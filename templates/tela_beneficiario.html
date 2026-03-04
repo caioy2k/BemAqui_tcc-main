@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Área do Beneficiário - BemAqui</title>
+  <link rel="stylesheet" href="../base.css" />
+  <link rel="stylesheet" href="tela_beneficiario.css" />
+</head>
+<body>
+  <header class="ba-header">
+    <div class="ba-header-inner">
+      <div class="ba-logo">BemAqui</div>
+      <nav class="ba-nav">
+        <a href="tela_beneficiario.html" class="active">Minha área</a>
+        <a href="../tela_inicial.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="ba-main">
+    <section class="beneficiary-hero">
+      <div>
+        <h1>Olá, beneficiário!</h1>
+        <p>
+          Aqui você acompanha seus pontos, histórico de trocas e oportunidades
+          de receber alimentos, roupas e outros itens essenciais.
+        </p>
+      </div>
+      <div class="points-card">
+        <h2>Meus pontos</h2>
+        <p class="points-value" id="points-value">0</p>
+        <p class="points-caption">Pontos disponíveis para troca</p>
+      </div>
+    </section>
+
+    <section class="beneficiary-actions">
+      <h2>O que você deseja fazer?</h2>
+      <div class="actions-grid">
+        <a href="tela_beneficiario_produtos.html" class="action-card">
+          <h3>Ver itens disponíveis</h3>
+          <p>Veja alimentos, roupas e outros itens que podem ser trocados.</p>
+        </a>
+
+        <a href="tela_beneficiario_trocar.html" class="action-card">
+          <h3>Realizar troca</h3>
+          <p>Troque seus reciclaveis por benefits.</p>
+        </a>
+
+        <a href="carteira.html" class="action-card">
+          <h3>Carteira</h3>
+          <p>Acessar carteira.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tela_beneficiario.js"></script>
+</body>
+</html>

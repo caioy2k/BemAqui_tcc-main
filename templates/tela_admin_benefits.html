@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerenciar Benefícios - BemAqui</title>
+  <link rel="stylesheet" href="../base.css" />
+  <link rel="stylesheet" href="tela_admin_benefits.css" />
+</head>
+<body>
+  <header class="ba-header">
+    <div class="ba-header-inner">
+      <div class="ba-logo">BemAqui - Admin</div>
+      <nav class="ba-nav">
+        <a href="tela_admin_menu.html">Dashboard</a>
+        <a href="tela_admin_benefits.html" class="active">Benefícios</a>
+        <a href="../tela_inicial.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="ba-main">
+    <section class="admin-section">
+      <div class="section-header">
+        <div>
+          <h1>Gerenciar Benefícios</h1>
+          <p>Adicione produtos que os beneficiários podem receber.</p>
+        </div>
+        <button class="primary-btn" onclick="openFormModal()">
+          + Cadastrar benefício
+        </button>
+      </div>
+
+      <div id="benefits-container" class="items-list">
+        <!-- carregado via JS -->
+      </div>
+
+      <div id="empty-state" class="empty-state hidden">
+        <p>Nenhum benefício cadastrado ainda.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de formulário -->
+  <div id="form-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Cadastrar Benefício</h2>
+        <button class="close-btn" onclick="closeFormModal()">✕</button>
+      </div>
+      <form id="benefit-form" class="admin-form">
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Ex: Arroz integral (5kg)"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoria</label>
+          <select id="category" name="category" required>
+            <option value="">Selecione...</option>
+            <option value="alimentos">Alimentos</option>
+            <option value="roupas">Roupas</option>
+            <option value="utensilio">Utensílio</option>
+            <option value="higiene">Higiene</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descrição</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Descreva o benefício..."
+            rows="3"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pointsCost">Pontos para receber</label>
+            <input
+              type="number"
+              id="pointsCost"
+              name="pointsCost"
+              placeholder="Ex: 150"
+              min="1"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">Quantidade disponível</label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              placeholder="Ex: 20"
+              min="0"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeFormModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="primary-btn">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tela_admin_benefits.js"></script>
+</body>
+</html>

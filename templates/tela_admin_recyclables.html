@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerenciar Recicláveis - BemAqui</title>
+  <link rel="stylesheet" href="../base.css" />
+  <link rel="stylesheet" href="tela_admin_recyclables.css" />
+</head>
+<body>
+  <header class="ba-header">
+    <div class="ba-header-inner">
+      <div class="ba-logo">BemAqui - Admin</div>
+      <nav class="ba-nav">
+        <a href="tela_admin_menu.html">Dashboard</a>
+        <a href="tela_admin_recyclables.html" class="active">Recicláveis</a>
+        <a href="../tela_inicial.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="ba-main">
+    <section class="admin-section">
+      <div class="section-header">
+        <div>
+          <h1>Gerenciar Recicláveis</h1>
+          <p>Adicione e edite os materiais recicláveis do catálogo.</p>
+        </div>
+        <button class="primary-btn" onclick="openFormModal()">
+          + Cadastrar reciclável
+        </button>
+      </div>
+
+      <div id="recyclables-container" class="items-list">
+        <!-- carregado via JS -->
+      </div>
+
+      <div id="empty-state" class="empty-state hidden">
+        <p>Nenhum reciclável cadastrado ainda.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de formulário -->
+  <div id="form-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Cadastrar Reciclável</h2>
+        <button class="close-btn" onclick="closeFormModal()">✕</button>
+      </div>
+      <form id="recyclable-form" class="admin-form">
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Ex: Garrafas plásticas"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="type">Tipo</label>
+          <select id="type" name="type" required>
+            <option value="">Selecione...</option>
+            <option value="plastico">Plástico</option>
+            <option value="papel">Papel</option>
+            <option value="vidro">Vidro</option>
+            <option value="metal">Metal</option>
+            <option value="organico">Orgânico</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descrição</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Descreva o material..."
+            rows="3"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="pointsValue">Pontos por unidade</label>
+          <input
+            type="number"
+            id="pointsValue"
+            name="pointsValue"
+            placeholder="Ex: 10"
+            min="1"
+            required
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeFormModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="primary-btn">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tela_admin_recyclables.js"></script>
+</body>
+</html>

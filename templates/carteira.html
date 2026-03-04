@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carteira - BemAqui</title>
+  <link rel="stylesheet" href="carteira.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💰 Minha Carteira</h1>
+      <p>BemAqui - Recicle e Troque</p>
+    </div>
+    
+    <div class="balance-card">
+      <div class="balance" id="balance">0</div>
+      <div class="currency">Moedas BemAqui</div>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-value" id="totalEarned">0</div>
+        <div class="stat-label">Total Ganhos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="totalSpent">0</div>
+        <div class="stat-label">Total Gastos</div>
+      </div>
+    </div>
+    
+    <div class="transactions">
+      <h3>📊 Últimas Transações</h3>
+      <div id="transactionsList">Carregando...</div>
+    </div>
+    
+    <div class="actions">
+      <button class="btn btn-primary" onclick="novaTroca()">🛒 Nova Troca</button>
+      <button class="btn btn-secondary" onclick="verCatalogo()">📦 Catálogo</button>
+    </div>
+    
+    <button class="logout" onclick="logout()">Sair</button>
+  </div>
+  <script src="carteira.js"></script>
+</body>
+</html>

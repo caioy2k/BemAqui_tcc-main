@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Realizar Troca - BemAqui</title>
+  <link rel="stylesheet" href="../base.css" />
+  <link rel="stylesheet" href="tela_beneficiario_trocar.css" />
+</head>
+<body>
+  <header class="ba-header">
+    <div class="ba-header-inner">
+      <div class="ba-logo">BemAqui</div>
+      <nav class="ba-nav">
+        <a href="tela_beneficiario.html">Minha área</a>
+        <a href="tela_beneficiario_trocar.html" class="active">Realizar troca</a>
+        <a href="../tela_inicial.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="ba-main">
+    <section class="trade-section">
+      <h1>Realizar uma troca</h1>
+      <p>Selecione o que você tem (esquerda) e o que você quer (direita)</p>
+
+      <div class="trade-container">
+        <!-- LADO ESQUERDO: O que você tem -->
+        <div class="trade-panel">
+          <h2>O que você tem? 📦</h2>
+          <div id="recyclables-container" class="items-grid">
+            <!-- carregado via JS -->
+          </div>
+          <div class="selected-list" id="selected-recyclables-list">
+            <h3>Selecionados:</h3>
+            <div id="selected-recyclables" class="selected-items">
+              <p class="placeholder">Nenhum item selecionado</p>
+            </div>
+          </div>
+          <div class="selected-summary">
+            <p>
+              <strong>Pontos oferecidos:</strong>
+              <span id="offered-points">0</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- LADO DIREITO: O que você quer -->
+        <div class="trade-panel">
+          <h2>O que você quer? 🎁</h2>
+          <div id="benefits-container" class="items-grid">
+            <!-- carregado via JS -->
+          </div>
+          <div class="selected-list" id="selected-benefits-list">
+            <h3>Selecionados:</h3>
+            <div id="selected-benefits" class="selected-items">
+              <p class="placeholder">Nenhum item selecionado</p>
+            </div>
+          </div>
+          <div class="selected-summary">
+            <p>
+              <strong>Pontos solicitados:</strong>
+              <span id="requested-points">0</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="trade-actions">
+        <div class="points-comparison">
+          <p>
+            Oferecido: <strong id="comparison-offered">0</strong> pts | Solicitado:
+            <strong id="comparison-requested">0</strong> pts
+          </p>
+          <p id="comparison-status" class="status-ok">✓ Você pode fazer essa troca!</p>
+        </div>
+        <button id="confirm-trade-btn" class="primary-btn" disabled>
+          Confirmar troca
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tela_beneficiario_trocar.js"></script>
+</body>
+</html>

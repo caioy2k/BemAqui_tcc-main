@@ -1,0 +1,76 @@
+.dashboard-section {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.dashboard-section h1 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.dashboard-section p {
+  font-size: 0.96rem;
+  color: #4b5563;
+  margin-bottom: 24px;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.action-card {
+  display: block;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 18px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s;
+  border: 1px solid #f0f0f0;
+}
+
+.action-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.action-card p {
+  font-size: 0.88rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  background: #fafbff;
+  border-color: #4f46e5;
+}
+
+/* Indicador de seção admin */
+.action-card::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: #4f46e5;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  .dashboard-section h1 {
+    font-size: 1.4rem;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+}

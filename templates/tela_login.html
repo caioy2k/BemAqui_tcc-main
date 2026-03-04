@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - BemAqui</title>
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="tela_login.css" />
+</head>
+<body>
+  <header class="ba-header">
+    <div class="ba-header-inner">
+      <div class="ba-logo">BemAqui</div>
+      <nav class="ba-nav">
+        <a href="tela_inicial.html">Início</a>
+        <a href="tela_login.html" class="active">Entrar</a>
+        <a href="tela_cadastro.html">Cadastrar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="ba-main">
+    <section class="auth-section">
+      <h1>Entrar</h1>
+      <p>Acesse sua conta para acompanhar suas trocas e pontos.</p>
+
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="seuemail@exemplo.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Sua senha"
+            required
+          />
+        </div>
+
+        <div class="form-extra">
+          <label class="remember">
+            <input type="checkbox" id="remember" />
+            Lembrar-me
+          </label>
+          <a href="#" class="link-small">Esqueci minha senha</a>
+        </div>
+
+        <button type="submit" class="primary-btn">Entrar</button>
+
+        <p class="auth-footer-text">
+          Ainda não tem conta?
+          <a href="tela_cadastro.html">Cadastre-se</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tela_login.js"></script>
+</body>
+</html>

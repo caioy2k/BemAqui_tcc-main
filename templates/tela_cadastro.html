@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro - BemAqui</title>
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="tela_cadastro.css" />
+</head>
+<body>
+  <header class="ba-header">
+    <div class="ba-header-inner">
+      <div class="ba-logo">BemAqui</div>
+      <nav class="ba-nav">
+        <a href="tela_inicial.html">Voltar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="ba-main">
+    <section class="cadastro-section">
+      <h1>Criar conta</h1>
+      <p>Preencha os dados abaixo para se registrar</p>
+
+      <form id="cadastro-form" class="cadastro-form">
+        <div class="form-group">
+          <label for="name">Nome completo</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Seu nome"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="seu@email.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="role">Tipo de usuário</label>
+          <select id="role" name="role" required>
+            <option value="">Selecione...</option>
+            <option value="beneficiario">Beneficiário</option>
+            <option value="doador">Doador</option>
+            <option value="parceiro">Parceiro</option>
+          </select>
+        </div>
+
+        <button type="submit" class="primary-btn">Cadastrar</button>
+        <a href="tela_login.html" class="link-login">Já tem conta? Faça login</a>
+      </form>
+    </section>
+  </main>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tela_cadastro.js"></script>
+</body>
+</html>
