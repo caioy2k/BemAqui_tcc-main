@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // ✅ REDIRECIONAMENTO BASEADO NO ROLE E BOOLEANOS
         if (data.user.isAdmin) {
-          window.location.href = "../telas-admin/tela_admin_menu.html";
+          window.location.href = "tela_admin_menu.html";
         } else if (data.user.isEmployee) {
-          window.location.href = "../telas-admin/tela_admin_trades.html";
+          window.location.href = "tela_admin_trades.html";
         } else if (data.user.role === "beneficiario") {
-          window.location.href = "../telas-beneficiario/tela_beneficiario.html";
+          window.location.href = "../templates/tela_beneficiario.html";
         } else if (data.user.role === "doador") {
-          window.location.href = "../telas-doador/tela_doador.html";
+          window.location.href = "tela_doador.html";
         } else if (data.user.role === "parceiro") {
           window.location.href = "../telas-parceiro/tela_parceiro.html";
         } else {
