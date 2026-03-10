@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email já cadastrado." });
+      return res.status(400).json({ error: "Email já cadastrado." });6
     }
 
     const newUser = await User.create({

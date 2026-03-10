@@ -4,6 +4,10 @@ const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+
+const authRoutes = require('./routes/auth');  // ← ESSA LINHA FALTAVA!
+const tradeRoutes = require('./routes/trade');
+
 const app = express();
 
 // Middlewares
@@ -22,11 +26,13 @@ app.get(['/', '/tela_admin_trades', '/tela_beneficiario_trocar', '/login'], (req
 
 // ✅ APIs (SEMPRE funcionam)
 app.use('/api/auth', require('./routes/auth'));
+app.use('/auth', authRoutes);
 app.use('/api/trade', require('./routes/trade'));
 app.use('/api/user', require('./routes/user'));
-app.use('/trades', require('./routes/trade'));  // funcionário
+app.use('/trades', require('./routes/trade'));  // ❌ COMENTADO!
 app.use('/recyclables', require('./routes/recyclables'));
 app.use('/benefits', require('./routes/benefits'));
+
 
 // 404
 app.use('*', (req, res) => res.status(404).json({ error: 'Página não encontrada' }));

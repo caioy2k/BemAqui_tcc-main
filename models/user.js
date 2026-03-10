@@ -36,6 +36,11 @@ const userSchema = new mongoose.Schema({
       default: 0,
       min: 0,
     },
+    totalRecycledPoints: {  // ← ADICIONE ESSA LINHA!
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     totalEarned: {
       type: Number,
       default: 0,

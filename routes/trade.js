@@ -1,5 +1,8 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const Trade = require('../models/trade');  // ← ADICIONE no topo!
+const User = require('../models/user');  // ← ADICIONE!
 const router = express.Router();
 
 // ✅ 1. PRIMEIRO DEFINE MIDDLEWARES
@@ -51,15 +54,65 @@ router.get('/trades', authMiddleware, isEmployeeMiddleware, async (req, res) => 
   });
 });
 
+
 router.post('/create-trade-type1', authMiddleware, async (req, res) => {
-  console.log('📦 DADOS TRADE:', req.body);
-  console.log('👤 USUÁRIO:', req.user.role);
-  res.json({ 
-    success: true, 
-    message: 'Troca criada!',
-    userId: req.user._id,
-    data: req.body
-  });
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
+  try {
+    // Calcula pontos
+    const recyclingPoints = req.body.recyclablesOffered[0].quantity * req.body.recyclablesOffered[0].pointsPerUnit;
+    const benefitCost = req.body.benefitsRequested[0].quantity * req.body.benefitsRequested[0].pointsCost;
+    const coinsSurplus = recyclingPoints - benefitCost;
+    
+    console.log(`📊 CÁLCULO: ${recyclingPoints} pontos - ${benefitCost} custo = ${coinsSurplus} moedas`);
+
+    // 1. CRIAR TRADE
+    const tradeData = {
+      beneficiaryId: req.user._id,
+      recyclablesOffered: req.body.recyclablesOffered,
+      benefitsRequested: req.body.benefitsRequested,
+      totalRecyclingPoints: recyclingPoints,
+      totalBenefitCost: benefitCost,
+      coinsSurplus: coinsSurplus,
+      tradeType: "with_benefit",
+      status: "pendente"
+    };
+
+    const newTrade = new Trade(tradeData);
+    await newTrade.save({ session });
+
+    // 2. ATUALIZAR CARTEIRA DO USUÁRIO
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { 
+        $inc: { 
+          'wallet.balance': coinsSurplus,  // +5 moedas (ou negativo se débito)
+          'wallet.totalRecycledPoints': recyclingPoints 
+        }
+      },
+      { session, new: true }
+    );
+
+    await session.commitTransaction();
+    console.log('✅ TRADE + CARTEIRA ATUALIZADA!');
+    
+    res.json({ 
+      success: true, 
+      message: 'Troca criada e carteira atualizada!',
+      tradeId: newTrade._id,
+      coinsEarned: coinsSurplus 
+    });
+
+  } catch (error) {
+    await session.abortTransaction();
+    console.error('❌ ERRO TRADE:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    session.endSession();
+  }
 });
+
+
 
 module.exports = router;
