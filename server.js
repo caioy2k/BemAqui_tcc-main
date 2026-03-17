@@ -38,7 +38,7 @@ app.use('/benefits', require('./routes/benefits'));
 app.use('*', (req, res) => res.status(404).json({ error: 'Página não encontrada' }));
 
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI || "sua_string_aqui")
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/bemaqui")
   .then(() => console.log('✅ MongoDB conectado'))
   .catch(err => console.error('❌ MongoDB:', err));
 
