@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://bemahi.onrender.com";
 
 // Esperar o DOM carregar completamente
 document.addEventListener("DOMContentLoaded", () => {
