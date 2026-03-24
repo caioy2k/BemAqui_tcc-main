@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("login-form");
