@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+const User = require('./models/user');
 const authRoutes = require('./routes/auth');
 const tradeRoutes = require('./routes/trade');
 
@@ -56,6 +57,25 @@ app.get('/benefits', async (req, res) => {
 });
 
 
+// ✅ ROTA WALLET (usuário logado)
+app.get('/api/user/wallet', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('wallet name email');
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+    
+    res.json({ 
+      success: true, 
+      wallet: user.wallet,
+      user: { name: user.name, email: user.email }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao carregar carteira' });
+  }
+});
+
+
+
+
 // ✅ LISTAR TRADES (Admin chama isso!)
 app.get('/trades', async (req, res) => {
   try {
@@ -70,7 +90,6 @@ app.get('/trades', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar trades' });
   }
 });
-
 
 // ✅ ROTAS ADMIN (aprovar/recusar)
 app.patch('/trades/:id/approve', async (req, res) => {

@@ -1,0 +1,33 @@
+.balance-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white !important;
+  border-radius: 20px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.list-group-item:hover {
+  background: #f8f9fa;
+}
+
+.transaction-positive { color: #28a745; }
+.transaction-negative { color: #dc3545; }
