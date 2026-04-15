@@ -9,7 +9,6 @@ async function loadWallet() {
       return;
     }
 
-    // Carrega wallet
     const response = await fetch(`${API_URL}/api/user/wallet`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -17,20 +16,29 @@ async function loadWallet() {
       }
     });
 
-    if (!response.ok) throw new Error('Erro ao carregar carteira');
-
     const data = await response.json();
-    const wallet = data.wallet;
 
-    // Atualiza saldos
+    if (!response.ok) {
+      console.error('Resposta da API:', data);
+      throw new Error(data.error || 'Erro ao carregar carteira');
+    }
+
+    const wallet = {
+      balance: data.wallet?.balance || 0,
+      totalEarned: data.wallet?.totalEarned || 0,
+      totalSpent: data.wallet?.totalSpent || 0,
+      totalRecycledPoints: data.wallet?.totalRecycledPoints || 0,
+      transactions: data.wallet?.transactions || []
+    };
+
     document.getElementById('balance').textContent = `R$ ${wallet.balance.toFixed(2)}`;
-    document.getElementById('totalEarned').textContent = wallet.totalEarned.toLocaleString();
-    document.getElementById('totalSpent').textContent = wallet.totalSpent.toLocaleString();
-    document.getElementById('totalRecycledPoints').textContent = wallet.totalRecycledPoints.toLocaleString();
-    document.getElementById('netBalance').textContent = (wallet.balance + wallet.totalRecycledPoints).toLocaleString();
+    document.getElementById('totalEarned').textContent = wallet.totalEarned.toLocaleString('pt-BR');
+    document.getElementById('totalSpent').textContent = wallet.totalSpent.toLocaleString('pt-BR');
+    document.getElementById('totalRecycledPoints').textContent = wallet.totalRecycledPoints.toLocaleString('pt-BR');
+    document.getElementById('netBalance').textContent = (wallet.balance + wallet.totalRecycledPoints).toLocaleString('pt-BR');
 
-    // Carrega transações
-    loadTransactions(token);
+    renderTransactions(wallet.transactions);
+    await loadTransactions(token);
 
   } catch (error) {
     console.error('Erro wallet:', error);
