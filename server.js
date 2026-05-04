@@ -59,41 +59,6 @@ app.get('/benefits', async (req, res) => {
 
 // ✅ ROTA WALLET (usuário logado)
 
-router.get('/wallet', auth, async (req, res) => {
-  try {
-    console.log('GET /api/user/wallet chamado');
-    console.log('req.user:', req.user);
-
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ error: 'Usuário não autenticado' });
-    }
-
-    const user = await User.findById(req.user._id).select('name email wallet');
-
-    if (!user) {
-      return res.status(404).json({ error: 'Usuário não encontrado' });
-    }
-
-    const wallet = {
-      balance: user.wallet?.balance || 0,
-      totalEarned: user.wallet?.totalEarned || 0,
-      totalSpent: user.wallet?.totalSpent || 0,
-      totalRecycledPoints: user.wallet?.totalRecycledPoints || 0,
-      transactions: user.wallet?.transactions || []
-    };
-
-    res.json({
-      success: true,
-      wallet
-    });
-  } catch (error) {
-    console.error('ERRO /wallet:', error);
-    res.status(500).json({
-      error: 'Erro interno ao carregar carteira',
-      details: error.message
-    });
-  }
-});
 
 
 // ✅ LISTAR TRADES (Admin chama isso!)

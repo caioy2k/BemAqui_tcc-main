@@ -1,128 +1,403 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Área do Beneficiário - BemAqui</title>
-  <link rel="stylesheet" href="../base.css" />
-  <link rel="stylesheet" href="tela_beneficiario.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem Aqui - Minha Conta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/tela_beneficiario.css">
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_beneficiario.html" class="active">Minha área</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
+    <!-- Header do Usuário -->
+    <header class="usuario-header">
+        <div class="container">
+            <div class="header-left">
+                <a href="usuario-home.html" class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <span>Bem Aqui</span>
+                </a>
+            </div>
+            
+            <div class="header-center">
+                <nav class="menu-principal">
+                    <a href="index.html" class="active">Início</a>
+                    <a href="tela_catalogo.html">Catálogo</a>
+                    <a href="usuario-doacoes.html">Doações</a>
+                    <a href="usuario-pedidos.html">Meus Pedidos</a>
+                    <a href="usuario-itens-gratuitos.html">Itens Gratuitos</a>
+                </nav>
+            </div>
+            
+            <div class="header-right">
+                <div class="carteira-info">
+                    <i class="fas fa-coins"></i>
+                    <span class="saldo" id="saldoMoedas">1.250</span>
+                    <span class="moeda-label">moedas</span>
+                </div>
+                
+                <div class="notificacoes">
+                    <button class="notificacoes-btn" id="notificacoesBtn">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                </div>
+                
+                <div class="usuario-menu">
+                    <button class="usuario-btn" id="usuarioMenuBtn">
+                        <div class="avatar">
+                            <i class="far fa-user-circle"></i>
+                        </div>
+                        <span class="usuario-nome">João Silva</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="usuario-dropdown" id="usuarioDropdown">
+                        <a href="usuario-perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <a href="usuario-carteira.html"><i class="fas fa-wallet"></i> Minha Carteira</a>
+                        <a href="usuario-converter.html"><i class="fas fa-exchange-alt"></i> Converter</a>
+                        <a href="usuario-historico-doacoes.html"><i class="fas fa-hand-holding-heart"></i> Histórico de Doações</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="home.html" class="sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Dashboard</span>
+            </div>
+
+            <!-- Boas Vindas -->
+            <div class="welcome-card">
+                <div class="welcome-text">
+                    <h1>Olá, João! 👋</h1>
+                    <p>Bem-vindo de volta. Que tal ver as novidades de hoje?</p>
+                </div>
+                <div class="welcome-actions">
+                    <button class="btn-primary" id="btnConverter">
+                      <link rel="stylesheet" href="tela_converter.html">
+                        <i class="fas fa-exchange-alt"></i> Converter Recicláveis
+                    </button>
+                    <button class="btn-outline" id="btnVerCatalogo">
+                      <link rel="stylesheet" href="tela_catalogo.html">
+                        <i class="fas fa-store"></i> Ver Catálogo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(39, 174, 96, 0.1); color: #27ae60;">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Saldo Disponível</span>
+                        <span class="stat-value" id="statSaldo">1.250</span>
+                        <span class="stat-unit">moedas</span>
+                    </div>
+                    <button class="stat-action" onclick="window.location.href='usuario-converter.html'">
+                        <i class="fas fa-plus"></i> Adicionar
+                    </button>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(52, 152, 219, 0.1); color: #3498db;">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Pedidos Ativos</span>
+                        <span class="stat-value" id="statPedidos">3</span>
+                        <span class="stat-unit">aguardando</span>
+                    </div>
+                    <button class="stat-action" onclick="window.location.href='usuario-pedidos.html'">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(241, 196, 15, 0.1); color: #f1c40f;">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Doações Realizadas</span>
+                        <span class="stat-value" id="statDoacoes">8</span>
+                        <span class="stat-unit">itens doados</span>
+                    </div>
+                    <button class="stat-action" onclick="window.location.href='usuario-doacoes.html'">
+                        <i class="fas fa-plus"></i> Doar
+                    </button>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(155, 89, 182, 0.1); color: #9b59b6;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Famílias Ajudadas</span>
+                        <span class="stat-value" id="statFamilias">12</span>
+                        <span class="stat-unit">com suas ações</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Famílias Ajudadas e Últimas Atividades -->
+            <div class="dashboard-grid">
+                <!-- Gráfico de Famílias -->
+                <div class="card grafico-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-line" style="color: #27ae60;"></i> Famílias Ajudadas</h2>
+                        <select class="grafico-select" id="graficoPeriodo">
+                            <option value="7">Últimos 7 dias</option>
+                            <option value="30" selected>Últimos 30 dias</option>
+                            <option value="90">Últimos 3 meses</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="grafico-container">
+                            <img src="https://via.placeholder.com/500x200/27ae60/ffffff?text=Gráfico+de+Famílias+Ajudadas" alt="Gráfico" class="grafico-img">
+                        </div>
+                        <div class="grafico-stats">
+                            <div class="stat-row">
+                                <span class="stat-name">Este mês:</span>
+                                <span class="stat-number">8 famílias</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-name">Total acumulado:</span>
+                                <span class="stat-number">12 famílias</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimas Atividades -->
+                <div class="card atividades-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-clock" style="color: #27ae60;"></i> Últimas Atividades</h2>
+                        <a href="#" class="ver-todos">Ver todos</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="atividades-lista">
+                            <div class="atividade-item">
+                                <div class="atividade-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="atividade-info">
+                                    <p class="atividade-titulo">Compra realizada</p>
+                                    <p class="atividade-desc">Você comprou 2 kits de higiene</p>
+                                    <span class="atividade-tempo">Há 2 horas</span>
+                                </div>
+                                <span class="atividade-valor">-150 moedas</span>
+                            </div>
+
+                            <div class="atividade-item">
+                                <div class="atividade-icon success">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="atividade-info">
+                                    <p class="atividade-titulo">Recicláveis convertidos</p>
+                                    <p class="atividade-desc">5 kg de papelão + 3 kg de plástico</p>
+                                    <span class="atividade-tempo">Ontem</span>
+                                </div>
+                                <span class="atividade-valor positivo">+320 moedas</span>
+                            </div>
+
+                            <div class="atividade-item">
+                                <div class="atividade-icon warning">
+                                    <i class="fas fa-hand-holding-heart"></i>
+                                </div>
+                                <div class="atividade-info">
+                                    <p class="atividade-titulo">Doação realizada</p>
+                                    <p class="atividade-desc">3 itens doados (2 alimentos + 1 roupa)</p>
+                                    <span class="atividade-tempo">3 dias atrás</span>
+                                </div>
+                                <span class="atividade-valor">Doação</span>
+                            </div>
+
+                            <div class="atividade-item">
+                                <div class="atividade-icon info">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div class="atividade-info">
+                                    <p class="atividade-titulo">Item gratuito retirado</p>
+                                    <p class="atividade-desc">1 cesta básica próxima ao vencimento</p>
+                                    <span class="atividade-tempo">5 dias atrás</span>
+                                </div>
+                                <span class="atividade-valor">Grátis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produtos em Destaque -->
+            <div class="destaques-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-star" style="color: #27ae60;"></i> Produtos em Destaque</h2>
+                    <a href="usuario-catalogo.html" class="ver-todos">Ver catálogo completo <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="produtos-grid">
+                    <!-- Produto 1 -->
+                    <div class="produto-card">
+                        <div class="produto-imagem">
+                            <img src="https://via.placeholder.com/200x150/27ae60/ffffff?text=Arroz" alt="Arroz">
+                            <span class="produto-tag">Alimentos</span>
+                        </div>
+                        <div class="produto-info">
+                            <h3 class="produto-titulo">Arroz Tipo 1</h3>
+                            <div class="produto-detalhes">
+                                <p class="produto-fabricacao">Fabricação: 10/01/2026</p>
+                                <p class="produto-validade">Validade: 10/01/2027</p>
+                            </div>
+                            <div class="produto-preco">
+                                <i class="fas fa-coins"></i>
+                                <span>45 moedas</span>
+                            </div>
+                            <button class="btn-primary small" onclick="window.location.href='usuario-simulacao.html'">
+                                <i class="fas fa-calculator"></i> Simular Compra
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Produto 2 -->
+                    <div class="produto-card">
+                        <div class="produto-imagem">
+                            <img src="https://via.placeholder.com/200x150/3498db/ffffff?text=Feijão" alt="Feijão">
+                            <span class="produto-tag">Alimentos</span>
+                        </div>
+                        <div class="produto-info">
+                            <h3 class="produto-titulo">Feijão Carioca</h3>
+                            <div class="produto-detalhes">
+                                <p class="produto-fabricacao">Fabricação: 05/02/2026</p>
+                                <p class="produto-validade">Validade: 05/02/2027</p>
+                            </div>
+                            <div class="produto-preco">
+                                <i class="fas fa-coins"></i>
+                                <span>38 moedas</span>
+                            </div>
+                            <button class="btn-primary small" onclick="window.location.href='usuario-simulacao.html'">
+                                <i class="fas fa-calculator"></i> Simular Compra
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Produto 3 -->
+                    <div class="produto-card">
+                        <div class="produto-imagem">
+                            <img src="https://via.placeholder.com/200x150/f1c40f/ffffff?text=Kit+Higiene" alt="Kit Higiene">
+                            <span class="produto-tag">Higiene</span>
+                        </div>
+                        <div class="produto-info">
+                            <h3 class="produto-titulo">Kit Higiene Pessoal</h3>
+                            <div class="produto-detalhes">
+                                <p class="produto-fabricacao">Fabricação: 20/12/2025</p>
+                                <p class="produto-validade">Validade: 20/12/2026</p>
+                            </div>
+                            <div class="produto-preco">
+                                <i class="fas fa-coins"></i>
+                                <span>85 moedas</span>
+                            </div>
+                            <button class="btn-primary small" onclick="window.location.href='usuario-simulacao.html'">
+                                <i class="fas fa-calculator"></i> Simular Compra
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Produto 4 -->
+                    <div class="produto-card">
+                        <div class="produto-imagem">
+                            <img src="https://via.placeholder.com/200x150/e74c3c/ffffff?text=Material+Limpeza" alt="Material Limpeza">
+                            <span class="produto-tag">Limpeza</span>
+                        </div>
+                        <div class="produto-info">
+                            <h3 class="produto-titulo">Kit Limpeza Completo</h3>
+                            <div class="produto-detalhes">
+                                <p class="produto-fabricacao">Fabricação: 15/01/2026</p>
+                                <p class="produto-validade">Validade: 15/01/2027</p>
+                            </div>
+                            <div class="produto-preco">
+                                <i class="fas fa-coins"></i>
+                                <span>120 moedas</span>
+                            </div>
+                            <button class="btn-primary small" onclick="window.location.href='usuario-simulacao.html'">
+                                <i class="fas fa-calculator"></i> Simular Compra
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itens Gratuitos em Destaque -->
+            <div class="gratuitos-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-gift" style="color: #27ae60;"></i> Itens Gratuitos Disponível</h2>
+                    <a href="usuario-itens-gratuitos.html" class="ver-todos">Ver todos <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="gratuitos-grid">
+                    <div class="gratuito-card">
+                        <div class="gratuito-imagem">
+                            <img src="https://via.placeholder.com/150x100/95a5a6/ffffff?text=Cesta+Básica" alt="Cesta Básica">
+                        </div>
+                        <div class="gratuito-info">
+                            <h4>Cesta Básica</h4>
+                            <p>Validade: 25/03/2026 (próximo)</p>
+                            <button class="btn-outline small">Selecionar</button>
+                        </div>
+                    </div>
+                    <div class="gratuito-card">
+                        <div class="gratuito-imagem">
+                            <img src="https://via.placeholder.com/150x100/95a5a6/ffffff?text=Leite" alt="Leite">
+                        </div>
+                        <div class="gratuito-info">
+                            <h4>Leite UHT - 10 unidades</h4>
+                            <p>Validade: 28/03/2026</p>
+                            <button class="btn-outline small">Selecionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chatbot Flutuante -->
+    <div class="chatbot-flutuante" id="chatbotFlutuante">
+        <button class="chatbot-toggle" id="chatbotToggle">
+            <i class="fas fa-comment"></i>
+        </button>
+        
+        <div class="chatbot-janela" id="chatbotJanela">
+            <div class="chatbot-header">
+                <h3><i class="fas fa-robot"></i> Assistente Virtual</h3>
+                <button class="chatbot-fechar" id="chatbotFechar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-mensagens" id="chatbotMensagens">
+                <div class="mensagem bot">
+                    <div class="mensagem-conteudo">
+                        Olá! Sou o assistente virtual da Bem Aqui. Como posso ajudar?
+                    </div>
+                    <span class="mensagem-horario">Agora</span>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" placeholder="Digite sua mensagem..." id="chatbotInput">
+                <button id="chatbotEnviar"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
-  </header>
-tela beneficiario
 
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Área do Beneficiário - BemAqui</title>
-  <link rel="stylesheet" href="../static/css/base.css" />
-  <link rel="stylesheet" href="../static/css/tela_beneficiario.css" />
-</head>
-<body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_beneficiario.html" class="active">Minha área</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="ba-main">
-    <section class="beneficiary-hero">
-      <div>
-        <h1>Olá, beneficiário!</h1>
-        <p>
-          Aqui você acompanha seus pontos, histórico de trocas e oportunidades
-          de receber alimentos, roupas e outros itens essenciais.
-        </p>
-      </div>
-      <div class="points-card">
-        <h2>Meus pontos</h2>
-        <p class="points-value" id="points-value">0</p>
-        <p class="points-caption">Pontos disponíveis para troca</p>
-      </div>
-    </section>
-
-    <section class="beneficiary-actions">
-      <h2>O que você deseja fazer?</h2>
-      <div class="actions-grid">
-        <a href="tela_beneficiario_produtos.html" class="action-card">
-          <h3>Ver itens disponíveis</h3>
-          <p>Veja alimentos, roupas e outros itens que podem ser trocados.</p>
-        </a>
-
-        <a href="tela_beneficiario_trocar.html" class="action-card">
-          <h3>Realizar troca</h3>
-          <p>Troque seus reciclaveis por benefits.</p>
-        </a>
-
-        <a href="tela_carteira.html" class="action-card">
-          <h3>Carteira</h3>
-          <p>Acessar carteira.</p>
-        </a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
-
-  <script src="../static/js/tela_beneficiario.js"></script>
-</body>
-</html>
-  <main class="ba-main">
-    <section class="beneficiary-hero">
-      <div>
-        <h1>Olá, beneficiário!</h1>
-        <p>
-          Aqui você acompanha seus pontos, histórico de trocas e oportunidades
-          de receber alimentos, roupas e outros itens essenciais.
-        </p>
-      </div>
-      <div class="points-card">
-        <h2>Meus pontos</h2>
-        <p class="points-value" id="points-value">0</p>
-        <p class="points-caption">Pontos disponíveis para troca</p>
-      </div>
-    </section>
-
-    <section class="beneficiary-actions">
-      <h2>O que você deseja fazer?</h2>
-      <div class="actions-grid">
-        <a href="tela_beneficiario_produtos.html" class="action-card">
-          <h3>Ver itens disponíveis</h3>
-          <p>Veja alimentos, roupas e outros itens que podem ser trocados.</p>
-        </a>
-
-        <a href="tela_beneficiario_trocar.html" class="action-card">
-          <h3>Realizar troca</h3>
-          <p>Troque seus reciclaveis por benefits.</p>
-        </a>
-
-        <a href="carteira.html" class="action-card">
-          <h3>Carteira</h3>
-          <p>Acessar carteira.</p>
-        </a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
-
-  <script src="tela_beneficiario.js"></script>
+    <script src="../static/js/tela_beneficiario.js"></script>
 </body>
 </html>

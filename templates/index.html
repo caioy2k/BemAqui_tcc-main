@@ -1,49 +1,534 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <title>BemAqui - Início</title>
-  <link rel="stylesheet" href="/static/css/base.css" />
-  <link rel="stylesheet" href="/static/css/tela_inicial.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BemAqui | Plataforma Social de Troca Sustentável</title>
+    <link rel="stylesheet" href="../static/css/tela_inicial.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="index.html" class="active">Início</a>
-        <a href="/tela_login.html">Entrar</a>
-        <a href="/tela_cadastro.html">Cadastrar</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="ba-main">
-    <section class="hero">
-      <div class="hero-text">
-        <h1>Transforme recicláveis em oportunidades</h1>
-        <p>
-          O BemAqui conecta pessoas, parceiros e doadores em uma rede de trocas
-          de materiais recicláveis por alimentos, roupas e outros benefícios.
-        </p>
-        <div class="hero-actions">
-          <a href="tela_cadastro.html" class="primary-btn">Começar agora</a>
-          <a href="tela_login.html" class="secondary-btn">Já tenho conta</a>
+    <!-- ==================== BARRA DE NAVEGAÇÃO ==================== -->
+    <header class="header">
+        <nav class="navbar container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">BemAqui</span>
+                    <span class="logo-slogan">uma ajuda para quem necessita</span>
+                </div>
+            </div>
+            <div class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Início</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#como-funciona">Como</a></li>
+                    <li><a href="#materiais">Materiais</a></li>
+                    <li><a href="#produtos">Produtos</a></li>
+                    <li><a href="#impacto">Impacto</a></li>
+                    <li><a href="#jogos">Jogos</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <a href="tela_login.html" class="btn-login"><i class="fas fa-user"></i> Entrar</a>
+                    
+                    <a href="tela_cadastro.html" class="btn-signup"><i class="fas fa-user-plus"></i> Cadastrar</a>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ==================== BANNER PRINCIPAL (HERO) ==================== -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <div class="hero-text">
+                <div class="hero-logo">
+                    <div class="hero-logo-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="hero-logo-text">
+                        <h1>Bem<span>Aqui</span></h1>
+                        <p>uma ajuda para quem necessita</p>
+                    </div>
+                </div>
+                <span class="hero-badge">✨ Plataforma Social de Troca Sustentável</span>
+                <h2>Troque recicláveis por <span class="highlight">produtos essenciais</span> com moedas virtuais</h2>
+                <p class="hero-subtitle">BemAqui conecta pessoas que querem ajudar o meio ambiente com quem precisa de alimentos, roupas e itens básicos.</p>
+                <div class="hero-buttons">
+                    <a href="login.html" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Entrar</a>
+                    <a href="cadastro.html" class="btn-secondary"><i class="fas fa-user-plus"></i> Criar Conta</a>
+                    <a href="#sobre" class="btn-outline"><i class="fas fa-play"></i> Saiba Mais</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">+2.000</span>
+                        <span class="stat-label">Famílias ajudadas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">+15.000kg</span>
+                        <span class="stat-label">Reciclados</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">+50</span>
+                        <span class="stat-label">Pontos de coleta</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&h=500&fit=crop" alt="Pessoas reciclando">
+            </div>
         </div>
-      </div>
-      <div class="hero-card">
-        <h2>Como funciona?</h2>
-        <ul>
-          <li>Cadastre-se como doador, beneficiário ou parceiro.</li>
-          <li>Registre materiais recicláveis ou ofertas de produtos.</li>
-          <li>Converta pontos em itens essenciais para quem precisa.</li>
-        </ul>
-      </div>
     </section>
-  </main>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
+    <!-- ==================== SEÇÃO SOBRE ==================== -->
+    <section id="sobre" class="about section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Sobre Nós</span>
+                <h2>Conheça o <span class="gradient-text">BemAqui</span></h2>
+                <p>Uma iniciativa que transforma reciclagem em dignidade e esperança</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-content">
+                    <div class="about-year">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Criado em 2025</span>
+                    </div>
+                    <h3>Plataforma Social de Troca Sustentável</h3>
+                    <p>O BemAqui nasceu com a missão de unir dois grandes desafios da nossa sociedade: o descarte inadequado de resíduos recicláveis e a insegurança alimentar que atinge milhares de famílias.</p>
+                    <p>Através de um sistema inovador de <strong>moedas virtuais</strong>, permitimos que pessoas em situação de vulnerabilidade troquem materiais recicláveis por alimentos, roupas, calçados e produtos de higiene.</p>
+                    <div class="about-features">
+                        <div class="feature">
+                            <i class="fas fa-recycle"></i>
+                            <span>Incentiva a reciclagem</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Promove inclusão social</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-coins"></i>
+                            <span>Sistema de moedas virtuais</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Gestão sustentável</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&h=400&fit=crop" alt="Ajuda social">
+                    <div class="about-quote">
+                        <i class="fas fa-quote-left"></i>
+                        <p>"Uma ajuda para quem necessita"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO COMO FUNCIONA ==================== -->
+    <section id="como-funciona" class="how-it-works section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Passo a Passo</span>
+                <h2>Como <span class="gradient-text">Funciona</span></h2>
+                <p>4 passos simples para transformar recicláveis em produtos essenciais</p>
+            </div>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+                    <h3>Crie sua conta</h3>
+                    <p>Cadastre-se gratuitamente na plataforma BemAqui</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon"><i class="fas fa-trash-alt"></i></div>
+                    <h3>Leve recicláveis</h3>
+                    <p>Entregue materiais em um ponto de coleta parceiro</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon"><i class="fas fa-coins"></i></div>
+                    <h3>Ganhe moedas</h3>
+                    <p>Receba moedas virtuais de acordo com os materiais</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <div class="step-icon"><i class="fas fa-shopping-basket"></i></div>
+                    <h3>Troque por produtos</h3>
+                    <p>Use suas moedas para adquirir produtos essenciais</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO MATERIAIS RECICLÁVEIS ==================== -->
+    <section id="materiais" class="materials section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Materiais Aceitos</span>
+                <h2>O que você pode <span class="gradient-text">reciclar</span></h2>
+                <p>Levamos todos os tipos de materiais recicláveis</p>
+            </div>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <i class="fas fa-wine-bottle"></i>
+                    <h3>Plástico</h3>
+                    <p>Garrafas, embalagens, potes</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>Papel/Papelão</h3>
+                    <p>Jornais, caixas, revistas</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-beer"></i>
+                    <h3>Latas</h3>
+                    <p>Alumínio, aço, latas de refrigerante</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-wine-glass-alt"></i>
+                    <h3>Vidro</h3>
+                    <p>Garrafas, potes, frascos</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-oil-can"></i>
+                    <h3>Óleo de cozinha</h3>
+                    <p>Óleo usado para reciclagem</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Eletrônicos</h3>
+                    <p>Celulares, computadores, pilhas</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Metal</h3>
+                    <p>Ferro, cobre, alumínio</p>
+                </div>
+                <div class="material-card">
+                    <i class="fas fa-box"></i>
+                    <h3>Embalagens Tetra Pak</h3>
+                    <p>Caixas de leite, sucos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO PRODUTOS PARA TROCA ==================== -->
+    <section id="produtos" class="products section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Produtos Disponíveis</span>
+                <h2>Troque suas <span class="gradient-text">moedas</span> por</h2>
+                <p>Produtos essenciais para sua família</p>
+            </div>
+            <div class="products-slider swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-egg"></i>
+                        </div>
+                        <h3>Arroz</h3>
+                        <p>5kg</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 15 Moedas</div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3>Feijão</h3>
+                        <p>1kg</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 10 moedas</div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Macarrão</h3>
+                        <p>500g</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 7 moedas </div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <h3>Leite</h3>
+                        <p>1L</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 40 moedas</div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <h3>Roupas</h3>
+                        <p>Kit básico</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 100 moedas</div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-shoe-prints"></i>
+                        </div>
+                        <h3>Calçados</h3>
+                        <p>Par</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 150 moedas</div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-soap"></i>
+                        </div>
+                        <h3>Sabonete</h3>
+                        <p>Kit 4 unidades</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 20 moedas</div>
+                    </div>
+                    <div class="swiper-slide product-card">
+                        <div class="product-image">
+                            <i class="fas fa-tooth"></i>
+                        </div>
+                        <h3>Pasta de dente</h3>
+                        <p>90g</p>
+                        <div class="product-price"><i class="fas fa-coins"></i> 15 moedas</div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO IMPACTO COM GRÁFICOS ==================== -->
+    <section id="impacto" class="impact section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Nosso Impacto</span>
+                <h2>Transformando vidas e o <span class="gradient-text">meio ambiente</span></h2>
+                <p>Números que representam nossa missão</p>
+            </div>
+            <div class="impact-stats">
+                <div class="impact-card">
+                    <div class="impact-icon"><i class="fas fa-users"></i></div>
+                    <div class="impact-number" data-target="120">0</div>
+                    <div class="impact-label">Famílias Ajudadas</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon"><i class="fas fa-recycle"></i></div>
+                    <div class="impact-number" data-target="2000">0</div>
+                    <div class="impact-label">kg de Materiais Reciclados</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon"><i class="fas fa-coins"></i></div>
+                    <div class="impact-number" data-target="10000">0</div>
+                    <div class="impact-label">Moedas Geradas</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon"><i class="fas fa-gift"></i></div>
+                    <div class="impact-number" data-target="3000">0</div>
+                    <div class="impact-label">Produtos Entregues</div>
+                </div>
+            </div>
+            
+            <!-- GRÁFICOS DE IMPACTO -->
+            <div class="impact-charts">
+                <div class="chart-container">
+                    <h3>Reciclagem por Material (kg)</h3>
+                    <canvas id="recyclingChart" width="400" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Evolução Mensal de Famílias Ajudadas</h3>
+                    <canvas id="familiesChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== DEPOIMENTOS ==================== -->
+    <section class="testimonials section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Depoimentos</span>
+                <h2>Quem já <span class="gradient-text">transformou</span> vidas</h2>
+                <p>Histórias reais de quem faz parte do BemAqui</p>
+            </div>
+            <div class="testimonials-slider swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"O BemAqui mudou minha vida! Com as moedas que ganhei reciclando, consegui alimentos para minha família e ainda ajudei o meio ambiente."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <h4>Maria Silva</h4>
+                            <span>Usuária desde 2025</span>
+                        </div>
+                    </div>
+                    <div class="swiper-slide testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"Como catadora, sempre tive dificuldade. Agora com o BemAqui, tenho uma renda extra e ainda ajudo minha comunidade."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <h4>Joana Oliveira</h4>
+                            <span>Catadora de Recicláveis</span>
+                        </div>
+                    </div>
+                    <div class="swiper-slide testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"Plataforma incrível! Minha família já trocou mais de 50kg de recicláveis por alimentos. Super recomendo!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <h4>Carlos Souza</h4>
+                            <span>Usuário desde 2025</span>
+                        </div>
+                    </div>
+                    <div class="swiper-slide testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <i class="fas fa-quote-left"></i>
+                            <p>"O projeto é essencial para a comunidade. Ensina sustentabilidade enquanto ajuda quem mais precisa."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <h4>Ana Beatriz</h4>
+                            <span>Voluntária</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO JOGOS COM IMAGENS ==================== -->
+   
+    <!-- ==================== SEÇÃO PARCEIROS ==================== -->
+    <section class="partners section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Parceiros e Apoiadores</span>
+                <h2>Quem <span class="gradient-text">apoia</span> essa causa</h2>
+                <p>Juntos somos mais fortes</p>
+            </div>
+            <div class="partners-grid">
+                <div class="partner-card"><i class="fas fa-hand-holding-heart"></i><span>ONG Recicla Vida</span></div>
+                <div class="partner-card"><i class="fas fa-church"></i><span>Igreja Esperança</span></div>
+                <div class="partner-card"><i class="fas fa-building"></i><span>EcoEmpresas</span></div>
+                <div class="partner-card"><i class="fas fa-city"></i><span>Prefeitura Verde</span></div>
+                <div class="partner-card"><i class="fas fa-seedling"></i><span>Instituto Sustentar</span></div>
+                <div class="partner-card"><i class="fas fa-recycle"></i><span>Coleta Recicla</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO CONTATO ==================== -->
+    <section id="contato" class="contact section-padding">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>Entre em <span class="gradient-text">Contato</span></h2>
+                    <p>Estamos aqui para ajudar. Entre em contato conosco!</p>
+                    <div class="contact-details">
+                        <div class="contact-item"><i class="fas fa-phone-alt"></i><span>(11) 99999-9999</span></div>
+                        <div class="contact-item"><i class="fas fa-envelope"></i><span>contato@bemaqui.org.br</span></div>
+                        <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Rua da Sustentabilidade, 123 - São Paulo, SP</span></div>
+                        <div class="contact-item"><i class="fas fa-clock"></i><span>Segunda a Sexta: 8h às 18h | Sábado: 8h às 12h</span></div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <input type="text" placeholder="Seu nome" required>
+                        <input type="email" placeholder="Seu e-mail" required>
+                        <input type="tel" placeholder="Telefone">
+                        <textarea rows="5" placeholder="Sua mensagem"></textarea>
+                        <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i> Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== RODAPÉ ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo-footer">
+                        <i class="fas fa-leaf"></i>
+                        <span>BemAqui</span>
+                    </div>
+                    <p>Plataforma Social de Troca Sustentável. Transformando recicláveis em dignidade.</p>
+                    <p class="footer-slogan">"Uma ajuda para quem necessita"</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#sobre">Sobre</a></li>
+                        <li><a href="#como-funciona">Como Funciona</a></li>
+                        <li><a href="#impacto">Impacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Política de Cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Receba Novidades</h4>
+                    <p>Cadastre-se para receber atualizações</p>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Seu e-mail">
+                        <button><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 BemAqui - Plataforma Social de Troca Sustentável. Todos os direitos reservados.</p>
+                <p class="version">Versão 1.0 | Desenvolvido com <i class="fas fa-heart"></i> para um mundo melhor</p>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="../static/js/tela_inicial.js"></script>
 </body>
 </html>

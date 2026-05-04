@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem Aqui - Simulação de Compra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/usuario-simulacao.css">
+</head>
+<body>
+    <!-- Header do Usuário -->
+    <header class="usuario-header">
+        <div class="container">
+            <div class="header-left">
+                <a href="usuario-home.html" class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <span>Bem Aqui</span>
+                </a>
+            </div>
+            
+            <div class="header-center">
+                <nav class="menu-principal">
+                    <a href="usuario-home.html">Início</a>
+                    <a href="usuario-catalogo.html">Catálogo</a>
+                    <a href="usuario-doacoes.html">Doações</a>
+                    <a href="usuario-pedidos.html">Meus Pedidos</a>
+                    <a href="usuario-itens-gratuitos.html">Itens Gratuitos</a>
+                </nav>
+            </div>
+            
+            <div class="header-right">
+                <div class="carteira-info">
+                    <i class="fas fa-coins"></i>
+                    <span class="saldo" id="saldoMoedas">1.250</span>
+                    <span class="moeda-label">moedas</span>
+                </div>
+                
+                <div class="notificacoes">
+                    <button class="notificacoes-btn" id="notificacoesBtn">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                </div>
+                
+                <div class="usuario-menu">
+                    <button class="usuario-btn" id="usuarioMenuBtn">
+                        <div class="avatar">
+                            <i class="far fa-user-circle"></i>
+                        </div>
+                        <span class="usuario-nome">João Silva</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="usuario-dropdown" id="usuarioDropdown">
+                        <a href="usuario-perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <a href="usuario-carteira.html"><i class="fas fa-wallet"></i> Minha Carteira</a>
+                        <a href="usuario-converter.html"><i class="fas fa-exchange-alt"></i> Converter</a>
+                        <a href="usuario-historico-doacoes.html"><i class="fas fa-hand-holding-heart"></i> Histórico de Doações</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="home.html" class="sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="usuario-home.html">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="usuario-catalogo.html">Catálogo</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Simulação de Compra</span>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Simulação de Compra</h1>
+                <p class="header-subtitle">Calcule quantos recicláveis você precisa levar para adquirir seus produtos</p>
+            </div>
+
+            <div class="simulacao-container">
+                <!-- Coluna Esquerda - Produtos Selecionados -->
+                <div class="produtos-selecionados">
+                    <h2><i class="fas fa-shopping-cart"></i> Produtos Selecionados</h2>
+                    
+                    <div class="produtos-lista" id="produtosLista">
+                        <!-- Produto 1 (mockado para exemplo) -->
+                        <div class="produto-item" data-id="1" data-preco="45">
+                            <div class="produto-info">
+                                <img src="https://via.placeholder.com/60x60/27ae60/ffffff?text=Arroz" alt="Arroz" class="produto-img">
+                                <div class="produto-detalhes">
+                                    <h4>Arroz Tipo 1</h4>
+                                    <p class="produto-preco">45 moedas</p>
+                                </div>
+                            </div>
+                            <div class="produto-quantidade">
+                                <button class="qtd-btn" onclick="alterarQuantidade(this, -1)">-</button>
+                                <input type="number" class="qtd-input" value="1" min="1" max="10" readonly>
+                                <button class="qtd-btn" onclick="alterarQuantidade(this, 1)">+</button>
+                                <button class="remover-btn" onclick="removerProduto(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Produto 2 -->
+                        <div class="produto-item" data-id="2" data-preco="38">
+                            <div class="produto-info">
+                                <img src="https://via.placeholder.com/60x60/3498db/ffffff?text=Feijão" alt="Feijão" class="produto-img">
+                                <div class="produto-detalhes">
+                                    <h4>Feijão Carioca</h4>
+                                    <p class="produto-preco">38 moedas</p>
+                                </div>
+                            </div>
+                            <div class="produto-quantidade">
+                                <button class="qtd-btn" onclick="alterarQuantidade(this, -1)">-</button>
+                                <input type="number" class="qtd-input" value="2" min="1" max="10" readonly>
+                                <button class="qtd-btn" onclick="alterarQuantidade(this, 1)">+</button>
+                                <button class="remover-btn" onclick="removerProduto(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="produtos-total">
+                        <span>Total em moedas:</span>
+                        <span class="total-valor" id="totalProdutos">121</span>
+                    </div>
+
+                    <button class="btn-outline" id="btnAdicionarProdutos">
+                        <i class="fas fa-plus"></i> Adicionar mais produtos
+                    </button>
+                </div>
+
+                <!-- Coluna Direita - Calculadora de Recicláveis -->
+                <div class="calculadora-reciclaveis">
+                    <h2><i class="fas fa-recycle"></i> Recicláveis para Troca</h2>
+                    <p class="calculadora-subtitle">Informe quantas unidades de cada tipo você vai levar</p>
+
+                    <div class="reciclaveis-lista">
+                        <!-- Papelão -->
+                        <div class="reciclavel-card">
+                            <div class="reciclavel-header">
+                                <div class="reciclavel-icon" style="background: rgba(52, 152, 219, 0.1); color: #3498db;">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+                                <div class="reciclavel-info">
+                                    <h3>Papelão</h3>
+                                    <p class="reciclavel-valor">2 moedas por unidade</p>
+                                </div>
+                            </div>
+                            <div class="reciclavel-input-group">
+                                <button class="input-btn" onclick="alterarReciclavel('papelao', -1)">-</button>
+                                <input type="number" id="qtdPapelao" class="reciclavel-input" value="0" min="0" readonly>
+                                <button class="input-btn" onclick="alterarReciclavel('papelao', 1)">+</button>
+                            </div>
+                            <div class="reciclavel-subtotal">
+                                <span>Subtotal:</span>
+                                <span id="subtotalPapelao">0 moedas</span>
+                            </div>
+                        </div>
+
+                        <!-- Vidro -->
+                        <div class="reciclavel-card">
+                            <div class="reciclavel-header">
+                                <div class="reciclavel-icon" style="background: rgba(241, 196, 15, 0.1); color: #f1c40f;">
+                                    <i class="fas fa-wine-bottle"></i>
+                                </div>
+                                <div class="reciclavel-info">
+                                    <h3>Vidro</h3>
+                                    <p class="reciclavel-valor">1 moeda por unidade</p>
+                                </div>
+                            </div>
+                            <div class="reciclavel-input-group">
+                                <button class="input-btn" onclick="alterarReciclavel('vidro', -1)">-</button>
+                                <input type="number" id="qtdVidro" class="reciclavel-input" value="0" min="0" readonly>
+                                <button class="input-btn" onclick="alterarReciclavel('vidro', 1)">+</button>
+                            </div>
+                            <div class="reciclavel-subtotal">
+                                <span>Subtotal:</span>
+                                <span id="subtotalVidro">0 moedas</span>
+                            </div>
+                        </div>
+
+                        <!-- Plástico -->
+                        <div class="reciclavel-card">
+                            <div class="reciclavel-header">
+                                <div class="reciclavel-icon" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c;">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="reciclavel-info">
+                                    <h3>Plástico</h3>
+                                    <p class="reciclavel-valor">3 moedas por unidade</p>
+                                </div>
+                            </div>
+                            <div class="reciclavel-input-group">
+                                <button class="input-btn" onclick="alterarReciclavel('plastico', -1)">-</button>
+                                <input type="number" id="qtdPlastico" class="reciclavel-input" value="0" min="0" readonly>
+                                <button class="input-btn" onclick="alterarReciclavel('plastico', 1)">+</button>
+                            </div>
+                            <div class="reciclavel-subtotal">
+                                <span>Subtotal:</span>
+                                <span id="subtotalPlastico">0 moedas</span>
+                            </div>
+                        </div>
+
+                        <!-- Metal -->
+                        <div class="reciclavel-card">
+                            <div class="reciclavel-header">
+                                <div class="reciclavel-icon" style="background: rgba(39, 174, 96, 0.1); color: #27ae60;">
+                                    <i class="fas fa-cubes"></i>
+                                </div>
+                                <div class="reciclavel-info">
+                                    <h3>Metal</h3>
+                                    <p class="reciclavel-valor">4 moedas por unidade</p>
+                                </div>
+                            </div>
+                            <div class="reciclavel-input-group">
+                                <button class="input-btn" onclick="alterarReciclavel('metal', -1)">-</button>
+                                <input type="number" id="qtdMetal" class="reciclavel-input" value="0" min="0" readonly>
+                                <button class="input-btn" onclick="alterarReciclavel('metal', 1)">+</button>
+                            </div>
+                            <div class="reciclavel-subtotal">
+                                <span>Subtotal:</span>
+                                <span id="subtotalMetal">0 moedas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumo da Simulação -->
+                    <div class="simulacao-resumo">
+                        <h3>Resumo da Compra</h3>
+                        
+                        <div class="resumo-linha">
+                            <span>Total dos produtos:</span>
+                            <span id="resumoTotalProdutos">121 moedas</span>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Total dos recicláveis:</span>
+                            <span id="resumoTotalReciclaveis">0 moedas</span>
+                        </div>
+                        <div class="resumo-linha total">
+                            <span>Saldo necessário:</span>
+                            <span id="resumoSaldoNecessario">121 moedas</span>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Seu saldo atual:</span>
+                            <span id="resumoSaldoAtual">1.250 moedas</span>
+                        </div>
+                        
+                        <div class="status-simulacao" id="statusSimulacao">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Complete com recicláveis ou use seu saldo</span>
+                        </div>
+
+                        <div class="opcoes-pagamento">
+                            <h4>Opções de pagamento:</h4>
+                            
+                            <label class="opcao-pagamento">
+                                <input type="radio" name="pagamento" value="reciclaveis" checked>
+                                <div class="opcao-conteudo">
+                                    <i class="fas fa-recycle"></i>
+                                    <div>
+                                        <strong>Pagar com recicláveis</strong>
+                                        <p>Leve as unidades informadas até o ponto de coleta</p>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="opcao-pagamento">
+                                <input type="radio" name="pagamento" value="saldo">
+                                <div class="opcao-conteudo">
+                                    <i class="fas fa-coins"></i>
+                                    <div>
+                                        <strong>Usar saldo da carteira</strong>
+                                        <p>Pague integralmente com suas moedas</p>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="opcao-pagamento">
+                                <input type="radio" name="pagamento" value="misto">
+                                <div class="opcao-conteudo">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <div>
+                                        <strong>Pagamento misto</strong>
+                                        <p>Recicláveis + saldo + boleto (se necessário)</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="acoes-simulacao">
+                        <button class="btn-outline" id="btnLimpar">
+                            <i class="fas fa-eraser"></i> Limpar
+                        </button>
+                        <button class="btn-primary" id="btnFinalizar">
+                            <i class="fas fa-check-circle"></i> Finalizar Simulação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal" id="modalConfirmacao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle" style="color: #27ae60;"></i> Simulação Concluída</h3>
+                <button class="modal-close" id="fecharModalConfirmacao">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code-container">
+                    <img src="https://via.placeholder.com/200x200/27ae60/ffffff?text=QR+Code" alt="QR Code" class="qr-code-img">
+                </div>
+                
+                <div class="codigo-retirada">
+                    <p>Código de retirada:</p>
+                    <code>BRT-2026-0317-001</code>
+                </div>
+
+                <div class="instrucoes-retirada">
+                    <h4>Instruções para retirada:</h4>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Apresente este QR Code no ponto de coleta</li>
+                        <li><i class="fas fa-check-circle"></i> Leve os recicláveis que você informou</li>
+                        <li><i class="fas fa-check-circle"></i> Retire seus produtos após a conferência</li>
+                        <li><i class="fas fa-clock"></i> Este código expira em 7 dias</li>
+                    </ul>
+                </div>
+
+                <div class="detalhes-pagamento" id="detalhesPagamento">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="btnOkConfirmacao">
+                    <i class="fas fa-check"></i> Entendi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Boleto -->
+    <div class="modal" id="modalBoleto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-barcode" style="color: #f1c40f;"></i> Pagamento via Boleto</h3>
+                <button class="modal-close" id="fecharModalBoleto">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Para completar a compra, você precisa pagar a diferença via boleto.</p>
+                
+                <div class="boleto-info">
+                    <div class="info-linha">
+                        <span>Valor total:</span>
+                        <span id="boletoValorTotal">R$ 0,00</span>
+                    </div>
+                    <div class="info-linha destaque">
+                        <span>Valor a pagar:</span>
+                        <span id="boletoValorPagar">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="gerarBoletoBtn" style="width: 100%;">
+                    <i class="fas fa-barcode"></i> Gerar Boleto
+                </button>
+
+                <div class="boleto-gerado" id="boletoGerado" style="display: none;">
+                    <div class="qr-code-container">
+                        <img src="https://via.placeholder.com/150x150/27ae60/ffffff?text=QR+Code" alt="QR Code Boleto">
+                    </div>
+                    <div class="linha-digitavel">
+                        <p>Linha digitável:</p>
+                        <code>34191.79001 01043.510047 91020.150008 9 87650000012345</code>
+                    </div>
+                    <p class="vencimento">Vencimento: 17/04/2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Seleção de Produtos -->
+    <div class="modal" id="modalSelecaoProdutos">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-bag"></i> Adicionar Produtos</h3>
+                <button class="modal-close" id="fecharModalSelecao">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="busca-produtos">
+                    <input type="text" id="buscaProduto" placeholder="Buscar produtos...">
+                </div>
+                
+                <div class="produtos-selecao-grid" id="produtosSelecaoGrid">
+                    <!-- Produtos serão carregados aqui via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Flutuante -->
+    <div class="chatbot-flutuante" id="chatbotFlutuante">
+        <button class="chatbot-toggle" id="chatbotToggle">
+            <i class="fas fa-comment"></i>
+        </button>
+        
+        <div class="chatbot-janela" id="chatbotJanela">
+            <div class="chatbot-header">
+                <h3><i class="fas fa-robot"></i> Assistente Virtual</h3>
+                <button class="chatbot-fechar" id="chatbotFechar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-mensagens" id="chatbotMensagens">
+                <div class="mensagem bot">
+                    <div class="mensagem-conteudo">
+                        Olá! Estou aqui para ajudar com sua simulação de compra. Quantas unidades de cada reciclável você pretende levar?
+                    </div>
+                    <span class="mensagem-horario">Agora</span>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" placeholder="Digite sua mensagem..." id="chatbotInput">
+                <button id="chatbotEnviar"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="usuario-simulacao.js"></script>
+</body>
+</html>

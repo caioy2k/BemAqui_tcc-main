@@ -1,76 +1,130 @@
-tela login
-
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <title>Login - BemAqui</title>
-  <link rel="stylesheet" href="../static/css/base.css" />
-  <link rel="stylesheet" href="../static/css/tela_login.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Login | BemAqui - Plataforma Social de Troca Sustentável</title>
+    <link rel="stylesheet" href="../static/css/tela_login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_inicial.html">Início</a>
-        <a href="tela_login.html" class="active">Entrar</a>
-        <a href="tela_cadastro.html">Cadastrar</a>
-      </nav>
+
+    <!-- ==================== BACKGROUND ANIMADO ==================== -->
+    <div class="bg-animation">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
     </div>
-  </header>
 
-  <main class="ba-main">
-    <section class="auth-section">
-      <h1>Entrar</h1>
-      <p>Acesse sua conta para acompanhar suas trocas e pontos.</p>
+    <!-- ==================== CONTAINER PRINCIPAL ==================== -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Botão Voltar para Home -->
+            <a href="home.html" class="back-home">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar para Home</span>
+            </a>
 
-      <form id="login-form" class="auth-form">
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="seuemail@exemplo.com"
-            required
-          />
+            <!-- Logo -->
+            <div class="login-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Bem<span>Aqui</span></h1>
+                    <p>uma ajuda para quem necessita</p>
+                </div>
+            </div>
+
+            <!-- Título -->
+            <div class="login-header">
+                <h2>Bem-vindo de volta!</h2>
+                <p>Entre com suas credenciais para acessar sua conta</p>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="email" id="email" placeholder=" " required>
+                        <label>E-mail</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" id="password" placeholder=" " required>
+                        <label>Senha</label>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="remember">
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">Lembrar-me</span>
+                    </label>
+                    <a href="#" class="forgot-password" id="forgotPasswordBtn">Esqueci minha senha?</a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </button>
+
+                <div class="login-divider">
+                    <span>ou</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
+                </div>
+            </form>
+
+            <!-- Link para Cadastro -->
+            <div class="signup-link">
+                <p>Não tem uma conta? <a href="cadastro.html" id="signupBtn">Cadastre-se gratuitamente</a></p>
+            </div>
         </div>
+    </div>
 
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Sua senha"
-            required
-          />
+
+    <!-- ==================== MODAL ESQUECI SENHA ==================== -->
+    <div class="modal" id="forgotModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Recuperar Senha</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Digite seu e-mail e enviaremos um link para redefinir sua senha.</p>
+                <div class="input-group-modal">
+                    <input type="email" id="resetEmail" placeholder="Seu e-mail">
+                </div>
+                <button class="btn-reset" onclick="sendResetLink()">Enviar link de recuperação</button>
+            </div>
         </div>
+    </div>
 
-        <div class="form-extra">
-          <label class="remember">
-            <input type="checkbox" id="remember" />
-            Lembrar-me
-          </label>
-          <a href="#" class="link-small">Esqueci minha senha</a>
-        </div>
-
-        <button type="submit" class="primary-btn">Entrar</button>
-
-        <p class="auth-footer-text">
-          Ainda não tem conta?
-          <a href="tela_cadastro.html">Cadastre-se</a>
-        </p>
-      </form>
-    </section>
-  </main>
-
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
-
-  <script src="../static/js/tela_login.js"></script>
+    <script src="../static/js/tela_login.js"></script>
 </body>
 </html>

@@ -1,25 +1,49 @@
 const API_URL = "https://bemaqui-tcc-main.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("login-form");
+  const form =
+    document.getElementById("login-form") ||
+    document.getElementById("loginForm") ||
+    document.querySelector("form");
+
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+
+  const submitButton =
+    document.querySelector(".login-btn") ||
+    document.querySelector(".btn-login") ||
+    form?.querySelector('button[type="submit"]');
 
   if (!form) {
     console.error("Formulário não encontrado!");
     return;
   }
 
+  if (!emailInput || !passwordInput) {
+    console.error("Campos de e-mail ou senha não encontrados!");
+    return;
+  }
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
 
     if (!email || !password) {
       alert("Preencha email e senha.");
       return;
     }
 
+    let originalButtonHTML = "";
+
     try {
+      if (submitButton) {
+        originalButtonHTML = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Entrando...`;
+      }
+
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -31,11 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Salvar token e usuário no localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("bemaquiUser", JSON.stringify(data.user));
 
-        // ✅ REDIRECIONAMENTO BASEADO NO ROLE E BOOLEANOS
         if (data.user.isAdmin) {
           window.location.href = "tela_admin_menu.html";
         } else if (data.user.isEmployee) {
@@ -50,11 +72,16 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.href = "../telas-beneficiario/tela_beneficiario.html";
         }
       } else {
-        alert(data.error || "Erro ao fazer login.");
+        alert(data.error || data.message || "Erro ao fazer login.");
       }
     } catch (error) {
       console.error("Erro:", error);
       alert("Não foi possível se conectar ao servidor.");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonHTML || "Entrar";
+      }
     }
   });
 });
