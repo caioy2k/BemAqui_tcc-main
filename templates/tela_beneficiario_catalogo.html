@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Catálogo</title>
+  <link rel="stylesheet" href="../static/css/tela_beneficiario_catalogo.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Catálogo de Benefícios</h1>
+      <p>Veja os itens cadastrados pelo administrador</p>
+    </div>
+
+    <div class="topbar-right">
+      <div class="wallet-box">
+        <span>Saldo atual</span>
+        <strong id="wallet-balance">0 moedas</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="catalog-page">
+    <section class="catalog-controls">
+      <div class="search-group">
+        <label for="search-input">Buscar item</label>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Digite o nome do item..."
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="category-filter">Categoria</label>
+        <select id="category-filter">
+          <option value="todos">Todas</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="catalog-summary">
+      <p id="results-count">Carregando itens...</p>
+    </section>
+
+    <section id="catalog-grid" class="catalog-grid">
+      <!-- cards renderizados via JS -->
+    </section>
+
+    <section id="empty-state" class="empty-state hidden">
+      <div class="empty-icon">📦</div>
+      <h2>Nenhum item encontrado</h2>
+      <p>Tente alterar a busca ou o filtro selecionado.</p>
+    </section>
+  </main>
+
+  <script src="../static/js/tela_beneficiario_catalogo.js"></script>
+</body>
+</html>

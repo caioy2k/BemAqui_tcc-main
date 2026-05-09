@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (data.user.isAdmin) {
           window.location.href = "tela_admin_menu.html";
         } else if (data.user.isEmployee) {
-          window.location.href = "tela_admin_trades.html";
+          window.location.href = "tela_funcionario.html";
         } else if (data.user.role === "beneficiario") {
           window.location.href = "../templates/tela_beneficiario.html";
         } else if (data.user.role === "doador") {
