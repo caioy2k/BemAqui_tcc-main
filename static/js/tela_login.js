@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // ✅ REDIRECIONAMENTO BASEADO NO ROLE E BOOLEANOS
         if (data.user.isAdmin) {
-          window.location.href = "tela_admin_menu.html";
+          window.location.href = "tela_admin_dashboard.html";
         } else if (data.user.isEmployee) {
           window.location.href = "tela_funcionario.html";
         } else if (data.user.role === "beneficiario") {
