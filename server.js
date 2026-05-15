@@ -16,6 +16,9 @@ const tradeRoutes = require('./routes/trade');
 
 const app = express();
 
+function escapeRegex(text) {
+  return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 // =========================
 // MIDDLEWARES
@@ -23,7 +26,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 // =========================
 // AUTH MIDDLEWARE
@@ -47,13 +49,11 @@ function authMiddleware(req, res, next) {
   }
 }
 
-
 // =========================
 // ARQUIVOS ESTÁTICOS
 // =========================
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use(express.static(path.join(__dirname, 'templates')));
-
 
 // =========================
 // PÁGINAS HTML
@@ -67,20 +67,18 @@ app.get(['/', '/index.html', '/tela_login.html', '/tela_cadastro.html'], (req, r
   res.sendFile(path.join(__dirname, 'templates', page));
 });
 
-
 // =========================
 // ROTAS DE AUTENTICAÇÃO E TRADE
 // =========================
 app.use('/auth', authRoutes);
 app.use('/trade', tradeRoutes);
 
-
 // =========================
 // ROTAS DE ITENS
 // =========================
 app.get('/recyclables', async (req, res) => {
   try {
-    const recyclables = await Recyclable.find();
+    const recyclables = await Recyclable.find().lean();
     res.json({ success: true, recyclables });
   } catch (error) {
     console.error('Erro recyclables:', error);
@@ -90,14 +88,13 @@ app.get('/recyclables', async (req, res) => {
 
 app.get('/benefits', async (req, res) => {
   try {
-    const benefits = await Benefit.find();
+    const benefits = await Benefit.find().lean();
     res.json({ success: true, benefits });
   } catch (error) {
     console.error('Erro benefits:', error);
     res.status(500).json({ error: 'Erro ao carregar benefícios' });
   }
 });
-
 
 // =========================
 // ROTA DA CARTEIRA
@@ -106,7 +103,12 @@ app.get('/api/user/wallet', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
 
-    const user = await User.findById(userId);
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ error: 'ID de usuário inválido.' });
+    }
+
+    const user = await User.findById(userId).lean();
+
     if (!user) {
       return res.status(404).json({ error: 'Usuário não encontrado.' });
     }
@@ -116,10 +118,10 @@ app.get('/api/user/wallet', authMiddleware, async (req, res) => {
     return res.json({
       success: true,
       wallet: {
-        balance: Number(wallet.balance || 0),
-        totalSpent: Number(wallet.totalSpent || 0),
-        totalRecycledPoints: Number(wallet.totalRecycledPoints || 0),
-        totalEarned: Number(wallet.totalEarned || 0)
+        balance: Number(wallet.balance ?? 0),
+        totalSpent: Number(wallet.totalSpent ?? 0),
+        totalRecycledPoints: Number(wallet.totalRecycledPoints ?? 0),
+        totalEarned: Number(wallet.totalEarned ?? 0)
       }
     });
   } catch (error) {
@@ -128,7 +130,6 @@ app.get('/api/user/wallet', authMiddleware, async (req, res) => {
   }
 });
 
-
 // =========================
 // ROTA DE TRANSAÇÕES
 // =========================
@@ -136,7 +137,9 @@ app.get('/api/user/transactions', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
 
-    const trades = await Trade.find({ beneficiaryId: userId }).sort({ createdAt: -1 });
+    const trades = await Trade.find({ beneficiaryId: userId })
+      .sort({ createdAt: -1 })
+      .lean();
 
     const transactions = [];
 
@@ -172,13 +175,14 @@ app.get('/api/user/transactions', authMiddleware, async (req, res) => {
   }
 });
 
-
 // =========================
 // LISTAR TRADES PENDENTES
 // =========================
 app.get('/trades', async (req, res) => {
   try {
-    const trades = await Trade.find({ status: 'pendente' }).populate('beneficiaryId', 'name email');
+    const trades = await Trade.find({ status: 'pendente' })
+      .populate('beneficiaryId', 'name email')
+      .lean();
 
     res.json({
       success: true,
@@ -190,7 +194,6 @@ app.get('/trades', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar trades' });
   }
 });
-
 
 // =========================
 // APROVAR TRADE
@@ -214,7 +217,6 @@ app.patch('/trades/:id/approve', async (req, res) => {
   }
 });
 
-
 // =========================
 // RECUSAR TRADE
 // =========================
@@ -237,13 +239,9 @@ app.patch('/trades/:id/reject', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
+// =========================
+// DASHBOARD ADMIN
+// =========================
 app.get('/api/admin/dashboard/summary', async (req, res) => {
   try {
     const [usersCount, tradesCount, pendingTrades, benefitsCount, approvedTrades] = await Promise.all([
@@ -302,7 +300,7 @@ app.get('/api/admin/dashboard/monthly', async (req, res) => {
 
     const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-    const formatted = monthlyTrades.map(item => ({
+    const formatted = monthlyTrades.map((item) => ({
       label: `${monthNames[item._id.month - 1]}/${item._id.year}`,
       trades: item.totalTrades,
       approvals: item.approvedTrades
@@ -318,40 +316,245 @@ app.get('/api/admin/dashboard/monthly', async (req, res) => {
   }
 });
 
+// =========================
+// DASHBOARD FUNCIONÁRIO
+// =========================
+app.get('/api/employee/dashboard', async (req, res) => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
 
+    let pendingTrades = 0;
+    let todayRescues = 0;
+    let servedUsers = 0;
 
+    try {
+      pendingTrades = await Trade.countDocuments({ status: 'pendente' });
+    } catch (err) {
+      console.warn('Não foi possível contar trades pendentes:', err.message);
+    }
 
+    try {
+      todayRescues = await Trade.countDocuments({
+        updatedAt: { $gte: startOfDay }
+      });
+    } catch (err) {
+      console.warn('Não foi possível contar resgates do dia:', err.message);
+    }
 
+    try {
+      const servedUsersAgg = await Trade.aggregate([
+        {
+          $match: {
+            updatedAt: { $gte: startOfDay },
+            userId: { $exists: true, $ne: null }
+          }
+        },
+        {
+          $group: {
+            _id: '$userId'
+          }
+        },
+        {
+          $count: 'total'
+        }
+      ]);
 
+      servedUsers = servedUsersAgg[0]?.total || 0;
+    } catch (err) {
+      console.warn('Não foi possível contar usuários atendidos:', err.message);
+    }
+
+    const activeBenefits = await Benefit.countDocuments({
+      status: 'ativo'
+    });
+
+    const latestPendingTrades = await Trade.find({ status: 'pendente' })
+      .sort({ createdAt: 1 })
+      .limit(5)
+      .lean();
+
+    const lowStockList = await Benefit.find({
+      quantity: { $lte: 5 },
+      status: 'ativo'
+    })
+      .sort({ quantity: 1 })
+      .limit(5)
+      .lean();
+
+    const priorities = latestPendingTrades.length
+      ? latestPendingTrades.map((trade) => ({
+        title: `Trade #${String(trade._id).slice(-6)} aguardando validação`,
+        description: `Status atual: ${trade.status}`,
+        tag: 'Pendente',
+        type: 'warning'
+      }))
+      : [
+        {
+          title: 'Sem pendências críticas',
+          description: 'Não há trades pendentes aguardando validação.',
+          tag: 'OK',
+          type: 'info'
+        }
+      ];
+
+    const alerts = lowStockList.length
+      ? lowStockList.map((benefit) => ({
+        title: `Estoque baixo: ${benefit.name}`,
+        description: `Restam ${benefit.quantity} unidades disponíveis.`,
+        tag: 'Estoque',
+        type: 'danger'
+      }))
+      : [
+        {
+          title: 'Operação estável',
+          description: 'Não há benefits com estoque crítico no momento.',
+          tag: 'Sistema',
+          type: 'info'
+        }
+      ];
+
+    res.json({
+      success: true,
+      metrics: {
+        pendingTrades,
+        todayRescues,
+        servedUsers,
+        coinsIssued: activeBenefits
+      },
+      priorities,
+      alerts
+    });
+  } catch (error) {
+    console.error('Erro ao carregar dashboard do funcionário:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao carregar dashboard do funcionário.'
+    });
+  }
+});
+
+// =========================
+// BUSCA DE USUÁRIOS
+// =========================
+app.get('/api/users/search', async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim();
+
+    if (!q) {
+      return res.json({
+        success: true,
+        users: []
+      });
+    }
+
+    const safeQuery = escapeRegex(q);
+
+    const users = await User.find({
+      $or: [
+        { name: { $regex: safeQuery, $options: 'i' } },
+        { email: { $regex: safeQuery, $options: 'i' } },
+        { cpf: { $regex: safeQuery, $options: 'i' } }
+      ]
+    })
+      .select('_id name email cpf status createdAt')
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    return res.json({
+      success: true,
+      users
+    });
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro ao buscar usuários.'
+    });
+  }
+});
+
+// =========================
+// DETALHES DO USUÁRIO
+// =========================
+app.get('/api/users/:id/details', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID de usuário inválido.'
+      });
+    }
+
+    const user = await User.findById(id)
+      .select('_id name email cpf phone telefone role tipo status createdAt wallet')
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'Usuário não encontrado.'
+      });
+    }
+
+    const walletBalance = Number(user.wallet?.balance ?? 0);
+
+    return res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name || '-',
+        email: user.email || '-',
+        cpf: user.cpf || '-',
+        phone: user.phone || user.telefone || '-',
+        role: user.role || user.tipo || 'usuário',
+        status: user.status || 'ativo',
+        createdAt: user.createdAt || null
+      },
+      metrics: {
+        walletBalance
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar detalhes do usuário:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro ao buscar detalhes do usuário.'
+    });
+  }
+});
 
 // =========================
 // CONEXÃO MONGODB
 // =========================
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB conectado'))
-  .catch((err) => console.error('❌ MongoDB:', err));
+  .then(() => {
 
+
+    const PORT = process.env.PORT || 3000;
+
+    app.listen(PORT, () => {
+      console.log(`🚀 BemAqui: http://localhost:${PORT}`);
+      console.log('✅ APIs disponíveis:');
+      console.log('   POST   /auth/login');
+      console.log('   GET    /recyclables');
+      console.log('   GET    /benefits');
+      console.log('   POST   /trade/create-trade-type1');
+      console.log('   GET    /api/user/wallet');
+      console.log('   GET    /api/user/transactions');
+      console.log('   GET    /api/users/search?q=joao');
+      console.log('   GET    /api/users/:id/details');
+      console.log('✅ MongoDB conectado');
+    });
+  })
+  .catch((err) => console.error('❌ MongoDB:', err));
 
 // =========================
 // 404 FINAL
 // =========================
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({ error: 'Página não encontrada' });
-});
-
-
-// =========================
-// START SERVER
-// =========================
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 BemAqui: http://localhost:${PORT}`);
-  console.log('✅ APIs disponíveis:');
-  console.log('   POST   /auth/login');
-  console.log('   GET    /recyclables');
-  console.log('   GET    /benefits');
-  console.log('   POST   /trade/create-trade-type1');
-  console.log('   GET    /api/user/wallet');
-  console.log('   GET    /api/user/transactions');
 });

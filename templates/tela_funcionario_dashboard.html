@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Dashboard do Funcionário</title>
+  <link rel="stylesheet" href="../static/css/tela_funcionario_dashboard.css" />
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">B</div>
+        <div>
+          <h1>BemAqui</h1>
+          <p>Funcionário</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-link active">Dashboard</a>
+        <a href="tela_funcionario.html" class="nav-link">Operações</a>
+        <a href="tela_funcionario_consultar.html" class="nav-link">Consulta de Usuário</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <p>Sistema operacional</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="welcome-label">Painel operacional</p>
+          <h2>Olá, Funcionário</h2>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="ghost-btn">Atualizar</button>
+          <div class="profile-chip">
+            <span>FT</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero-card">
+        <div>
+          <span class="hero-badge">Resumo do turno</span>
+          <h3>Gerencie pendências, atendimentos e resgates em um só lugar.</h3>
+          <p>
+            Visualize rapidamente as demandas do dia e acesse as ações mais importantes
+            da operação do BemAqui.
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <a href="tela_funcionario.html" class="primary-btn">Ir para Operações</a>
+          <a href="tela_funcionario_consultar.html" class="secondary-btn">Consultar Usuário</a>
+        </div>
+      </section>
+
+      <section class="cards-grid">
+        <article class="metric-card">
+          <p>Trades pendentes</p>
+          <strong id="pendingTrades">0</strong>
+          <span class="metric-detail">Aguardando validação</span>
+        </article>
+
+        <article class="metric-card">
+          <p>Resgates hoje</p>
+          <strong id="todayRescues">0</strong>
+          <span class="metric-detail">Retiradas previstas</span>
+        </article>
+
+        <article class="metric-card">
+          <p>Usuários atendidos</p>
+          <strong id="servedUsers">0</strong>
+          <span class="metric-detail">Atendimentos concluídos</span>
+        </article>
+
+        <article class="metric-card">
+          <p>Créditos realizados</p>
+          <strong id="coinsIssued">0</strong>
+          <span class="metric-detail">Moedas liberadas hoje</span>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Fila de prioridade</h3>
+              <p>Itens que precisam de atenção imediata</p>
+            </div>
+          </div>
+
+          <div id="priorityList" class="priority-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Ações rápidas</h3>
+              <p>Acesso direto às tarefas principais</p>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <a href="tela_funcionario.html" class="quick-card">
+              <span>✅</span>
+              <strong>Validar trades</strong>
+              <p>Analise solicitações pendentes.</p>
+            </a>
+
+            <a href="tela_funcionario_consultar.html" class="quick-card">
+              <span>🔎</span>
+              <strong>Consultar usuário</strong>
+              <p>Pesquise saldo e histórico.</p>
+            </a>
+
+            <a href="tela_funcionario.html" class="quick-card">
+              <span>♻️</span>
+              <strong>Registrar entrega</strong>
+              <p>Confirme recicláveis recebidos.</p>
+            </a>
+
+            <button class="quick-card button-card" id="simulateBtn">
+              <span>⟳</span>
+              <strong>Atualizar</strong>
+              <p>Atualize os indicadores do painel.</p>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel alerts-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Avisos operacionais</h3>
+            <p>Situações que merecem acompanhamento</p>
+          </div>
+        </div>
+
+        <div id="alertsList" class="alerts-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../static/js/tela_funcionario_dashboard.js"></script>
+</body>
+</html>

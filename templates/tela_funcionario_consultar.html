@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Consulta de Usuário</title>
+  <link rel="stylesheet" href="../static/css/tela_funcionario_consultar.css" />
+</head>
+<body>
+  <main class="user-query-page">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Painel do funcionário</p>
+        <h1>Consulta de usuário</h1>
+        <p class="subtitle">Pesquise usuários e visualize os dados principais da conta.</p>
+      </div>
+
+      <div class="header-actions">
+        <button id="clearBtn" class="btn btn-secondary" type="button">Limpar</button>
+        <button id="refreshUserBtn" class="btn btn-primary" type="button">Atualizar</button>
+      </div>
+    </header>
+
+    <section class="search-panel">
+      <div class="search-box">
+        <label for="searchInput">Buscar por nome, email ou CPF</label>
+        <div class="search-row">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Ex.: João, joao@email.com ou 12345678900"
+          />
+          <button id="searchBtn" class="btn btn-primary" type="button">Buscar</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout-grid">
+      <aside class="results-panel card">
+        <div class="section-header">
+          <h2>Resultados</h2>
+          <span id="resultsCount" class="section-meta">0 encontrados</span>
+        </div>
+
+        <div id="resultsList" class="results-list">
+          <div class="empty-state">
+            <h3>Nenhuma busca realizada</h3>
+            <p>Digite um nome, email ou CPF para localizar um usuário.</p>
+          </div>
+        </div>
+      </aside>
+
+      <section class="details-panel">
+        <article class="card profile-card">
+          <div class="section-header">
+            <h2>Perfil do usuário</h2>
+            <span id="profileStatus" class="badge neutral">Sem seleção</span>
+          </div>
+
+          <div class="profile-top-layout">
+            <div id="profileContent" class="profile-content">
+              <div class="empty-state">
+                <h3>Selecione um usuário</h3>
+                <p>Os dados do perfil aparecerão aqui após a busca.</p>
+              </div>
+            </div>
+
+            <aside class="balance-panel">
+              <div class="balance-card">
+                <span class="balance-label">Saldo atual</span>
+                <strong id="walletBalance">0</strong>
+                <p>Moedas disponíveis para uso</p>
+              </div>
+            </aside>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script src="../static/js/tela_funcionario_consultar.js"></script>
+</body>
+</html>
