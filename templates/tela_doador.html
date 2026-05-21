@@ -1,53 +1,182 @@
-tela doador
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Área do Doador - BemAqui</title>
-  <link rel="stylesheet" href="../static/css/base.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui - Painel do Doador</title>
   <link rel="stylesheet" href="../static/css/tela_doador.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_doador.html" class="active">Minha área</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="ba-main">
-    <section class="dashboard-section">
-      <h1>Olá, doador!</h1>
-      <p>Cadastre materiais recicláveis e acompanhe o impacto das suas doações.</p>
-
-      <div class="actions-grid">
-        <a href="tela_doador_materiais.html" class="action-card">
-          <h3>Cadastrar materiais</h3>
-          <p>Registre novos itens recicláveis disponíveis para coleta.</p>
-        </a>
-
-        <a href="#" class="action-card">
-          <h3>Minhas doações</h3>
-          <p>Veja o histórico de materiais já doados.</p>
-        </a>
-
-        <a href="#" class="action-card">
-          <h3>Informações do ponto</h3>
-          <p>Atualize dados de local de entrega/coleta.</p>
-        </a>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">B</div>
+        <div>
+          <h2>BemAqui</h2>
+          <p>Painel do doador</p>
+        </div>
       </div>
-    </section>
-  </main>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
+      <nav class="menu">
+        <a href="#" class="menu-item active">Início</a>
+        <a href="tela_doacao.html" class="menu-item">Nova doação</a>
+        <a href="tela_doador_submissoes.html" class="menu-item">Minhas submissões</a>
+        <a href="tela_doador_perfil.html" class="menu-item">Perfil</a>
+      </nav>
 
-  <script src="tela_doador.js"></script>
+      <div class="sidebar-box">
+        <span class="mini-label">Como funciona</span>
+        <h3>Envie seu item para avaliação</h3>
+        <p>
+          Você pode doar alimentos não perecíveis e outros itens. Nossa equipe analisa as informações e define o melhor destino da doação.
+        </p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <span class="tag">Bem-vindo ao BemAqui</span>
+          <h1>Olá, <span id="donorName">Caio</span></h1>
+          <p class="subtitle">
+            Cadastre alimentos e itens para análise, acompanhe o status das submissões e veja o destino das suas doações.
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="btn btn-secondary">Minhas submissões
+            <link rel="stylesheet" href="tela_doador_submissoes.html">
+          </button>
+          <button class="btn btn-primary">+ Nova doação</button>
+        </div>
+      </header>
+
+      <section class="hero-card">
+        <div class="hero-text">
+          <span class="hero-badge">Doação com avaliação</span>
+          <h2>Envie fotos e informações do item para que nossa equipe faça a validação.</h2>
+          <p>
+            Se o item for compatível com o estoque do BemAqui, ele poderá entrar no sistema de trocas. Caso contrário, poderá ser direcionado para repasse social a ONGs parceiras.
+          </p>
+          <button class="btn btn-primary">Cadastrar item para análise</button>
+        </div>
+
+        <div class="hero-status">
+          <div class="status-card">
+            <span>Status geral</span>
+            <strong id="generalStatus">Acompanhando submissões</strong>
+            <small>Você pode verificar se seus itens estão em análise, aprovados para estoque ou encaminhados para repasse.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-label">Submissões realizadas</span>
+          <h3 id="totalSubmissions">0</h3>
+          <p>Total de doações cadastradas</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Em análise</span>
+          <h3 id="pendingReview">0</h3>
+          <p>Aguardando avaliação da equipe</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Aprovadas</span>
+          <h3 id="approvedItems">0</h3>
+          <p>Itens validados com sucesso</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Última atualização</span>
+          <h3 id="lastUpdate">-</h3>
+          <p>Movimentação mais recente</p>
+        </article>
+      </section>
+
+      <section class="main-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Submissões recentes</h2>
+              <p>Itens enviados para análise pela sua conta</p>
+            </div>
+            <button class="text-link">Ver tudo</button>
+          </div>
+
+          <div id="recentSubmissions" class="submission-list">
+            <div class="submission-item empty">
+              <div>
+                <strong>Nenhuma submissão recente</strong>
+                <p>Quando você cadastrar itens, eles aparecerão aqui para acompanhamento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-column">
+          <div class="panel info-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Destinos possíveis</h2>
+                <p>Como sua doação pode ser utilizada</p>
+              </div>
+            </div>
+
+            <div class="impact-list">
+              <div class="impact-item">
+                <span class="impact-dot green"></span>
+                <div>
+                  <strong>Estoque para trocas</strong>
+                  <p>Quando o item estiver alinhado aos produtos trabalhados na plataforma.</p>
+                </div>
+              </div>
+
+              <div class="impact-item">
+                <span class="impact-dot blue"></span>
+                <div>
+                  <strong>Repasse para ONGs</strong>
+                  <p>Quando o item puder gerar impacto social fora do estoque principal.</p>
+                </div>
+              </div>
+
+              <div class="impact-item">
+                <span class="impact-dot gold"></span>
+                <div>
+                  <strong>Análise interna</strong>
+                  <p>Fotos, descrição e estado do item serão avaliados antes da aprovação.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel quick-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Orientações rápidas</h2>
+                <p>Antes de enviar sua doação</p>
+              </div>
+            </div>
+
+            <div class="quick-actions">
+              <div class="quick-tip">
+                Envie fotos nítidas do item ou alimento.
+              </div>
+              <div class="quick-tip">
+                Informe quantidade, validade e condição do produto.
+              </div>
+              <div class="quick-tip">
+                Aguarde a validação da equipe antes do destino final.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../static/js/tela_doador.js"></script>
 </body>
 </html>

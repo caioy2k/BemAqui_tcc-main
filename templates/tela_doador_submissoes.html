@@ -1,0 +1,124 @@
+    <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minhas Submissões - BemAqui</title>
+  <link rel="stylesheet" href="../base.css" />
+  <link rel="stylesheet" href="../static/css/tela_doador_submissoes.css" />
+</head>
+<body>
+  <main class="dashboard-section">
+    <section class="page-header">
+      <div>
+        <span class="page-badge">Área do doador</span>
+        <h1>Minhas submissões</h1>
+        <p>Acompanhe o status dos itens enviados para análise pela equipe do BemAqui.</p>
+      </div>
+      <button class="btn-new-submission" onclick="window.location.href='tela_doacao.html'">
+        Nova submissão
+      </button>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <span class="summary-label">Total enviado</span>
+        <strong id="totalSubmissions">0</strong>
+        <small>Submissões registradas</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-label">Em análise</span>
+        <strong id="pendingSubmissions">0</strong>
+        <small>Aguardando validação</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-label">Aprovadas</span>
+        <strong id="approvedSubmissions">0</strong>
+        <small>Itens aceitos</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-label">Última atualização</span>
+        <strong id="lastUpdate">-</strong>
+        <small>Movimentação recente</small>
+      </article>
+    </section>
+
+    <section class="filter-bar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar por item, categoria ou status"
+      />
+
+      <select id="statusFilter">
+        <option value="all">Todos os status</option>
+        <option value="em análise">Em análise</option>
+        <option value="aprovada">Aprovada</option>
+        <option value="recusada">Recusada</option>
+      </select>
+    </section>
+
+    <section class="submissions-section">
+      <div class="section-header">
+        <h2>Histórico de submissões</h2>
+        <span id="resultsInfo">0 resultados</span>
+      </div>
+
+      <div id="submissionsList" class="submissions-list"></div>
+    </section>
+  </main>
+
+  <div id="detailsModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeModal()"></div>
+
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge">Detalhes da submissão</span>
+          <h3 id="modalTitle">Título</h3>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="modal-item">
+            <span>Status</span>
+            <strong id="modalStatus">-</strong>
+          </div>
+
+          <div class="modal-item">
+            <span>Categoria</span>
+            <strong id="modalCategory">-</strong>
+          </div>
+
+          <div class="modal-item">
+            <span>Quantidade</span>
+            <strong id="modalQuantity">-</strong>
+          </div>
+
+          <div class="modal-item">
+            <span>Data de envio</span>
+            <strong id="modalDate">-</strong>
+          </div>
+        </div>
+
+        <div class="modal-description">
+          <span>Descrição</span>
+          <p id="modalDescription"></p>
+        </div>
+
+        <div class="modal-description">
+          <span>Observação da equipe</span>
+          <p id="modalNote"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/js/tela_doador_submissoes.js"></script>
+</body>
+</html>

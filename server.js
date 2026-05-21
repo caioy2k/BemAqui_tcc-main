@@ -74,6 +74,56 @@ app.use('/auth', authRoutes);
 app.use('/trade', tradeRoutes);
 
 // =========================
+// AUTH - USUÁRIO LOGADO
+// =========================
+app.get('/auth/me', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id || req.user._id || req.user.userId;
+
+    if (!userId || !mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID do usuário no token é inválido.'
+      });
+    }
+
+    const user = await User.findById(userId)
+      .select('_id name email cpf phone telefone city cidade role tipo status createdAt wallet isAdmin isEmployee')
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'Usuário não encontrado.'
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name || '-',
+        email: user.email || '-',
+        cpf: user.cpf || '-',
+        phone: user.phone || user.telefone || '-',
+        city: user.city || user.cidade || '-',
+        role: user.role || user.tipo || 'usuário',
+        status: user.status || 'ativo',
+        createdAt: user.createdAt || null,
+        isAdmin: Boolean(user.isAdmin),
+        isEmployee: Boolean(user.isEmployee)
+      }
+    });
+  } catch (error) {
+    console.error('Erro em /auth/me:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro ao buscar usuário autenticado.'
+    });
+  }
+});
+
+// =========================
 // ROTAS DE ITENS
 // =========================
 app.get('/recyclables', async (req, res) => {
@@ -101,7 +151,7 @@ app.get('/benefits', async (req, res) => {
 // =========================
 app.get('/api/user/wallet', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id || req.user._id;
+    const userId = req.user.id || req.user._id || req.user.userId;
 
     if (!mongoose.isValidObjectId(userId)) {
       return res.status(400).json({ error: 'ID de usuário inválido.' });
@@ -135,7 +185,7 @@ app.get('/api/user/wallet', authMiddleware, async (req, res) => {
 // =========================
 app.get('/api/user/transactions', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id || req.user._id;
+    const userId = req.user.id || req.user._id || req.user.userId;
 
     const trades = await Trade.find({ beneficiaryId: userId })
       .sort({ createdAt: -1 })
@@ -347,12 +397,12 @@ app.get('/api/employee/dashboard', async (req, res) => {
         {
           $match: {
             updatedAt: { $gte: startOfDay },
-            userId: { $exists: true, $ne: null }
+            beneficiaryId: { $exists: true, $ne: null }
           }
         },
         {
           $group: {
-            _id: '$userId'
+            _id: '$beneficiaryId'
           }
         },
         {
@@ -384,35 +434,35 @@ app.get('/api/employee/dashboard', async (req, res) => {
 
     const priorities = latestPendingTrades.length
       ? latestPendingTrades.map((trade) => ({
-        title: `Trade #${String(trade._id).slice(-6)} aguardando validação`,
-        description: `Status atual: ${trade.status}`,
-        tag: 'Pendente',
-        type: 'warning'
-      }))
+          title: `Trade #${String(trade._id).slice(-6)} aguardando validação`,
+          description: `Status atual: ${trade.status}`,
+          tag: 'Pendente',
+          type: 'warning'
+        }))
       : [
-        {
-          title: 'Sem pendências críticas',
-          description: 'Não há trades pendentes aguardando validação.',
-          tag: 'OK',
-          type: 'info'
-        }
-      ];
+          {
+            title: 'Sem pendências críticas',
+            description: 'Não há trades pendentes aguardando validação.',
+            tag: 'OK',
+            type: 'info'
+          }
+        ];
 
     const alerts = lowStockList.length
       ? lowStockList.map((benefit) => ({
-        title: `Estoque baixo: ${benefit.name}`,
-        description: `Restam ${benefit.quantity} unidades disponíveis.`,
-        tag: 'Estoque',
-        type: 'danger'
-      }))
+          title: `Estoque baixo: ${benefit.name}`,
+          description: `Restam ${benefit.quantity} unidades disponíveis.`,
+          tag: 'Estoque',
+          type: 'danger'
+        }))
       : [
-        {
-          title: 'Operação estável',
-          description: 'Não há benefits com estoque crítico no momento.',
-          tag: 'Sistema',
-          type: 'info'
-        }
-      ];
+          {
+            title: 'Operação estável',
+            description: 'Não há benefits com estoque crítico no momento.',
+            tag: 'Sistema',
+            type: 'info'
+          }
+        ];
 
     res.json({
       success: true,
@@ -478,7 +528,7 @@ app.get('/api/users/search', async (req, res) => {
 // =========================
 // DETALHES DO USUÁRIO
 // =========================
-app.get('/api/users/:id/details', async (req, res) => {
+app.get('/api/users/:id/details', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -490,7 +540,7 @@ app.get('/api/users/:id/details', async (req, res) => {
     }
 
     const user = await User.findById(id)
-      .select('_id name email cpf phone telefone role tipo status createdAt wallet')
+      .select('_id name email cpf phone telefone city cidade role tipo status createdAt wallet')
       .lean();
 
     if (!user) {
@@ -500,7 +550,27 @@ app.get('/api/users/:id/details', async (req, res) => {
       });
     }
 
+    const trades = await Trade.find({ beneficiaryId: id })
+      .sort({ updatedAt: -1, createdAt: -1 })
+      .lean();
+
     const walletBalance = Number(user.wallet?.balance ?? 0);
+    const totalTrades = trades.length;
+    const totalRescues = trades.filter(trade =>
+      ['aprovado', 'concluido', 'concluído', 'finalizado', 'entregue'].includes(
+        String(trade.status || '').toLowerCase()
+      )
+    ).length;
+
+    const lastTrade = trades[0] || null;
+    const lastActivity = lastTrade ? (lastTrade.updatedAt || lastTrade.createdAt) : null;
+
+    const history = trades.slice(0, 10).map((trade) => ({
+      title: buildHistoryTitle(trade),
+      description: buildHistoryDescription(trade),
+      date: trade.updatedAt || trade.createdAt || null,
+      tag: trade.totalBenefitCost > 0 ? 'Benefício' : 'Trade'
+    }));
 
     return res.json({
       success: true,
@@ -510,13 +580,18 @@ app.get('/api/users/:id/details', async (req, res) => {
         email: user.email || '-',
         cpf: user.cpf || '-',
         phone: user.phone || user.telefone || '-',
+        city: user.city || user.cidade || '-',
         role: user.role || user.tipo || 'usuário',
         status: user.status || 'ativo',
         createdAt: user.createdAt || null
       },
       metrics: {
-        walletBalance
-      }
+        walletBalance,
+        totalTrades,
+        totalRescues,
+        lastActivity
+      },
+      history
     });
   } catch (error) {
     console.error('Erro ao buscar detalhes do usuário:', error);
@@ -528,18 +603,116 @@ app.get('/api/users/:id/details', async (req, res) => {
 });
 
 // =========================
+// ATUALIZAR PERFIL DO USUÁRIO
+// =========================
+app.put('/api/users/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const loggedUserId = req.user.id || req.user._id || req.user.userId;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID inválido.'
+      });
+    }
+
+    if (String(loggedUserId) !== String(id)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Você não tem permissão para editar este perfil.'
+      });
+    }
+
+    const { name, email, phone, city } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          name,
+          email,
+          phone,
+          city
+        }
+      },
+      { new: true, runValidators: true }
+    )
+      .select('_id name email cpf phone telefone city cidade role tipo status createdAt wallet')
+      .lean();
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        error: 'Usuário não encontrado.'
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: 'Perfil atualizado com sucesso.',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro ao atualizar usuário.'
+    });
+  }
+});
+
+function buildHistoryTitle(trade) {
+  const status = String(trade.status || '').toLowerCase();
+
+  if (['aprovado', 'concluido', 'concluído', 'finalizado', 'entregue'].includes(status)) {
+    return 'Resgate concluído';
+  }
+
+  if (['pendente', 'aguardando'].includes(status)) {
+    return 'Solicitação pendente';
+  }
+
+  if (['recusado', 'cancelado', 'negado'].includes(status)) {
+    return 'Solicitação recusada';
+  }
+
+  return 'Movimentação registrada';
+}
+
+function buildHistoryDescription(trade) {
+  const recyclableCount = Array.isArray(trade.recyclablesOffered) ? trade.recyclablesOffered.length : 0;
+  const benefitCount = Array.isArray(trade.benefitsRequested) ? trade.benefitsRequested.length : 0;
+
+  if (benefitCount > 0) {
+    const names = trade.benefitsRequested
+      .map(item => item.benefitName || 'Benefício')
+      .join(', ');
+    return `Benefícios solicitados: ${names}`;
+  }
+
+  if (recyclableCount > 0) {
+    const names = trade.recyclablesOffered
+      .map(item => item.recyclableName || 'Reciclável')
+      .join(', ');
+    return `Materiais enviados: ${names}`;
+  }
+
+  return 'Movimentação sem descrição detalhada.';
+}
+
+// =========================
 // CONEXÃO MONGODB
 // =========================
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
-
-
     const PORT = process.env.PORT || 3000;
 
     app.listen(PORT, () => {
       console.log(`🚀 BemAqui: http://localhost:${PORT}`);
       console.log('✅ APIs disponíveis:');
       console.log('   POST   /auth/login');
+      console.log('   GET    /auth/me');
       console.log('   GET    /recyclables');
       console.log('   GET    /benefits');
       console.log('   POST   /trade/create-trade-type1');
@@ -547,6 +720,7 @@ mongoose.connect(process.env.MONGODB_URI)
       console.log('   GET    /api/user/transactions');
       console.log('   GET    /api/users/search?q=joao');
       console.log('   GET    /api/users/:id/details');
+      console.log('   PUT    /api/users/:id');
       console.log('✅ MongoDB conectado');
     });
   })

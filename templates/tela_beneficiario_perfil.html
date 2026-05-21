@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil do Beneficiário - BemAqui</title>
+  <link rel="stylesheet" href="../static/css/base.css" />
+  <link rel="stylesheet" href="../static/css/tela_beneficiario_perfil.css" />
+</head>
+<body>
+
+  <header class="site-header">
+  <div class="container site-header-inner">
+    <a href="/index.html" class="site-brand">
+      <div class="site-brand-mark">♻</div>
+      <div class="site-brand-copy">
+        <h1>Bem<span>Aqui</span></h1>
+        <p>uma ajuda para quem necessita</p>
+      </div>
+    </a>
+
+    <nav class="site-nav" aria-label="Navegação principal">
+      
+      <a href="tela_beneficiario.html">Menu</a>
+      <a href="tela_beneficiario_perfil.html">Perfil</a>
+      <a href="tela_carteira.html">Carteira</a>
+      <a href="index.html">Sair</a>
+    </nav>
+  </div>
+</header>
+
+  <main class="perfil-page">
+    <section class="perfil-hero">
+      <div class="perfil-identidade">
+        <div class="perfil-avatar" id="profileAvatar">B</div>
+
+        <div class="perfil-textos">
+          <span class="perfil-badge">Conta do beneficiário</span>
+          <h1 id="profileName">Carregando...</h1>
+          <p id="profileSubtitle">Acompanhe seus dados, saldo, atividades e informações da conta.</p>
+
+          <div class="perfil-tags">
+            <span class="tag" id="tagRole">Beneficiário</span>
+            <span class="tag" id="tagStatus">Ativo</span>
+            <span class="tag" id="tagCity">-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="perfil-actions">
+        <button class="btn-primary" id="editProfileBtn">Editar perfil</button>
+        <button class="btn-secondary" id="refreshProfileBtn">Atualizar dados</button>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-label">Saldo atual</span>
+        <strong id="statBalance">0</strong>
+        <small>Moedas disponíveis</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Trocas realizadas</span>
+        <strong id="statTrades">0</strong>
+        <small>Histórico total</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Resgates realizados</span>
+        <strong id="statRescues">0</strong>
+        <small>Benefícios resgatados</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Última atividade</span>
+        <strong id="statLastActivity">-</strong>
+        <small>Movimentação mais recente</small>
+      </article>
+    </section>
+
+    <section class="perfil-grid">
+      <article class="info-card">
+        <div class="card-header">
+          <h2>Informações pessoais</h2>
+          <span>Dados reais da conta</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <span>Nome completo</span>
+            <strong id="infoName">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>E-mail</span>
+            <strong id="infoEmail">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>CPF</span>
+            <strong id="infoCpf">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Telefone</span>
+            <strong id="infoPhone">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Cidade</span>
+            <strong id="infoCity">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Tipo de perfil</span>
+            <strong id="infoRole">-</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Conta criada em</span>
+            <strong id="infoCreatedAt">-</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="info-card">
+        <div class="card-header">
+          <h2>Status da conta</h2>
+          <span>Situação atual do beneficiário</span>
+        </div>
+
+        <div class="status-panel">
+          <div class="status-box status-success">
+            <span class="status-title">Situação</span>
+            <strong id="accountStatus">Ativa</strong>
+            <p id="accountStatusText">Sua conta está apta para utilizar os recursos do sistema.</p>
+          </div>
+
+          <div class="status-box status-light">
+            <span class="status-title">Carteira digital</span>
+            <strong id="walletSummary">0 moedas</strong>
+            <p>Saldo atualizado conforme suas trocas e resgates confirmados.</p>
+          </div>
+
+          <div class="status-box status-neutral">
+            <span class="status-title">Participação</span>
+            <strong id="activitySummary">Sem movimentações recentes</strong>
+            <p>As informações abaixo são carregadas diretamente do banco de dados.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="info-card wide-card">
+        <div class="card-header">
+          <h2>Histórico recente</h2>
+          <span>Últimas movimentações do beneficiário</span>
+        </div>
+
+        <div class="activity-list" id="activityList">
+          <div class="empty-state">
+            <h3>Carregando histórico...</h3>
+            <p>Aguarde enquanto buscamos as movimentações mais recentes.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div id="editModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeEditModal()"></div>
+
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge">Editar perfil</span>
+          <h3>Atualizar informações</h3>
+        </div>
+        <button class="modal-close" type="button" onclick="closeEditModal()">×</button>
+      </div>
+
+      <form class="modal-form" id="editProfileForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editName">Nome completo</label>
+            <input type="text" id="editName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="editEmail">E-mail</label>
+            <input type="email" id="editEmail" required />
+          </div>
+
+          <div class="form-group">
+            <label for="editPhone">Telefone</label>
+            <input type="text" id="editPhone" />
+          </div>
+
+          <div class="form-group">
+            <label for="editCity">Cidade</label>
+            <input type="text" id="editCity" />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Salvar alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<footer class="site-footer">
+  <div class="container site-footer-inner">
+    <p>© 2026 BemAqui. Plataforma social de troca sustentável.</p>
+
+    
+    
+  </div>
+</footer>
+
+
+  <script src="../static/js/tela_beneficiario_perfil.js"></script>
+</body>
+</html>

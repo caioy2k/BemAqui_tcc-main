@@ -1,76 +1,97 @@
-tela login
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Login - BemAqui</title>
-  <link rel="stylesheet" href="../static/css/base.css" />
-  <link rel="stylesheet" href="../static/css/tela_login.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Entrar</title>
+  <link rel="stylesheet" href="/static/css/tela_login.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_inicial.html">Início</a>
-        <a href="tela_login.html" class="active">Entrar</a>
-        <a href="tela_cadastro.html">Cadastrar</a>
-      </nav>
-    </div>
-  </header>
+  <main class="login-page">
+    <section class="login-shell">
+      <div class="login-brand">
+        <a href="/index.html" class="brand-link">
+          <div class="brand-mark">♻</div>
+          <div class="brand-text">
+            <h1>Bem<span>Aqui</span></h1>
+            <p>uma ajuda para quem necessita</p>
+          </div>
+        </a>
 
-  <main class="ba-main">
-    <section class="auth-section">
-      <h1>Entrar</h1>
-      <p>Acesse sua conta para acompanhar suas trocas e pontos.</p>
+        <div class="brand-panel">
+          <span class="brand-badge">Plataforma social de troca sustentável</span>
+          <h2>Entre na sua conta e continue ajudando quem precisa</h2>
+          <p>
+            Acesse sua carteira, acompanhe movimentações e gerencie suas trocas
+            com um visual moderno, limpo e consistente com o restante da plataforma.
+          </p>
 
-      <form id="login-form" class="auth-form">
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="seuemail@exemplo.com"
-            required
-          />
+          <ul class="brand-points">
+            <li>Carteira digital com moedas virtuais</li>
+            <li>Trocas sustentáveis com benefícios</li>
+            <li>Acompanhamento rápido e intuitivo</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="login-card">
+        <div class="login-card-header">
+          <span class="eyebrow">Acesso à plataforma</span>
+          <h2>Entrar</h2>
+          <p>Preencha seus dados para acessar sua conta.</p>
         </div>
 
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Sua senha"
-            required
-          />
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="input-default"
+              autocomplete="email"
+              placeholder="Digite seu e-mail"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Senha</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="input-default"
+              autocomplete="current-password"
+              placeholder="Digite sua senha"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="remember-me">
+              <input type="checkbox" name="rememberMe" />
+              <span>Lembrar acesso</span>
+            </label>
+
+            <a href="#" class="link-inline">Esqueci minha senha</a>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            Entrar
+          </button>
+        </form>
+
+        <div class="login-divider">
+          <span>ou</span>
         </div>
 
-        <div class="form-extra">
-          <label class="remember">
-            <input type="checkbox" id="remember" />
-            Lembrar-me
-          </label>
-          <a href="#" class="link-small">Esqueci minha senha</a>
+        <div class="login-footer">
+          <p>Ainda não tem cadastro?</p>
+          <a href="/tela_cadastro.html" class="btn-outline">Criar conta</a>
         </div>
-
-        <button type="submit" class="primary-btn">Entrar</button>
-
-        <p class="auth-footer-text">
-          Ainda não tem conta?
-          <a href="tela_cadastro.html">Cadastre-se</a>
-        </p>
-      </form>
+      </div>
     </section>
   </main>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
-
-  <script src="../static/js/tela_login.js"></script>
+  <script src="/static/js/tela_login.js"></script>
 </body>
 </html>

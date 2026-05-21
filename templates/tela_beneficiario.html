@@ -1,63 +1,81 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Área do Beneficiário - BemAqui</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Menu do Beneficiário</title>
   <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_beneficiario.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_beneficiario.html" class="active">Minha área</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
+  <main class="dashboard-page">
+    <div class="dashboard-shell">
+      <header class="site-header">
+  <div class="container site-header-inner">
+    <a href="/index.html" class="site-brand">
+      <div class="site-brand-mark">♻</div>
+      <div class="site-brand-copy">
+        <h1>Bem<span>Aqui</span></h1>
+        <p>uma ajuda para quem necessita</p>
+      </div>
+    </a>
 
-  <main class="ba-main">
-    <section class="beneficiary-hero">
-      <div>
-        <h1>Olá, beneficiário!</h1>
+    <nav class="site-nav" aria-label="Navegação principal">
+      
+      <a href="tela_beneficiario.html">Menu</a>
+      <a href="tela_beneficiario_perfil.html">Perfil</a>
+      <a href="tela_carteira.html">Carteira</a>
+      <a href="index.html">Sair</a>
+    </nav>
+  </div>
+</header>
+
+      <section class="welcome-panel">
+        <span class="section-badge">Área do beneficiário</span>
+        <h2>Bem Vindo a área do usuário!</h2>
         <p>
-          Aqui você acompanha seus pontos, histórico de trocas e oportunidades
-          de receber alimentos, roupas e outros itens essenciais.
+          Troque seus reciclaveis por alimentos, produtos de higiene e roupas de forma simples e rapida.
         </p>
-      </div>
-      <div class="points-card">
-        <h2>Meus pontos</h2>
-        <p class="points-value" id="points-value">0</p>
-        <p class="points-caption">Pontos disponíveis para troca</p>
-      </div>
-    </section>
+      </section>
 
-    <section class="beneficiary-actions">
-      <h2>O que você deseja fazer?</h2>
-      <div class="actions-grid">
-        <a href="tela_beneficiario_catalogo.html" class="action-card">
-          <h3>Ver itens disponíveis</h3>
-          <p>Veja alimentos, roupas e outros itens que podem ser trocados.</pf>
+      <section class="shortcut-grid">
+        <a href="tela_beneficiario_perfil.html" class="shortcut-card">
+          <span class="shortcut-label">Perfil</span>
+          <h3>Meu perfil</h3>
+          <p>Consulte e atualize seus dados pessoais.</p>
         </a>
 
-        <a href="tela_beneficiario_trocar.html" class="action-card">
+        <a href="tela_carteira.html" class="shortcut-card">
+          <span class="shortcut-label">Carteira</span>
+          <h3>Minhas moedas</h3>
+          <p>Veja saldo, histórico e movimentações.</p>
+        </a>
+
+        <a href="tela_beneficiario_catalogo.html" class="shortcut-card">
+          <span class="shortcut-label">Catálogo</span>
+          <h3>Itens disponíveis</h3>
+          <p>Explore benefícios e produtos para resgate.</p>
+        </a>
+
+        <a href="tela_beneficiario_trocar.html" class="shortcut-card">
+          <span class="shortcut-label">Trocas</span>
           <h3>Realizar troca</h3>
-          <p>Troque seus reciclaveis por benefits.</p>
+          <p>Use suas moedas e acompanhe solicitações.</p>
         </a>
+      </section>
 
-        <a href="tela_carteira.html" class="action-card">
-          <h3>Carteira</h3>
-          <p>Acessar carteira.</p>
-        </a>
-      </div>
-    </section>
+      
+    </div>
+
   </main>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
+  <footer class="site-footer">
+  <div class="container site-footer-inner">
+    <p>© 2026 BemAqui. Plataforma social de troca sustentável.</p>
 
-  <script src="../static/js/tela_beneficiario.js"></script>
+    
+    
+  </div>
+</footer>
 </body>
+</html>

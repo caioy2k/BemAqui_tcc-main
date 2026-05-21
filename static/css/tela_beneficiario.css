@@ -1,109 +1,250 @@
-.beneficiary-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: 24px;
-  align-items: center;
-  margin-bottom: 32px;
+:root {
+  --green-primary: #43a047;
+  --green-dark: #2e7d32;
+  --green-soft: #edf7ee;
+  --green-border: #d7e8d8;
+
+  --text-main: #183024;
+  --text-body: #607065;
+  --text-soft: #8a978e;
+
+  --bg-page: #f6faf6;
+  --bg-card: #ffffff;
+
+  --shadow-soft: 0 14px 40px rgba(22, 48, 32, 0.06);
+  --radius-xl: 26px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+
+  --container: 1100px;
+  --transition: 0.25s ease;
 }
 
-.beneficiary-hero h1 {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
-  color: #111827;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.beneficiary-hero p {
-  font-size: 0.96rem;
-  color: #4b5563;
-  max-width: 520px;
-  line-height: 1.6;
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(67, 160, 71, 0.07), transparent 28%),
+    linear-gradient(180deg, #f9fcf9 0%, var(--bg-page) 100%);
+  color: var(--text-main);
+  min-height: 100vh;
 }
 
-.points-card {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  border-radius: 16px;
-  padding: 24px 20px;
-  box-shadow: 0 12px 30px rgba(79, 70, 229, 0.15);
-  text-align: center;
-  color: #ffffff;
-}
-
-.points-card h2 {
-  font-size: 0.95rem;
-  margin-bottom: 8px;
-  opacity: 0.9;
-  font-weight: 500;
-}
-
-.points-value {
-  font-size: 2.8rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.points-caption {
-  font-size: 0.85rem;
-  opacity: 0.85;
-}
-
-.beneficiary-actions h2 {
-  font-size: 1.2rem;
-  margin-bottom: 16px;
-  color: #111827;
-}
-
-.actions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.action-card {
-  display: block;
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 18px 16px;
+a {
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s;
-  border: 1px solid #f0f0f0;
 }
 
-.action-card h3 {
-  font-size: 1rem;
-  margin-bottom: 8px;
-  color: #111827;
-  font-weight: 600;
+.dashboard-page {
+  min-height: 100vh;
+  padding: 28px 20px 36px;
 }
 
-.action-card p {
-  font-size: 0.85rem;
-  color: #4b5563;
-  line-height: 1.4;
+.dashboard-shell {
+  max-width: var(--container);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.action-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-  background: #f0f4ff;
-  border-color: #4f46e5;
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 4px;
 }
 
-@media (max-width: 768px) {
-  .beneficiary-hero {
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+  color: white;
+  font-size: 1.6rem;
+  box-shadow: 0 10px 25px rgba(46, 125, 50, 0.16);
+}
+
+.brand-copy h1 {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.brand-copy h1 span {
+  color: var(--green-primary);
+}
+
+.brand-copy p {
+  margin-top: 6px;
+  font-size: 0.94rem;
+  color: var(--text-soft);
+}
+
+.welcome-panel {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-xl);
+  padding: 34px;
+  box-shadow: var(--shadow-soft);
+}
+
+.section-badge {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 0.86rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.welcome-panel h2 {
+  font-size: 2.3rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.welcome-panel p {
+  color: var(--text-body);
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.shortcut-card {
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  min-height: 180px;
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.shortcut-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 36px rgba(22, 48, 32, 0.08);
+  border-color: #bdd9bf;
+}
+
+.shortcut-label {
+  display: inline-block;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  background: #f3faf3;
+  color: var(--green-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.shortcut-card h3 {
+  font-size: 1.35rem;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+.shortcut-card p {
+  color: var(--text-body);
+  line-height: 1.65;
+  max-width: 32ch;
+}
+
+.footer-action {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-ghost,
+.btn-outline {
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-ghost {
+  border: 1px solid var(--green-border);
+  background: white;
+  color: var(--text-main);
+}
+
+.btn-ghost:hover {
+  background: #f7fbf7;
+}
+
+.btn-outline {
+  border: 2px solid var(--green-primary);
+  color: var(--green-dark);
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background: var(--green-soft);
+}
+
+@media (max-width: 860px) {
+  .shortcut-grid {
     grid-template-columns: 1fr;
   }
 
-  .beneficiary-hero h1 {
-    font-size: 1.4rem;
+  .welcome-panel h2 {
+    font-size: 1.95rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-page {
+    padding: 20px 14px 28px;
   }
 
-  .points-card {
-    padding: 20px 16px;
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 0;
   }
 
-  .actions-grid {
-    grid-template-columns: 1fr;
+  .welcome-panel,
+  .shortcut-card {
+    padding: 22px;
+  }
+
+  .brand-copy h1 {
+    font-size: 1.7rem;
+  }
+
+  .welcome-panel h2 {
+    font-size: 1.7rem;
   }
 }

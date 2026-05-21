@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil do Doador - BemAqui</title>
+  <link rel="stylesheet" href="../base.css" />
+  <link rel="stylesheet" href="../static/css/tela_doador_perfil.css" />
+</head>
+<body>
+  <main class="profile-page">
+    <section class="profile-hero">
+      <div class="profile-identity">
+        <div class="profile-avatar">C</div>
+
+        <div class="profile-texts">
+          <span class="profile-badge">Conta do doador</span>
+          <h1 id="profileName">Caio Henrique</h1>
+          <p id="profileSubtitle">Participando ativamente das ações solidárias e ambientais do BemAqui.</p>
+
+          <div class="profile-tags">
+            <span class="tag">Conta verificada</span>
+            <span class="tag">Doador ativo</span>
+            <span class="tag">São Paulo - SP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-primary" id="editProfileBtn">Editar perfil</button>
+        <button class="btn-secondary" onclick="window.location.href='tela_minhas_submissoes.html'">
+          Ver submissões
+        </button>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-label">Submissões realizadas</span>
+        <strong id="statSubmissions">12</strong>
+        <small>Total de envios cadastrados</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Submissões aprovadas</span>
+        <strong id="statApproved">7</strong>
+        <small>Itens aceitos pela equipe</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Em análise</span>
+        <strong id="statPending">3</strong>
+        <small>Aguardando retorno</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Última atividade</span>
+        <strong id="statLastActivity">Hoje</strong>
+        <small>Atualização mais recente</small>
+      </article>
+    </section>
+
+    <section class="profile-grid">
+      <article class="info-card">
+        <div class="card-header">
+          <h2>Informações pessoais</h2>
+          <span>Dados principais da conta</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <span>Nome completo</span>
+            <strong id="infoName">Caio Henrique</strong>
+          </div>
+
+          <div class="info-item">
+            <span>E-mail</span>
+            <strong id="infoEmail">caio@email.com</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Telefone</span>
+            <strong id="infoPhone">(11) 99999-0000</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Cidade</span>
+            <strong id="infoCity">São Paulo - SP</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Tipo de perfil</span>
+            <strong>Doador</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Cadastro no sistema</span>
+            <strong>Março de 2026</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="info-card">
+        <div class="card-header">
+          <h2>Status da conta</h2>
+          <span>Resumo visual do perfil</span>
+        </div>
+
+        <div class="status-panel">
+          <div class="status-box status-success">
+            <span class="status-title">Situação</span>
+            <strong>Ativa</strong>
+            <p>Sua conta está apta para realizar novas submissões.</p>
+          </div>
+
+          <div class="status-box status-warning">
+            <span class="status-title">Validação recente</span>
+            <strong>3 itens em análise</strong>
+            <p>A equipe está avaliando suas submissões mais recentes.</p>
+          </div>
+
+          <div class="status-box status-neutral">
+            <span class="status-title">Participação</span>
+            <strong>Alta recorrência</strong>
+            <p>Seu perfil tem bom histórico de participação no sistema.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="info-card wide-card">
+        <div class="card-header">
+          <h2>Atividades recentes</h2>
+          <span>Últimas movimentações registradas</span>
+        </div>
+
+        <div class="activity-list" id="activityList"></div>
+      </article>
+
+      <article class="info-card wide-card">
+        <div class="card-header">
+          <h2>Preferências e segurança</h2>
+          <span>Configurações visuais da conta</span>
+        </div>
+
+        <div class="settings-grid">
+          <div class="setting-item">
+            <div>
+              <strong>Receber notificações por e-mail</strong>
+              <p>Acompanhe o andamento das submissões por mensagem.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="emailNotifications" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div>
+              <strong>Mostrar telefone no perfil interno</strong>
+              <p>Permite visualização do contato pela equipe responsável.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="showPhone" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div>
+              <strong>Receber lembretes de novas campanhas</strong>
+              <p>Ativa avisos sobre ações, eventos e coletas especiais.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="campaignAlerts" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div id="editModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeEditModal()"></div>
+
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge">Editar perfil</span>
+          <h3>Atualizar informações</h3>
+        </div>
+        <button class="modal-close" onclick="closeEditModal()">×</button>
+      </div>
+
+      <form class="modal-form" id="editProfileForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editName">Nome completo</label>
+            <input type="text" id="editName" />
+          </div>
+
+          <div class="form-group">
+            <label for="editEmail">E-mail</label>
+            <input type="email" id="editEmail" />
+          </div>
+
+          <div class="form-group">
+            <label for="editPhone">Telefone</label>
+            <input type="text" id="editPhone" />
+          </div>
+
+          <div class="form-group">
+            <label for="editCity">Cidade</label>
+            <input type="text" id="editCity" />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Salvar alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../static/js/tela_doador_perfil.js"></script>
+</body>
+</html>

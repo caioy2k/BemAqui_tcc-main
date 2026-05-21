@@ -31,31 +31,8 @@ body {
   min-height: 100vh;
 }
 
-.topbar {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-  padding: 24px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
 
-.topbar h1 {
-  font-size: 2rem;
-  margin-bottom: 4px;
-}
 
-.topbar p {
-  color: var(--gray-500);
-}
-
-.topbar-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
 
 .btn {
   border: none;
