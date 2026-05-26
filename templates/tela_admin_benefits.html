@@ -1,129 +1,161 @@
-tela admin benefits
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerenciar Benefícios - BemAqui</title>
   <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_admin_benefits.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui - Admin</div>
-      <nav class="ba-nav">
-        <a href="tela_admin_menu.html">Dashboard</a>
-        <a href="tela_admin_benefits.html" class="active">Benefícios</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="container site-header-inner">
+        <a href="./tela_admin_menu.html" class="site-brand">
+          <div class="site-brand-mark">♻</div>
+          <div class="site-brand-copy">
+            <h1>Bem<span>Aqui</span></h1>
+            <p>painel administrativo</p>
+          </div>
+        </a>
 
-  <main class="ba-main">
-    <section class="admin-section">
-      <div class="section-header">
-        <div>
-          <h1>Gerenciar Benefícios</h1>
-          <p>Adicione produtos que os beneficiários podem receber.</p>
-        </div>
-        <button class="primary-btn" onclick="openFormModal()">
-          + Cadastrar benefício
-        </button>
+        <nav class="site-nav" aria-label="Navegação administrativa">
+          <a href="tela_admin_dashboard.html">inicio</a>
+         
+          <a href="index.html">Sair</a>
+        </nav>
       </div>
+    </header>
 
-      <div id="benefits-container" class="items-list">
-        <!-- carregado via JS -->
-      </div>
-
-      <div id="empty-state" class="empty-state hidden">
-        <p>Nenhum benefício cadastrado ainda.</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Modal de formulário -->
-  <div id="form-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Cadastrar Benefício</h2>
-        <button class="close-btn" onclick="closeFormModal()">✕</button>
-      </div>
-      <form id="benefit-form" class="admin-form">
-        <div class="form-group">
-          <label for="name">Nome</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Ex: Arroz integral (5kg)"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="category">Categoria</label>
-          <select id="category" name="category" required>
-            <option value="">Selecione...</option>
-            <option value="alimentos">Alimentos</option>
-            <option value="roupas">Roupas</option>
-            <option value="utensilio">Utensílio</option>
-            <option value="higiene">Higiene</option>
-            <option value="outro">Outro</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="description">Descrição</label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Descreva o benefício..."
-            rows="3"
-            required
-          ></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="pointsCost">Pontos para receber</label>
-            <input
-              type="number"
-              id="pointsCost"
-              name="pointsCost"
-              placeholder="Ex: 150"
-              min="1"
-              required
-            />
+    <main class="page-content">
+      <div class="container admin-benefits-page">
+        <section class="admin-benefits-hero surface-soft">
+          <div class="admin-benefits-hero-content">
+            <span class="section-badge">Gestão administrativa</span>
+            <h2 class="page-title">Gerenciar benefícios</h2>
+            <p class="page-text">
+              Cadastre, acompanhe e organize os benefícios disponíveis para os beneficiários
+              da plataforma BemAqui.
+            </p>
           </div>
 
-          <div class="form-group">
-            <label for="quantity">Quantidade disponível</label>
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              placeholder="Ex: 20"
-              min="0"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel" onclick="closeFormModal()">
-            Cancelar
+          <button class="btn-primary admin-benefits-cta" onclick="openFormModal()">
+            + Cadastrar benefício
           </button>
-          <button type="submit" class="primary-btn">Cadastrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
+        </section>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
+        <section class="section-card admin-benefits-section">
+          <div class="admin-section-header">
+            <div>
+              <h3>Lista de benefícios</h3>
+              <p>Produtos e itens disponíveis para distribuição e resgate.</p>
+            </div>
+          </div>
+
+          <div id="benefits-container" class="benefits-grid">
+            <!-- carregado via JS -->
+          </div>
+
+          <div id="empty-state" class="empty-state hidden">
+            <p>Nenhum benefício cadastrado ainda.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div id="form-modal" class="modal hidden">
+      <div class="modal-backdrop" onclick="closeFormModal()"></div>
+
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div>
+            <span class="section-badge">Novo benefício</span>
+            <h2>Cadastrar benefício</h2>
+          </div>
+          <button class="modal-close" onclick="closeFormModal()" aria-label="Fechar modal">✕</button>
+        </div>
+
+        <form id="benefit-form" class="admin-form">
+          <div class="form-group">
+            <label for="name">Nome</label>
+            <input
+              class="input-default"
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Ex: Arroz integral (5kg)"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="category">Categoria</label>
+            <select class="select-default" id="category" name="category" required>
+              <option value="">Selecione...</option>
+              <option value="alimentos">Alimentos</option>
+              <option value="roupas">Roupas</option>
+              <option value="utensilio">Utensílio</option>
+              <option value="higiene">Higiene</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea
+              class="textarea-default"
+              id="description"
+              name="description"
+              placeholder="Descreva o benefício..."
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pointsCost">Pontos para receber</label>
+              <input
+                class="input-default"
+                type="number"
+                id="pointsCost"
+                name="pointsCost"
+                placeholder="Ex: 150"
+                min="1"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="quantity">Quantidade disponível</label>
+              <input
+                class="input-default"
+                type="number"
+                id="quantity"
+                name="quantity"
+                placeholder="Ex: 20"
+                min="0"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeFormModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">Cadastrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container site-footer-inner">
+        <p>© 2026 BemAqui. Plataforma social de troca sustentável.</p>
+      </div>
+    </footer>
+  </div>
 
   <script src="../static/js/tela_admin_benefits.js"></script>
 </body>

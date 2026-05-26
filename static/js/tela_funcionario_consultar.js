@@ -27,10 +27,33 @@ function bindActions() {
   if (searchInput) {
     searchInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
+        event.preventDefault();
         handleSearch();
       }
     });
   }
+}
+
+function getAuthToken() {
+  return (
+    localStorage.getItem("token") ||
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("jwt") ||
+    localStorage.getItem("accessToken")
+  );
+}
+
+function getAuthHeaders() {
+  const token = getAuthToken();
+
+  if (!token) {
+    throw new Error("Token não encontrado. Faça login novamente.");
+  }
+
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
 }
 
 async function handleSearch() {
@@ -46,7 +69,11 @@ async function handleSearch() {
   try {
     setResultsLoading();
 
-    const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(term)}`);
+    const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(term)}`, {
+      method: "GET",
+      headers: getAuthHeaders()
+    });
+
     const rawText = await response.text();
     const data = rawText ? JSON.parse(rawText) : {};
 
@@ -77,7 +104,11 @@ async function loadUserDetails(userId) {
   try {
     setProfileLoading();
 
-    const response = await fetch(`${API_URL}/api/users/${userId}/details`);
+    const response = await fetch(`${API_URL}/api/users/${userId}/details`, {
+      method: "GET",
+      headers: getAuthHeaders()
+    });
+
     const rawText = await response.text();
     const data = rawText ? JSON.parse(rawText) : {};
 
