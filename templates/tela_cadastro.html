@@ -1,82 +1,176 @@
-tela cadastro
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cadastro - BemAqui</title>
   <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_cadastro.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_inicial.html">Voltar</a>
-      </nav>
+  <main class="cadastro-page">
+    <div class="cadastro-shell">
+      <aside class="cadastro-brand">
+        <div class="cadastro-brand-inner">
+          <a href="./index.html" class="brand-link">
+            <div class="brand-mark">♻</div>
+            <div class="brand-text">
+              <h1>Bem<span>Aqui</span></h1>
+              <p>plataforma social de troca sustentável</p>
+            </div>
+          </a>
+
+          <div class="brand-panel">
+            <span class="brand-badge">Novo cadastro</span>
+            <h2>Crie sua conta e comece a participar.</h2>
+            <p>
+              Faça seu cadastro para acessar a plataforma, acompanhar suas trocas,
+              acumular pontos e resgatar benefícios de forma simples.
+            </p>
+
+            <ul class="brand-points">
+              <li>Cadastro rápido e intuitivo.</li>
+              <li>Acompanhe recicláveis, pontos e benefícios.</li>
+              <li>Experiência integrada ao painel BemAqui.</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <section class="cadastro-form-area">
+        <div class="cadastro-form-scroll">
+          <section class="login-card">
+            <div class="login-card-header">
+              <span class="eyebrow">Criar conta</span>
+              <h2>Cadastro de usuário</h2>
+              <p>Preencha os dados abaixo para acessar a plataforma.</p>
+            </div>
+
+            <form id="cadastro-form" class="login-form">
+              <div class="form-group">
+                <label for="name">Nome completo</label>
+                <input
+                  class="input-default"
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Digite seu nome completo"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email">E-mail</label>
+                <input
+                  class="input-default"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Digite seu e-mail"
+                  required
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <div class="form-group">
+                  <label for="cpf">CPF</label>
+                  <input
+                    class="input-default"
+                    type="text"
+                    id="cpf"
+                    name="cpf"
+                    placeholder="000.000.000-00"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Telefone</label>
+                  <input
+                    class="input-default"
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    placeholder="(00) 00000-0000"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row-grid">
+                <div class="form-group">
+                  <label for="bairro">Bairro</label>
+                  <input
+                    class="input-default"
+                    type="text"
+                    id="city"
+                    name="bairro"
+                    placeholder="Digite sua cidade"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="role">Perfil</label>
+                  <select
+                    class="input-default"
+                    id="role"
+                    name="role"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="beneficiario">Beneficiário</option>
+                    <option value="doador">Doador</option>
+                    <option value="parceiro">Parceiro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row-grid">
+                <div class="form-group">
+                  <label for="password">Senha</label>
+                  <input
+                    class="input-default"
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Crie sua senha"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="confirmPassword">Confirmar senha</label>
+                  <input
+                    class="input-default"
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Repita sua senha"
+                    required
+                  />
+                </div>
+              </div>
+
+              
+
+              <div id="form-message" class="form-message"></div>
+
+              <button type="submit" class="btn-primary">Cadastrar</button>
+
+              <div class="login-divider">
+                <span>ou</span>
+              </div>
+
+              <div class="login-footer">
+                <p>Já possui uma conta?</p>
+                <a href="./tela_login.html" class="btn-outline">Entrar agora</a>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
     </div>
-  </header>
-
-  <main class="ba-main">
-    <section class="cadastro-section">
-      <h1>Criar conta</h1>
-      <p>Preencha os dados abaixo para se registrar</p>
-
-      <form id="cadastro-form" class="cadastro-form">
-        <div class="form-group">
-          <label for="name">Nome completo</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Seu nome"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="seu@email.com"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="••••••••"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="role">Tipo de usuário</label>
-          <select id="role" name="role" required>
-            <option value="">Selecione...</option>
-            <option value="beneficiario">Beneficiário</option>
-            <option value="doador">Doador</option>
-            <option value="parceiro">Parceiro</option>
-          </select>
-        </div>
-
-        <button type="submit" class="primary-btn">Cadastrar</button>
-        <a href="tela_login.html" class="link-login">Já tem conta? Faça login</a>
-      </form>
-    </section>
   </main>
-
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
 
   <script src="../static/js/tela_cadastro.js"></script>
 </body>

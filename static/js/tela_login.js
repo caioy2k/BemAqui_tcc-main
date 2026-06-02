@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (data.user.role === "doador") {
           window.location.href = "tela_doador.html";
         } else if (data.user.role === "parceiro") {
-          window.location.href = "../telas-parceiro/tela_parceiro.html";
+          window.location.href = "tela_parceiros.html";
         } else {
           window.location.href = "../telas-beneficiario/tela_beneficiario.html";
         }

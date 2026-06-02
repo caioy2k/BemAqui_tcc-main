@@ -3,80 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BemAqui | Consulta de Usuário</title>
+  <title>BemAqui | Consulta de Usuários</title>
   <link rel="stylesheet" href="../static/css/tela_funcionario_consultar.css" />
 </head>
 <body>
-  <main class="user-query-page">
-    <header class="page-header">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
       <div>
-        <p class="eyebrow">Painel do funcionário</p>
-        <h1>Consulta de usuário</h1>
-        <p class="subtitle">Pesquise usuários e visualize os dados principais da conta.</p>
-      </div>
-
-      <div class="header-actions">
-        <button id="clearBtn" class="btn btn-secondary" type="button">Limpar</button>
-        <button id="refreshUserBtn" class="btn btn-primary" type="button">Atualizar</button>
-      </div>
-    </header>
-
-    <section class="search-panel">
-      <div class="search-box">
-        <label for="searchInput">Buscar por nome, email ou CPF</label>
-        <div class="search-row">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Ex.: João, joao@email.com ou 12345678900"
-          />
-          <button id="searchBtn" class="btn btn-primary" type="button">Buscar</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="layout-grid">
-      <aside class="results-panel card">
-        <div class="section-header">
-          <h2>Resultados</h2>
-          <span id="resultsCount" class="section-meta">0 encontrados</span>
-        </div>
-
-        <div id="resultsList" class="results-list">
-          <div class="empty-state">
-            <h3>Nenhuma busca realizada</h3>
-            <p>Digite um nome, email ou CPF para localizar um usuário.</p>
+        <div class="brand">
+          <div class="brand-logo">B</div>
+          <div>
+            <h1>BemAqui</h1>
+            <p>Funcionário</p>
           </div>
         </div>
-      </aside>
 
-      <section class="details-panel">
-        <article class="card profile-card">
-          <div class="section-header">
-            <h2>Perfil do usuário</h2>
-            <span id="profileStatus" class="badge neutral">Sem seleção</span>
+        <nav class="sidebar-nav">
+          <a href="tela_funcionario_dashboard.html" class="nav-link">Dashboard</a>
+          <a href="tela_funcionario_trade.html" class="nav-link">Operações</a>
+          <a href="tela_funcionario_consultar.html" class="nav-link active">Consulta de Usuário</a>
+          <a href="index.html" class="nav-link">Sair</a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <p>Sistema operacional</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="welcome-label">Painel operacional</p>
+          <h2>Consulta de Usuários</h2>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="refreshUserBtn" class="ghost-btn" type="button">Atualizar perfil</button>
+          <div class="profile-chip">
+            <span>FT</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero-card compact">
+        <div>
+          <span class="hero-badge">Consulta operacional</span>
+          <h3>Busque beneficiários e consulte rapidamente os dados do cadastro.</h3>
+          <p>
+            Localize usuários por nome, e-mail ou CPF e visualize informações de perfil
+            e saldo em uma única área.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel search-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Buscar usuário</h3>
+            <p>Digite um nome, e-mail ou CPF para localizar um cadastro.</p>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <div class="field-group field-grow">
+            <label for="searchInput">Termo da busca</label>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Ex.: Maria, maria@email.com ou CPF"
+            />
           </div>
 
-          <div class="profile-top-layout">
-            <div id="profileContent" class="profile-content">
+          <div class="search-actions">
+            <button id="searchBtn" class="primary-btn" type="button">Buscar</button>
+            <button id="clearBtn" class="secondary-btn light" type="button">Limpar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="consult-grid">
+        <article class="panel results-panel">
+          <div class="panel-header panel-header-row">
+            <div>
+              <h3>Resultados</h3>
+              <p>Usuários localizados pela pesquisa atual.</p>
+            </div>
+            <span id="resultsCount" class="table-caption">0 encontrados</span>
+          </div>
+
+          <div id="resultsList" class="results-list">
+            <div class="empty-state">
+              <h3>Nenhuma busca realizada</h3>
+              <p>Digite um nome, email ou CPF para localizar um usuário.</p>
+            </div>
+          </div>
+        </article>
+
+        <div class="details-column">
+          <article class="panel profile-panel">
+            <div class="panel-header panel-header-row">
+              <div>
+                <h3>Perfil do usuário</h3>
+                <p>Informações principais do cadastro selecionado.</p>
+              </div>
+              <span id="profileStatus" class="badge neutral">Sem seleção</span>
+            </div>
+
+            <div id="profileContent">
               <div class="empty-state">
                 <h3>Selecione um usuário</h3>
                 <p>Os dados do perfil aparecerão aqui após a busca.</p>
               </div>
             </div>
+          </article>
 
-            <aside class="balance-panel">
-              <div class="balance-card">
-                <span class="balance-label">Saldo atual</span>
-                <strong id="walletBalance">0</strong>
-                <p>Moedas disponíveis para uso</p>
+          <article class="panel balance-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Carteira</h3>
+                <p>Resumo do saldo disponível do usuário.</p>
               </div>
-            </aside>
-          </div>
-        </article>
+            </div>
+
+            <div class="metric-highlight">
+              <span class="metric-label">Saldo atual</span>
+              <strong id="walletBalance">0</strong>
+              <p>Moedas disponíveis para trocas e benefícios.</p>
+            </div>
+          </article>
+        </div>
       </section>
-    </section>
-  </main>
+    </main>
+  </div>
 
   <script src="../static/js/tela_funcionario_consultar.js"></script>
 </body>

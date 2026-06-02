@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Validar Trocas</title>
+  <link rel="stylesheet" href="../static/css/tela_funcionario.css" />
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">B</div>
+          <div>
+            <h1>BemAqui</h1>
+            <p>Funcionário</p>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="tela_funcionario_dashboard.html" class="nav-link">Dashboard</a>
+          <a href="tela_funcionario_trade.html" class="nav-link active">Operações</a>
+          <a href="tela_funcionario_consultar.html" class="nav-link">Consulta de Usuário</a>
+          <a href="index.html" class="nav-link">Sair</a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <p>Sistema operacional</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="welcome-label">Painel operacional</p>
+          <h2>Validar Trocas</h2>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="loadTradesBtn" class="ghost-btn">Atualizar lista</button>
+          <div class="profile-chip">
+            <span>FT</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero-card compact">
+        <div>
+          <span class="hero-badge">Fluxo de validação</span>
+          <h3>Analise solicitações de troca com rapidez e segurança.</h3>
+          <p>
+            Consulte os itens oferecidos, benefícios solicitados e aprove ou recuse
+            as trocas pendentes dos beneficiários.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel filters-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Filtros</h3>
+            <p>Refine a busca por beneficiário, ID ou status da solicitação.</p>
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <div class="field-group field-grow">
+            <label for="search-input">Buscar troca</label>
+            <input type="text" id="search-input" placeholder="Nome do beneficiário ou ID da troca" />
+          </div>
+
+          <div class="field-group">
+            <label for="status-filter">Status</label>
+            <select id="status-filter">
+              <option value="">Todos os status</option>
+              <option value="pendente">Pendente</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="concluido">Concluído</option>
+              <option value="recusado">Recusado</option>
+            </select>
+          </div>
+
+          <div class="field-group actions-group">
+            <label>&nbsp;</label>
+            <button id="loadTradesBtnSecondary" class="primary-btn action-btn" type="button">
+              Listar trades
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel trades-panel">
+        <div class="panel-header panel-header-row">
+          <div>
+            <h3>Solicitações de troca</h3>
+            <p>Visualize e execute as ações disponíveis para cada solicitação.</p>
+          </div>
+          <span class="table-caption">Tabela operacional</span>
+        </div>
+
+        <div class="table-shell">
+          <table id="tradesTable" class="trades-table">
+            <thead>
+              <tr>
+                <th>Beneficiário</th>
+                <th>Recicláveis oferecidos</th>
+                <th>Benefícios pedidos</th>
+                <th>Pontos</th>
+                <th>Moedas sobra</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-state-box">
+            <h4>Nenhuma troca encontrada</h4>
+            <p>Aguarde novas solicitações ou atualize a listagem.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="trade-modal" class="trade-modal hidden">
+    <div class="trade-modal-dialog">
+      <div class="trade-modal-content">
+        <div class="trade-modal-header">
+          <h5>Detalhes da troca</h5>
+          <button type="button" class="modal-close-btn" onclick="closeTradeModal()">×</button>
+        </div>
+
+        <div id="trade-details" class="trade-modal-body">
+          <!-- preenchido via JS -->
+        </div>
+
+        <div id="modal-actions" class="trade-modal-footer hidden">
+          <button class="modal-btn approve" onclick="approveTrade()">Aprovar</button>
+          <button class="modal-btn reject" onclick="rejectTrade()">Recusar</button>
+          <button class="modal-btn neutral" onclick="closeTradeModal()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/js/tela_funcionario.js"></script>
+</body>
+</html>

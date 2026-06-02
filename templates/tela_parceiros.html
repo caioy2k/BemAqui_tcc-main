@@ -3,228 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Empresas Parceiras - BemAqui</title>
+  <title>BemAqui | Empresa</title>
 
   <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_parceiros.css" />
 </head>
 <body>
-  <div class="page-shell">
-    <header class="site-header">
-      <div class="container site-header-inner">
-        <a href="./index.html" class="brand">BemAqui</a>
-        <nav class="site-nav" aria-label="Navegação principal">
-          <a href="./index.html">Início</a>
-          <a href="./tela_login.html">Usuários</a>
-          <a href="./tela_empresa_parceira_entrada.html" class="is-active">Empresas</a>
-        </nav>
+  <main class="auth-page">
+    <section class="auth-panel auth-brand">
+      <div class="brand-box">
+        <span class="brand-badge">Área da Empresa</span>
+        <h1>BemAqui</h1>
+        <p>
+          Acesse sua conta empresarial ou cadastre sua empresa para participar da plataforma.
+        </p>
       </div>
-    </header>
+    </section>
 
-    <main class="site-main">
-      <section class="company-hero">
-        <div class="container company-hero-grid">
-          <div class="company-hero-content">
-            <span class="section-badge">Área institucional</span>
-            <h1>Portal da empresa parceira</h1>
-            <p>
-              Acompanhe a participação da sua empresa no ecossistema BemAqui,
-              fortaleça ações sustentáveis e visualize como sua parceria pode
-              gerar impacto social e ambiental.
-            </p>
-
-            <div class="hero-highlights">
-              <div class="highlight-card">
-                <strong>Parcerias sustentáveis</strong>
-                <span>Conexão com ações de impacto e apoio à plataforma.</span>
-              </div>
-
-              <div class="highlight-card">
-                <strong>Painel ilustrativo</strong>
-                <span>Visão demonstrativa para apresentação do módulo parceiro.</span>
-              </div>
-
-              <div class="highlight-card">
-                <strong>Acesso dedicado</strong>
-                <span>Login e cadastro próprios para futuras empresas parceiras.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="company-auth-card">
-            <div class="auth-tabs">
-              <button class="auth-tab active" type="button" data-tab="login">Login</button>
-              <button class="auth-tab" type="button" data-tab="cadastro">Cadastro</button>
-            </div>
-
-            <div class="auth-panel active" id="painel-login">
-              <div class="auth-panel-header">
-                <h2>Entrar como empresa</h2>
-                <p>Acesse o portal parceiro com seus dados institucionais.</p>
-              </div>
-
-              <form id="empresa-login-form" class="auth-form">
-                <div class="form-group">
-                  <label for="empresa-email">E-mail corporativo</label>
-                  <input
-                    type="email"
-                    id="empresa-email"
-                    name="email"
-                    placeholder="empresa@exemplo.com"
-                    required
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="empresa-password">Senha</label>
-                  <input
-                    type="password"
-                    id="empresa-password"
-                    name="password"
-                    placeholder="Digite sua senha"
-                    required
-                  />
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
-              </form>
-            </div>
-
-            <div class="auth-panel" id="painel-cadastro">
-              <div class="auth-panel-header">
-                <h2>Cadastrar empresa</h2>
-                <p>Registre uma nova empresa parceira no BemAqui.</p>
-              </div>
-
-              <form id="empresa-register-form" class="auth-form">
-                <div class="form-group">
-                  <label for="empresa-nome">Nome da empresa</label>
-                  <input
-                    type="text"
-                    id="empresa-nome"
-                    name="companyName"
-                    placeholder="Ex.: EcoVida Soluções"
-                    required
-                  />
-                </div>
-
-                <div class="form-group form-grid">
-                  <div>
-                    <label for="empresa-cnpj">CNPJ</label>
-                    <input
-                      type="text"
-                      id="empresa-cnpj"
-                      name="cnpj"
-                      placeholder="00.000.000/0001-00"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label for="empresa-telefone">Telefone</label>
-                    <input
-                      type="text"
-                      id="empresa-telefone"
-                      name="phone"
-                      placeholder="(11) 99999-9999"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="empresa-representante">Responsável</label>
-                  <input
-                    type="text"
-                    id="empresa-representante"
-                    name="representative"
-                    placeholder="Nome do responsável"
-                    required
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="empresa-cadastro-email">E-mail corporativo</label>
-                  <input
-                    type="email"
-                    id="empresa-cadastro-email"
-                    name="email"
-                    placeholder="contato@empresa.com"
-                    required
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="empresa-cadastro-password">Senha</label>
-                  <input
-                    type="password"
-                    id="empresa-cadastro-password"
-                    name="password"
-                    placeholder="Crie uma senha"
-                    required
-                  />
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block">Cadastrar empresa</button>
-              </form>
-            </div>
-          </div>
+    <section class="auth-panel auth-form-panel">
+      <div class="auth-card">
+        <div class="auth-tabs" role="tablist" aria-label="Login e cadastro da empresa">
+          <button class="auth-tab active" id="tab-login" type="button" role="tab" aria-selected="true">
+            Login
+          </button>
+          <button class="auth-tab" id="tab-register" type="button" role="tab" aria-selected="false">
+            Cadastro
+          </button>
         </div>
-      </section>
 
-      <section class="company-preview">
-        <div class="container">
-          <div class="section-heading">
-            <span class="section-badge">Visão futura</span>
-            <h2>Como a empresa verá sua parceria</h2>
-            <p>
-              Esta área ilustra como os parceiros poderão acompanhar sua atuação
-              dentro do BemAqui de forma simples, institucional e organizada.
-            </p>
+        <div id="form-message" class="form-message hidden" aria-live="polite"></div>
+
+        <form id="company-login-form" class="auth-form active" novalidate>
+          <h2>Entrar como empresa</h2>
+
+          <div class="form-group">
+            <label for="login-email">E-mail</label>
+            <input
+              class="input-default"
+              type="email"
+              id="login-email"
+              name="email"
+              autocomplete="username"
+              placeholder="empresa@email.com"
+              required
+            />
           </div>
 
-          <div class="preview-grid">
-            <article class="preview-card">
-              <h3>Impacto gerado</h3>
-              <p>Resumo de campanhas, apoio institucional e contribuição socioambiental.</p>
-            </article>
-
-            <article class="preview-card">
-              <h3>Status da parceria</h3>
-              <p>Etapa de ativação, vínculo com a plataforma e histórico de participação.</p>
-            </article>
-
-            <article class="preview-card">
-              <h3>Ações recentes</h3>
-              <p>Lista de atividades, iniciativas apoiadas e interações mais recentes.</p>
-            </article>
+          <div class="form-group">
+            <label for="login-password">Senha</label>
+            <input
+              class="input-default"
+              type="password"
+              id="login-password"
+              name="password"
+              autocomplete="current-password"
+              placeholder="Digite sua senha"
+              required
+            />
           </div>
-        </div>
-      </section>
-    </main>
 
-    <footer class="site-footer">
-      <div class="container site-footer-inner">
-        <p>© 2026 BemAqui. Plataforma social de troca sustentável.</p>
+          <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+
+        <form id="company-register-form" class="auth-form hidden" novalidate>
+          <h2>Cadastrar empresa</h2>
+
+          <div class="form-group">
+            <label for="company-name">Nome da empresa</label>
+            <input
+              class="input-default"
+              type="text"
+              id="company-name"
+              name="name"
+              autocomplete="organization"
+              placeholder="Digite o nome da empresa"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="company-cnpj">CNPJ</label>
+            <input
+              class="input-default"
+              type="text"
+              id="company-cnpj"
+              name="cnpj"
+              inputmode="numeric"
+              placeholder="00.000.000/0000-00"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="company-email">E-mail</label>
+            <input
+              class="input-default"
+              type="email"
+              id="company-email"
+              name="email"
+              autocomplete="email"
+              placeholder="empresa@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="company-password">Senha</label>
+            <input
+              class="input-default"
+              type="password"
+              id="company-password"
+              name="password"
+              autocomplete="new-password"
+              placeholder="Crie uma senha"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="company-confirm-password">Confirmar senha</label>
+            <input
+              class="input-default"
+              type="password"
+              id="company-confirm-password"
+              name="confirmPassword"
+              autocomplete="new-password"
+              placeholder="Repita a senha"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-primary">Cadastrar empresa</button>
+        </form>
       </div>
-    </footer>
-  </div>
+    </section>
+  </main>
 
-  <script>
-    const tabs = document.querySelectorAll('.auth-tab');
-    const panels = document.querySelectorAll('.auth-panel');
-
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        const target = tab.dataset.tab;
-
-        tabs.forEach((item) => item.classList.remove('active'));
-        panels.forEach((panel) => panel.classList.remove('active'));
-
-        tab.classList.add('active');
-        document.getElementById(target === 'login' ? 'painel-login' : 'painel-cadastro').classList.add('active');
-      });
-    });
-  </script>
+  <script src="../static/js/tela_parceiros.js"></script>
 </body>
 </html>

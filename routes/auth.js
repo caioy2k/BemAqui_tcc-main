@@ -1,69 +1,146 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user.js');
-const jwt = require('jsonwebtoken');  // ← FALTAVA ISSO!
+
 const router = express.Router();
 
-// POST /auth/register (copie TODO seu código atual do server.js)
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, cpf, phone, city } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Nome, email e senha são obrigatórios." });
+    if (!name || !email || !password || !role || !cpf || !phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Nome, e-mail, senha, tipo de usuário, CPF e telefone são obrigatórios.'
+      });
     }
 
-    if (!role || !["beneficiario", "doador", "parceiro"].includes(role)) {
-      return res.status(400).json({ error: "Tipo de usuário inválido." });
+    if (!['beneficiario', 'doador', 'parceiro'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Tipo de usuário inválido.'
+      });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email já cadastrado." });6
+    const cleanName = String(name).trim();
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanCpf = String(cpf).replace(/\D/g, '');
+    const cleanPhone = String(phone).replace(/\D/g, '');
+    const cleanCity = String(city || '').trim();
+    const cleanPassword = String(password);
+
+    if (cleanCpf.length !== 11) {
+      return res.status(400).json({
+        success: false,
+        error: 'CPF inválido.'
+      });
+    }
+
+    if (cleanPhone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        error: 'Telefone inválido.'
+      });
+    }
+
+    if (cleanPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'A senha deve ter pelo menos 6 caracteres.'
+      });
+    }
+
+    const existingUserByEmail = await User.findOne({ email: cleanEmail });
+    if (existingUserByEmail) {
+      return res.status(409).json({
+        success: false,
+        error: 'Email já cadastrado.'
+      });
+    }
+
+    const existingUserByCpf = await User.findOne({ cpf: cleanCpf });
+    if (existingUserByCpf) {
+      return res.status(409).json({
+        success: false,
+        error: 'CPF já cadastrado.'
+      });
     }
 
     const newUser = await User.create({
-      name,
-      email,
-      password,
+      name: cleanName,
+      email: cleanEmail,
+      password: cleanPassword,
       role,
+      cpf: cleanCpf,
+      phone: cleanPhone,
+      city: cleanCity,
       isAdmin: false,
-      isEmployee: false,
+      isEmployee: false
     });
 
-    res.status(201).json({
-      message: "Usuário cadastrado com sucesso.",
-      user: {
+    const token = jwt.sign(
+      {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
         isAdmin: newUser.isAdmin,
-        isEmployee: newUser.isEmployee,
+        isEmployee: newUser.isEmployee
       },
+      process.env.JWT_SECRET || 'sua_chave_secreta_aqui',
+      { expiresIn: '7d' }
+    );
+
+    const userObject = newUser.toObject();
+    delete userObject.password;
+
+    res.status(201).json({
+      success: true,
+      message: 'Usuário cadastrado com sucesso.',
+      token,
+      user: userObject
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro ao cadastrar usuário." });
+    console.error('Erro no cadastro:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao cadastrar usuário.'
+    });
   }
 });
 
-// POST /auth/login (copie TODO seu código atual do server.js)
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: "Informe e-mail e senha." });
+      return res.status(400).json({
+        success: false,
+        error: 'Informe e-mail e senha.'
+      });
     }
 
-    const user = await User.findOne({ email });
+    const cleanEmail = String(email).trim().toLowerCase();
+
+    const user = await User.findOne({ email: cleanEmail });
     if (!user) {
-      return res.status(401).json({ error: "E-mail ou senha inválidos." });
+      return res.status(401).json({
+        success: false,
+        error: 'E-mail ou senha inválidos.'
+      });
     }
 
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid =
+      typeof user.comparePassword === 'function'
+        ? await user.comparePassword(password)
+        : await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "E-mail ou senha inválidos." });
+      return res.status(401).json({
+        success: false,
+        error: 'E-mail ou senha inválidos.'
+      });
     }
 
     const token = jwt.sign(
@@ -73,22 +150,27 @@ router.post('/login', async (req, res) => {
         email: user.email,
         role: user.role,
         isAdmin: user.isAdmin,
-        isEmployee: user.isEmployee,
+        isEmployee: user.isEmployee
       },
-      process.env.JWT_SECRET || "sua_chave_secreta_aqui",
-      { expiresIn: "7d" }
+      process.env.JWT_SECRET || 'sua_chave_secreta_aqui',
+      { expiresIn: '7d' }
     );
 
-    const { password: _, ...userWithoutPassword } = user.toObject();
+    const userObject = user.toObject();
+    delete userObject.password;
 
-    res.json({
-      message: "Login realizado com sucesso.",
+    res.status(200).json({
+      success: true,
+      message: 'Login realizado com sucesso.',
       token,
-      user: userWithoutPassword,
+      user: userObject
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro no servidor ao fazer login." });
+    console.error('Erro no login:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Erro no servidor ao fazer login.'
+    });
   }
 });
 

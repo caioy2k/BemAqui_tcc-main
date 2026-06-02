@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BemAqui | Dashboard Admin</title>
+  <title>BemAqui | Menu Admin</title>
 
   <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_admin_dashboard.css" />
@@ -14,11 +14,11 @@
     <div class="ba-header-inner">
       <div>
         <h1 class="ba-logo">BemAqui Admin</h1>
-        <p class="ba-subtitle">Dashboard principal</p>
+        <p class="ba-subtitle">Menu principal</p>
       </div>
 
       <nav class="ba-nav">
-        <a href="index.html">Início</a>
+        <a href="index.html">Home</a>
         <a href="tela_login.html">Login</a>
       </nav>
     </div>
@@ -37,8 +37,8 @@
 
       <div class="dashboard-actions">
         <button class="action-btn primary" id="goRecyclablesBtn">Cadastrar recicláveis</button>
-        <button class="action-btn secondary" id="goBenefitsBtn">Cadastrar benefits</button>
-        <button class="action-btn dark" id="goTradesBtn">Validar trades</button>
+        <button class="action-btn secondary" id="goBenefitsBtn">Cadastrar benefícios</button>
+        <button class="action-btn dark" id="goTradesBtn">Validar trocas</button>
       </div>
     </section>
 
@@ -62,7 +62,7 @@
       </article>
 
       <article class="kpi-card">
-        <span class="kpi-label">Benefits ativos</span>
+        <span class="kpi-label">Benefícios ativos</span>
         <strong id="benefitsCount">...</strong>
         <p>Itens disponíveis para troca no sistema.</p>
       </article>
@@ -92,7 +92,7 @@
         </div>
 
         <ul class="insights-list">
-          <li>Total de benefits ativos: <strong id="insightBenefits">...</strong></li>
+          <li>Total de benefícios ativos: <strong id="insightBenefits">...</strong></li>
           <li>Total de trades pendentes: <strong id="insightPending">...</strong></li>
           <li>Status do dashboard: <strong id="dashboardStatus">conectando...</strong></li>
           <li>Atualização automática: <strong id="refreshMode">a cada 15 segundos</strong></li>
@@ -117,7 +117,7 @@
 
         <button class="quick-card" id="quickBenefits">
           <span>🎁</span>
-          <strong>Benefits</strong>
+          <strong>Benefícios</strong>
           <p>Gerenciar benefícios da plataforma.</p>
         </button>
 
@@ -131,7 +131,7 @@
   </main>
 
   <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+    <p>&copy; 2026 BemAqui ♻ Uma ajuda para quem necessita.</p>
   </footer>
 
   <script src="../static/js/tela_admin_dashboard.js"></script>

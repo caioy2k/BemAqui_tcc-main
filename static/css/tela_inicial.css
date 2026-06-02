@@ -410,14 +410,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-outline {
-    background: transparent;
-    color: var(--dark);
+    background: rgba(82, 173, 253, 0.334);
+    color: rgb(0, 3, 41);
     border: 2px solid var(--gray-light);
 }
 
 .btn-outline:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: rgb(0, 3, 41);
+    color: rgb(32, 34, 64);
 }
 
 .hero-stats {
