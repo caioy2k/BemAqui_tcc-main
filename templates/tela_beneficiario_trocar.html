@@ -1,93 +1,154 @@
-tela beneficiario trocar
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Realizar Troca - BemAqui</title>
   <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_beneficiario_trocar.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui</div>
-      <nav class="ba-nav">
-        <a href="tela_beneficiario.html">Minha área</a>
-        <a href="tela_beneficiario_trocar.html" class="active">Realizar troca</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="ba-main">
-    <section class="trade-section">
-      <h1>Realizar uma troca</h1>
-      <p>Selecione o que você tem (esquerda) e o que você quer (direita)</p>
-
-      <div class="trade-container">
-        <!-- LADO ESQUERDO: O que você tem -->
-        <div class="trade-panel">
-          <h2>O que você tem? 📦</h2>
-          <div id="recyclables-container" class="items-grid">
-            <!-- carregado via JS -->
-          </div>
-          <div class="selected-list" id="selected-recyclables-list">
-            <h3>Selecionados:</h3>
-            <div id="selected-recyclables" class="selected-items">
-              <p class="placeholder">Nenhum item selecionado</p>
+  <header class="site-header">
+        <div class="container site-header-inner">
+          <a href="/index.html" class="site-brand">
+            <div class="site-brand-mark">♻</div>
+            <div class="site-brand-copy">
+              <h1>Bem<span>Aqui</span></h1>
+              <p>uma ajuda para quem necessita</p>
             </div>
-          </div>
-          <div class="selected-summary">
-            <p>
-              <strong>Pontos oferecidos:</strong>
-              <span id="offered-points">0</span>
-            </p>
-          </div>
-        </div>
+          </a>
 
-        <!-- LADO DIREITO: O que você quer -->
-        <div class="trade-panel">
-          <h2>O que você quer? 🎁</h2>
-          <div id="benefits-container" class="items-grid">
-            <!-- carregado via JS -->
-          </div>
-          <div class="selected-list" id="selected-benefits-list">
-            <h3>Selecionados:</h3>
-            <div id="selected-benefits" class="selected-items">
-              <p class="placeholder">Nenhum item selecionado</p>
-            </div>
-          </div>
-          <div class="selected-summary">
-            <p>
-              <strong>Pontos solicitados:</strong>
-              <span id="requested-points">0</span>
-            </p>
-          </div>
-        </div>
-      </div>
+          <nav class="site-nav" aria-label="Navegação principal">
 
-      <div class="trade-actions">
-        <div class="points-comparison">
+            <a href="tela_beneficiario.html">Menu</a>
+            <a href="tela_beneficiario_perfil.html">Perfil</a>
+            <a href="tela_carteira.html">Carteira</a>
+            <a href="index.html">Sair</a>
+          </nav>
+        </div>
+      </header>
+
+  <main class="site-main">
+    <div class="container">
+      <section class="trade-hero card-surface">
+        <div class="trade-hero-content">
+          <span class="section-badge">Trocas do beneficiário</span>
+          <h1>Monte sua troca de forma simples</h1>
           <p>
-            Oferecido: <strong id="comparison-offered">0</strong> pts | Solicitado:
-            <strong id="comparison-requested">0</strong> pts
+            Escolha os recicláveis que você pode oferecer, selecione o benefício desejado
+            e acompanhe se a troca pode ser concluída com seus pontos e com o saldo atual da carteira.
           </p>
-          <p id="comparison-status" class="status-ok">✓ Você pode fazer essa troca!</p>
         </div>
-        <button id="wallet-trade-btn" class="primary-btn">
-          Usar saldo atual
-        </button>
-        <button id="confirm-trade-btn" class="primary-btn" disabled>
-          Confirmar troca
-        </button>
-      </div>
-    </section>
+
+        <div class="trade-wallet-summary" aria-label="Resumo da carteira">
+          <span class="wallet-label">Saldo disponível</span>
+          <strong id="wallet-balance-display">0 moedas</strong>
+          <small>O valor é usado automaticamente nas trocas híbridas.</small>
+        </div>
+      </section>
+
+      <section class="trade-section">
+        <div class="trade-section-head">
+          <div>
+            <h2>Área de troca</h2>
+            <p>Selecione os itens em cada lado e ajuste as quantidades conforme necessário.</p>
+          </div>
+        </div>
+
+        <div class="trade-container">
+          <article class="trade-panel card-surface trade-panel-offer">
+            <div class="panel-top">
+              <div>
+                <span class="panel-tag">Etapa 1</span>
+                <h3>O que você tem? ♻️</h3>
+              </div>
+              <span class="panel-chip">Recicláveis</span>
+            </div>
+
+            <div id="recyclables-container" class="items-grid">
+              <!-- carregado via JS -->
+            </div>
+
+            <div class="selected-list" id="selected-recyclables-list">
+              <div class="selected-head">
+                <h4>Selecionados</h4>
+                <span>Itens para ofertar</span>
+              </div>
+
+              <div id="selected-recyclables" class="selected-items">
+                <p class="placeholder">Nenhum item selecionado</p>
+              </div>
+            </div>
+
+            <div class="selected-summary">
+              <p>
+                <strong>Pontos oferecidos</strong>
+                <span id="offered-points">0</span>
+              </p>
+            </div>
+          </article>
+
+          <article class="trade-panel card-surface trade-panel-reward">
+            <div class="panel-top">
+              <div>
+                <span class="panel-tag">Etapa 2</span>
+                <h3>O que você quer? 🎁</h3>
+              </div>
+              <span class="panel-chip panel-chip-gift">Benefícios</span>
+            </div>
+
+            <div id="benefits-container" class="items-grid">
+              <!-- carregado via JS -->
+            </div>
+
+            <div class="selected-list" id="selected-benefits-list">
+              <div class="selected-head">
+                <h4>Selecionados</h4>
+                <span>Itens solicitados</span>
+              </div>
+
+              <div id="selected-benefits" class="selected-items">
+                <p class="placeholder">Nenhum item selecionado</p>
+              </div>
+            </div>
+
+            <div class="selected-summary">
+              <p>
+                <strong>Pontos solicitados</strong>
+                <span id="requested-points">0</span>
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="trade-actions card-surface">
+          <div class="points-comparison">
+            <div class="comparison-label">Resumo da troca</div>
+            <p>
+              Oferecido: <strong id="comparison-offered">0</strong> pts
+              <span class="comparison-divider">|</span>
+              Solicitado: <strong id="comparison-requested">0</strong> pts
+            </p>
+            <p id="comparison-status" class="status-ok">✓ Você pode fazer essa troca!</p>
+          </div>
+
+          <div class="trade-buttons">
+            <button id="wallet-trade-btn" class="secondary-btn" type="button">
+              Usar saldo atual
+            </button>
+            <button id="confirm-trade-btn" class="primary-btn" type="button" disabled>
+              Confirmar troca
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  <footer class="site-footer">
+    <div class="container site-footer-inner">
+      <p>&copy; 2026 BemAqui. Plataforma social de troca sustentável.</p>
+    </div>
   </footer>
 
   <script src="../static/js/tela_beneficiario_trocar.js"></script>

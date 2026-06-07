@@ -17,6 +17,13 @@ const comparisonRequestedSpan = document.getElementById("comparison-requested");
 const comparisonStatus = document.getElementById("comparison-status");
 const confirmBtn = document.getElementById("confirm-trade-btn");
 const walletTradeBtn = document.getElementById("wallet-trade-btn");
+const walletBalanceDisplay = document.getElementById("wallet-balance-display");
+
+function updateWalletDisplay() {
+  if (walletBalanceDisplay) {
+    walletBalanceDisplay.textContent = `${currentWalletBalance} moedas`;
+  }
+}
 
 async function loadUserWallet() {
   try {
@@ -28,6 +35,8 @@ async function loadUserWallet() {
   } catch (error) {
     console.error("Erro ao carregar saldo da carteira:", error);
     currentWalletBalance = 0;
+  } finally {
+    updateWalletDisplay();
   }
 }
 
@@ -245,6 +254,13 @@ function setQty(type, index, value) {
   const qty = Math.max(1, parseInt(value) || 1);
   const array = type === "recyclable" ? selectedRecyclables : selectedBenefits;
   array[index].quantity = qty;
+
+  if (type === "recyclable") {
+    updateRecyclablesDisplay();
+  } else {
+    updateBenefitsDisplay();
+  }
+
   updateUI();
 }
 
@@ -262,6 +278,8 @@ function removeItem(type, index) {
 function updateUI() {
   const offeredPoints = getSelectedRecyclablesPoints();
   const requestedPoints = getSelectedBenefitsPoints();
+
+  updateWalletDisplay();
 
   offeredPointsSpan.textContent = offeredPoints;
   requestedPointsSpan.textContent = requestedPoints;
@@ -333,7 +351,8 @@ walletTradeBtn.addEventListener("click", async () => {
   const selectedBenefit = selectedBenefits[0];
   const totalCost = selectedBenefit.pointsCost * selectedBenefit.quantity;
   const offeredPoints = getSelectedRecyclablesPoints();
-  const { walletUsed, remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
+  const balanceBeforePurchase = currentWalletBalance;
+  const { remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
 
   try {
     walletTradeBtn.disabled = true;
@@ -387,6 +406,7 @@ walletTradeBtn.addEventListener("click", async () => {
 
     if (response.ok) {
       currentWalletBalance = data.walletBalanceAfter ?? data.walletBalance ?? currentWalletBalance;
+      updateWalletDisplay();
 
       try {
         const storedUser = localStorage.getItem("bemaquiUser");
@@ -404,13 +424,13 @@ walletTradeBtn.addEventListener("click", async () => {
         benefitName: selectedBenefit.name,
         quantity: selectedBenefit.quantity,
         totalCost,
-        walletUsed: data.walletUsed ?? Math.min(currentWalletBalance, totalCost),
-        recyclingPointsUsed: data.recyclingPointsUsed ?? (currentWalletBalance >= totalCost ? 0 : remainingCost),
+        walletUsed: data.walletUsed ?? Math.min(balanceBeforePurchase, totalCost),
+        recyclingPointsUsed: data.recyclingPointsUsed ?? (balanceBeforePurchase >= totalCost ? 0 : remainingCost),
         recyclingPointsGenerated: data.recyclingPointsGenerated ?? offeredPoints,
         coinsSurplus: data.coinsSurplus ?? 0,
         walletBalance: currentWalletBalance,
         tradeId: data.tradeId,
-        isHybrid: currentWalletBalance < totalCost || selectedRecyclables.length > 0,
+        isHybrid: balanceBeforePurchase < totalCost || selectedRecyclables.length > 0,
       });
 
       selectedBenefits = [];
@@ -426,7 +446,6 @@ walletTradeBtn.addEventListener("click", async () => {
     alert("Não foi possível realizar a compra.");
   } finally {
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Usar saldo atual";
     updateUI();
   }
 });
@@ -597,11 +616,11 @@ function showConfirmationModal(trade) {
             <h3>📦 Você está ofertando:</h3>
             <div class="items-list">
               ${trade.recyclablesOffered
-      .map(
-        (item) =>
-          `<div class="item"><span>${item.recyclableName}</span><span class="qty">x${item.quantity}</span></div>`
-      )
-      .join("")}
+                .map(
+                  (item) =>
+                    `<div class="item"><span>${item.recyclableName}</span><span class="qty">x${item.quantity}</span></div>`
+                )
+                .join("")}
             </div>
             <p class="points-info">Total: <strong>${trade.totalPointsOffered} pontos</strong></p>
           </div>
@@ -612,11 +631,11 @@ function showConfirmationModal(trade) {
             <h3>🎁 Você vai receber:</h3>
             <div class="items-list">
               ${trade.benefitsRequested
-      .map(
-        (item) =>
-          `<div class="item"><span>${item.benefitName}</span><span class="qty">x${item.quantity}</span></div>`
-      )
-      .join("")}
+                .map(
+                  (item) =>
+                    `<div class="item"><span>${item.benefitName}</span><span class="qty">x${item.quantity}</span></div>`
+                )
+                .join("")}
             </div>
             <p class="points-info">Total: <strong>${trade.totalPointsRequested} pontos</strong></p>
           </div>

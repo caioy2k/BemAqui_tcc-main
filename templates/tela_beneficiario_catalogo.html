@@ -4,56 +4,88 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BemAqui | Catálogo</title>
+  <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_beneficiario_catalogo.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-left">
-      <h1>Catálogo de Benefícios</h1>
-      <p>Veja os itens cadastrados pelo administrador</p>
+  <main class="catalog-dashboard-page">
+    <div class="catalog-dashboard-shell">
+      <header class="site-header">
+        <div class="container site-header-inner">
+          <a href="/index.html" class="site-brand">
+            <div class="site-brand-mark">♻</div>
+            <div class="site-brand-copy">
+              <h1>Bem<span>Aqui</span></h1>
+              <p>uma ajuda para quem necessita</p>
+            </div>
+          </a>
+
+          <nav class="site-nav" aria-label="Navegação principal">
+            <a href="tela_beneficiario.html">Menu</a>
+            <a href="tela_beneficiario_perfil.html">Perfil</a>
+            <a href="tela_carteira.html">Carteira</a>
+            <a href="tela_beneficiario_catalogo.html" class="active">Catálogo</a>
+            <a href="index.html">Sair</a>
+          </nav>
+        </div>
+      </header>
+
+      <section class="catalog-hero">
+        <div class="catalog-hero-copy">
+          <span class="section-badge">Benefícios disponíveis</span>
+          <h2>Explore o catálogo de itens para resgate</h2>
+          <p>
+            Consulte os benefícios cadastrados, filtre por categoria e acompanhe seu saldo
+            para realizar trocas com mais facilidade.
+          </p>
+        </div>
+
+        <div class="wallet-panel">
+          <span>Saldo atual</span>
+          <strong id="wallet-balance">0 moedas</strong>
+          <p>Use suas moedas para solicitar itens disponíveis no catálogo.</p>
+        </div>
+      </section>
+
+      <section class="catalog-controls">
+        <div class="control-card search-group">
+          <label for="search-input">Buscar item</label>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Digite o nome do item..."
+          />
+        </div>
+
+        <div class="control-card filter-group">
+          <label for="category-filter">Categoria</label>
+          <select id="category-filter">
+            <option value="todos">Todas</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="catalog-summary">
+        <p id="results-count">Carregando itens...</p>
+      </section>
+
+      <section id="catalog-grid" class="catalog-grid">
+        <!-- cards renderizados via JS -->
+      </section>
+
+      <section id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">📦</div>
+        <h2>Nenhum item encontrado</h2>
+        <p>Tente alterar a busca ou o filtro selecionado.</p>
+      </section>
     </div>
-
-    <div class="topbar-right">
-      <div class="wallet-box">
-        <span>Saldo atual</span>
-        <strong id="wallet-balance">0 moedas</strong>
-      </div>
-    </div>
-  </header>
-
-  <main class="catalog-page">
-    <section class="catalog-controls">
-      <div class="search-group">
-        <label for="search-input">Buscar item</label>
-        <input
-          type="text"
-          id="search-input"
-          placeholder="Digite o nome do item..."
-        />
-      </div>
-
-      <div class="filter-group">
-        <label for="category-filter">Categoria</label>
-        <select id="category-filter">
-          <option value="todos">Todas</option>
-        </select>
-      </div>
-    </section>
-
-    <section class="catalog-summary">
-      <p id="results-count">Carregando itens...</p>
-    </section>
-
-    <section id="catalog-grid" class="catalog-grid">
-      <!-- cards renderizados via JS -->
-    </section>
-
-    <section id="empty-state" class="empty-state hidden">
-      <div class="empty-icon">📦</div>
-      <h2>Nenhum item encontrado</h2>
-      <p>Tente alterar a busca ou o filtro selecionado.</p>
-    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer-inner">
+      <p>© 2026 BemAqui. Plataforma social de troca sustentável.</p>
+    </div>
+  </footer>
 
   <script src="../static/js/tela_beneficiario_catalogo.js"></script>
 </body>

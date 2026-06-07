@@ -13,6 +13,8 @@ const Benefit = require('./models/benefit');
 
 const authRoutes = require('./routes/auth');
 const tradeRoutes = require('./routes/trade');
+const authCompanyRoutes = require('./routes/authCompany');
+const companyRoutes = require('./routes/company');
 
 const app = express();
 
@@ -72,6 +74,8 @@ app.get(['/', '/index.html', '/tela_login.html', '/tela_cadastro.html'], (req, r
 // =========================
 app.use('/auth', authRoutes);
 app.use('/trade', tradeRoutes);
+app.use('/auth-company', authCompanyRoutes);
+app.use('/company', companyRoutes);
 
 // =========================
 // AUTH - USUÁRIO LOGADO
@@ -713,6 +717,10 @@ mongoose.connect(process.env.MONGODB_URI)
       console.log('✅ APIs disponíveis:');
       console.log('   POST   /auth/login');
       console.log('   GET    /auth/me');
+      console.log('   POST   /auth-company/register');
+      console.log('   POST   /auth-company/login');
+      console.log('   GET    /company/me');
+      console.log('   PUT    /company/me');
       console.log('   GET    /recyclables');
       console.log('   GET    /benefits');
       console.log('   POST   /trade/create-trade-type1');
