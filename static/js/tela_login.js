@@ -1,3 +1,5 @@
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("login-form");
 
@@ -18,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "/tela_beneficiario.html";
       }
     } catch (error) {
-      console.error("Erro:", error);
+      console.error("Erro no login:", error);
       alert("Não foi possível se conectar ao servidor.");
     }
   });

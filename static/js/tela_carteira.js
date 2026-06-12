@@ -3,39 +3,60 @@ const API_URL = "https://bemaqui-tcc-main.onrender.com";
 let allTransactions = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("refreshBtn").addEventListener("click", loadWalletData);
-  document.getElementById("novaTrocaBtn").addEventListener("click", novaTroca);
-  document.getElementById("searchTransaction").addEventListener("input", filterTransactions);
+  document.getElementById("refreshBtn")?.addEventListener("click", loadWalletData);
+  document.getElementById("novaTrocaBtn")?.addEventListener("click", novaTroca);
+  document.getElementById("searchTransaction")?.addEventListener("input", filterTransactions);
 
   loadWalletData();
 });
 
+function isTokenExpired(token) {
+  if (!token) return true;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch (error) {
+    return true;
+  }
+}
+
+function logoutAndRedirect(message = "Sua sessão expirou. Faça login novamente.") {
+  localStorage.removeItem("token");
+  localStorage.removeItem("bemaquiUser");
+  alert(message);
+  window.location.href = "tela_login.html";
+}
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+
+  if (!token || isTokenExpired(token)) {
+    logoutAndRedirect();
+    throw new Error("Token inválido ou expirado.");
+  }
+
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  };
+}
+
 async function loadWalletData() {
   try {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Faça login primeiro.");
-      window.location.href = "tela_login.html";
-      return;
-    }
-
     setLoadingState();
 
+    const headers = getAuthHeaders();
+
     const [walletResponse, transactionsResponse] = await Promise.all([
-      fetch(`${API_URL}/api/user/wallet`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      }),
-      fetch(`${API_URL}/api/user/transactions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      })
+      fetch(`${API_URL}/api/user/wallet`, { headers }),
+      fetch(`${API_URL}/api/user/transactions`, { headers })
     ]);
+
+    if (walletResponse.status === 401 || transactionsResponse.status === 401) {
+      logoutAndRedirect("Sessão inválida ou expirada. Faça login novamente.");
+      return;
+    }
 
     const walletData = await walletResponse.json();
     const transactionsData = await transactionsResponse.json();
@@ -62,12 +83,11 @@ async function loadWalletData() {
 
     renderWallet(wallet, allTransactions);
     renderTransactions(allTransactions);
-
     updateLocalUserWallet(wallet.balance);
 
   } catch (error) {
     console.error("Erro geral carteira:", error);
-    showErrorState("Não foi possível carregar os dados da carteira.");
+    showErrorState(error.message || "Não foi possível carregar os dados da carteira.");
   }
 }
 
@@ -133,7 +153,7 @@ function renderTransactions(transactions) {
 }
 
 function filterTransactions() {
-  const term = document.getElementById("searchTransaction").value.trim().toLowerCase();
+  const term = document.getElementById("searchTransaction")?.value.trim().toLowerCase() || "";
 
   const filtered = allTransactions.filter((transaction) => {
     const type = (transaction.type || "").toLowerCase();
@@ -159,7 +179,7 @@ function setLoadingState() {
 function showErrorState(message) {
   document.getElementById("wallet-status").textContent = message;
   document.getElementById("transactionsList").innerHTML = `
-    <div class="empty-message">${message}</div>
+    <div class="empty-message">${escapeHtml(message)}</div>
   `;
 }
 
@@ -183,7 +203,7 @@ function formatNumber(value) {
 }
 
 function escapeHtml(text) {
-  return String(text)
+  return String(text ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
