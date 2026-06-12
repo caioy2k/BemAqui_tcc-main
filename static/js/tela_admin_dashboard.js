@@ -1,4 +1,4 @@
-const API_URL = "https://bemaqui-tcc-main.onrender.com/api/admin/dashboard";
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
 let adminChartInstance = null;
 let dashboardInterval = null;
 

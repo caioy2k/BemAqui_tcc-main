@@ -1,4 +1,4 @@
-const API_BASE = "https://bemaqui-tcc-main.onrender.com/auth/me";
+const API_BASE = "https://bemaqui-tcc-main.onrender.com";
 const token = localStorage.getItem("token");
 
 let currentUserId = null;

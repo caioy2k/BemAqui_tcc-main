@@ -1,4 +1,4 @@
-const API_URL = "https://bemaqui-tcc-main.onrender.com/api/admin/recyclables";
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
 let recyclables = [];
 let editingRecyclableId = null;
 

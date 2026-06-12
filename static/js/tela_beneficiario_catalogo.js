@@ -1,4 +1,4 @@
-const API_URL = "https://bemaqui-tcc-main.onrender.com/benefits";
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
 
 let allBenefits = [];
 let filteredBenefits = [];
