@@ -1,103 +1,181 @@
-tela admin trades
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Validar Trocas - BemAqui</title>
-  <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_admin_trades.css" />
-  <!-- Bootstrap para tabela responsiva -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui - Admin</div>
-      <nav class="ba-nav">
-        <a href="tela_admin_menu.html">Dashboard</a>
-        <a href="tela_admin_trades.html" class="active">Validar Trocas</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="ba-main">
-    <section class="trades-section">
-      <div class="section-header">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">B</div>
         <div>
-          <h1>Validar Trocas</h1>
+          <h1>BemAqui</h1>
+          <p>Painel Admin</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="tela_admin_menu.html" class="nav-item">Dashboard</a>
+        <a href="tela_admin_recyclables.html" class="nav-item">Recicláveis</a>
+        <a href="tela_admin_benefits.html" class="nav-item">Benefícios</a>
+        <a href="tela_admin_trades.html" class="nav-item active">Trades</a>
+        <a href="../tela_inicial.html" class="nav-item">Sair</a>
+      </nav>
+
+      <div class="sidebar-box">
+        <span class="sidebar-label">Validação operacional</span>
+        <h3>Solicitações de troca</h3>
+        <p>
+          Analise pedidos, acompanhe pontuações e aprove ou recuse trocas feitas
+          pelos beneficiários da plataforma.
+        </p>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <span class="topbar-badge">Fluxo administrativo</span>
+          <h2>Validar trocas</h2>
           <p>Aprove ou recuse as solicitações de troca dos beneficiários.</p>
         </div>
-      </div>
 
-      <div class="filters-bar mb-4">
-        <input type="text" id="search-input" placeholder="Buscar por nome ou ID da troca..." class="form-control me-2" style="width: 300px;">
-        <select id="status-filter" class="form-select" style="width: 200px;">
-          <option value="">Todos os status</option>
-          <option value="pendente">Pendente</option>
-          <option value="aprovado">Aprovado</option>
-          <option value="concluido">Concluído</option>
-          <option value="recusado">Recusado</option>
-        </select>
-        <!-- ✅ BOTÃO LISTAR TRADES -->
-        <button id="loadTradesBtn" class="btn btn-primary ms-2">🔄 Listar Trades</button>
-      </div>
-
-      <!-- ✅ TABELA QUE FALTAVA -->
-      <div class="table-responsive">
-        <table id="tradesTable" class="table table-striped table-hover">
-          <thead class="table-dark">
-            <tr>
-              <th>Beneficiário</th>
-              <th>Recicláveis Oferecidos</th>
-              <th>Benefícios Pedidos</th>
-              <th>Pontos Recicláveis</th>
-              <th>Moedas Sobras</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Trades vão aparecer aqui via JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Estado vazio -->
-      <div id="empty-state" class="empty-state text-center py-5 hidden">
-        <div class="alert alert-info">
-          <h4>📭 Nenhuma troca pendente</h4>
-          <p>Aguarde beneficiários realizarem trocas para aprovar.</p>
+        <div class="topbar-actions">
+          <button id="loadTradesBtn" class="action-btn primary">Atualizar trades</button>
         </div>
-      </div>
-    </section>
-  </main>
+      </header>
 
-  <!-- Modal de detalhes da troca -->
-  <div id="trade-modal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+      <section class="hero-panel">
+        <div class="hero-content">
+          <span class="hero-badge">Monitoramento de solicitações</span>
+          <h3>Gerencie aprovações com mais clareza e agilidade</h3>
+          <p>
+            Filtre por status, localize beneficiários e acompanhe os itens
+            recicláveis e benefícios envolvidos em cada solicitação.
+          </p>
+        </div>
+
+        <div class="hero-side-card">
+          <span class="mini-kicker">Ações rápidas</span>
+          <strong>Análise centralizada</strong>
+          <p>
+            Visualize os detalhes da troca no modal e execute aprovação ou recusa
+            de forma objetiva.
+          </p>
+        </div>
+      </section>
+
+      <section class="content-grid single-column">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <span class="panel-tag">Filtros e listagem</span>
+              <h3>Trades cadastradas</h3>
+              <p>Use os filtros para localizar rapidamente as solicitações.</p>
+            </div>
+          </div>
+
+          <div class="filters-toolbar">
+            <div class="filter-field search-field">
+              <label for="search-input">Buscar troca</label>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Buscar por nome ou ID da troca..."
+                class="form-control"
+              />
+            </div>
+
+            <div class="filter-field status-field">
+              <label for="status-filter">Status</label>
+              <select id="status-filter" class="form-select">
+                <option value="">Todos os status</option>
+                <option value="pendente">Pendente</option>
+                <option value="aprovado">Aprovado</option>
+                <option value="concluido">Concluído</option>
+                <option value="recusado">Recusado</option>
+              </select>
+            </div>
+
+            <div class="filter-action">
+              <button class="action-btn soft" id="loadTradesBtnSecondary" type="button">
+                Recarregar
+              </button>
+            </div>
+          </div>
+
+          <div class="table-shell">
+            <div class="table-responsive">
+              <table id="tradesTable" class="table align-middle admin-table">
+                <thead>
+                  <tr>
+                    <th>Beneficiário</th>
+                    <th>Recicláveis oferecidos</th>
+                    <th>Benefícios pedidos</th>
+                    <th>Pontos recicláveis</th>
+                    <th>Moedas sobras</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Trades vão aparecer aqui via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="empty-state" class="empty-state hidden">
+            <div class="empty-illustration">📭</div>
+            <h4>Nenhuma troca encontrada</h4>
+            <p>Aguarde novas solicitações ou ajuste os filtros para continuar.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="trade-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content custom-trade-modal">
         <div class="modal-header">
-          <h5 class="modal-title">Detalhes da Troca</h5>
-          <button type="button" class="btn-close" onclick="closeTradeModal()"></button>
+          <div>
+            <span class="panel-tag">Detalhamento</span>
+            <h5 class="modal-title">Detalhes da troca</h5>
+          </div>
+          <button type="button" class="btn-close" onclick="closeTradeModal()" aria-label="Fechar"></button>
         </div>
+
         <div id="trade-details" class="modal-body">
-          <!-- Preenchido via JS -->
+          <!-- preenchido via JS -->
         </div>
+
         <div id="modal-actions" class="modal-footer hidden">
-          <button class="btn btn-success" onclick="approveTrade()">✅ Aprovar</button>
-          <button class="btn btn-danger" onclick="rejectTrade()">❌ Recusar</button>
-          <button class="btn btn-secondary" onclick="closeTradeModal()">Fechar</button>
+          <button class="action-btn success" onclick="approveTrade()">Aprovar</button>
+          <button class="action-btn danger" onclick="rejectTrade()">Recusar</button>
+          <button class="action-btn muted" onclick="closeTradeModal()">Fechar</button>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const primaryLoadBtn = document.getElementById('loadTradesBtn');
+      const secondaryLoadBtn = document.getElementById('loadTradesBtnSecondary');
+
+      if (primaryLoadBtn && secondaryLoadBtn) {
+        secondaryLoadBtn.addEventListener('click', () => primaryLoadBtn.click());
+      }
+    });
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../static/js/tela_admin_trades.js"></script>

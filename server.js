@@ -16,6 +16,7 @@ const tradeRoutes = require('./routes/trade');
 const authCompanyRoutes = require('./routes/authCompany');
 const companyRoutes = require('./routes/company');
 const recyclablesRoutes = require('./routes/recyclables');
+const benefitRoutes = require('./routes/benefits');
 
 
 const app = express();
@@ -152,6 +153,7 @@ app.get('/benefits', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar benefícios' });
   }
 });
+app.use('/benefits', benefitRoutes);
 
 // =========================
 // ROTA DA CARTEIRA
@@ -716,7 +718,7 @@ mongoose.connect(process.env.MONGODB_URI)
     const PORT = process.env.PORT || 3000;
 
     app.listen(PORT, () => {
-      console.log(`🚀 BemAqui: http://localhost:${PORT}`);
+      console.log(`🚀 BemAqui: https://bemaqui-tcc-main.onrender.com`);
       console.log('✅ APIs disponíveis:');
       console.log('   POST   /auth/login');
       console.log('   GET    /auth/me');
@@ -725,7 +727,13 @@ mongoose.connect(process.env.MONGODB_URI)
       console.log('   GET    /company/me');
       console.log('   PUT    /company/me');
       console.log('   GET    /recyclables');
+      console.log('   POST   /recyclables');
+      console.log('   PUT    /recyclables');
+      console.log('   DELETE /recyclables');
       console.log('   GET    /benefits');
+      console.log('   POST   /benefits');
+      console.log('   PUT    /benefits');
+      console.log('   DELETE /benefits');
       console.log('   POST   /trade/create-trade-type1');
       console.log('   GET    /api/user/wallet');
       console.log('   GET    /api/user/transactions');

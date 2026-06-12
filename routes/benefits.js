@@ -60,4 +60,39 @@ router.post('/', authMiddleware, isAdminMiddleware, async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedBenefit = await Benefit.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedBenefit) {
+      return res.status(404).json({ error: 'Benefício não encontrado.' });
+    }
+
+    res.json({
+      message: 'Benefício atualizado com sucesso.',
+      benefit: updatedBenefit
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar benefício.' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedBenefit = await Benefit.findByIdAndDelete(req.params.id);
+
+    if (!deletedBenefit) {
+      return res.status(404).json({ error: 'Benefício não encontrado.' });
+    }
+
+    res.json({ message: 'Benefício excluído com sucesso.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao excluir benefício.' });
+  }
+});
+
 module.exports = router;

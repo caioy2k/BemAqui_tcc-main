@@ -1,49 +1,90 @@
-const API_URL = 'http://localhost:3000/benefits';
+const API_URL = 'https://bemaqui-tcc-main.onrender.com/benefits';
 
 const benefitsContainer = document.getElementById('benefits-container');
 const emptyState = document.getElementById('empty-state');
 const formModal = document.getElementById('form-modal');
 const benefitForm = document.getElementById('benefit-form');
 
+const modalBadge = document.querySelector('.modal-header .section-badge, .modal-header .panel-tag');
+const modalTitle = document.querySelector('.modal-header h2');
+const submitButton = benefitForm.querySelector('button[type="submit"]');
+
 let editingBenefitId = null;
+let benefits = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   loadBenefits();
   setupForm();
 });
 
-function openFormModal(benefit = null) {
-  formModal.classList.remove('hidden');
+function getToken() {
+  return localStorage.getItem('token');
+}
 
-  if (benefit) {
-    editingBenefitId = benefit._id;
-    document.querySelector('.modal-header .section-badge').textContent = 'Editar benefício';
-    document.querySelector('.modal-header h2').textContent = 'Editar benefício';
+function setCreateMode() {
+  editingBenefitId = null;
+  benefitForm.reset();
 
-    document.getElementById('name').value = benefit.name || '';
-    document.getElementById('category').value = benefit.category || '';
-    document.getElementById('description').value = benefit.description || '';
-    document.getElementById('pointsCost').value = benefit.pointsCost || 0;
-    document.getElementById('quantity').value = benefit.quantity || 0;
-    benefitForm.querySelector('button[type="submit"]').textContent = 'Salvar alterações';
-  } else {
-    editingBenefitId = null;
-    benefitForm.reset();
-    document.querySelector('.modal-header .section-badge').textContent = 'Novo benefício';
-    document.querySelector('.modal-header h2').textContent = 'Cadastrar benefício';
-    benefitForm.querySelector('button[type="submit"]').textContent = 'Cadastrar';
+  if (modalBadge) {
+    modalBadge.textContent = 'Novo benefício';
   }
+
+  if (modalTitle) {
+    modalTitle.textContent = 'Cadastrar benefício';
+  }
+
+  if (submitButton) {
+    submitButton.textContent = 'Cadastrar';
+  }
+}
+
+function setEditMode(benefit) {
+  editingBenefitId = benefit._id;
+
+  if (modalBadge) {
+    modalBadge.textContent = 'Editar benefício';
+  }
+
+  if (modalTitle) {
+    modalTitle.textContent = 'Editar benefício';
+  }
+
+  document.getElementById('name').value = benefit.name || '';
+  document.getElementById('category').value = benefit.category || '';
+  document.getElementById('description').value = benefit.description || '';
+  document.getElementById('pointsCost').value = Number(benefit.pointsCost || 0);
+  document.getElementById('quantity').value = Number(benefit.quantity || 0);
+
+  if (submitButton) {
+    submitButton.textContent = 'Salvar alterações';
+  }
+}
+
+function openFormModal(benefit = null) {
+  if (benefit) {
+    setEditMode(benefit);
+  } else {
+    setCreateMode();
+  }
+
+  formModal.classList.remove('hidden');
 }
 
 function closeFormModal() {
   formModal.classList.add('hidden');
-  benefitForm.reset();
-  editingBenefitId = null;
+  setCreateMode();
 }
 
 function setupForm() {
   benefitForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+
+    const token = getToken();
+
+    if (!token) {
+      alert('Você precisa estar autenticado para realizar esta ação.');
+      return;
+    }
 
     const payload = {
       name: document.getElementById('name').value.trim(),
@@ -53,14 +94,16 @@ function setupForm() {
       quantity: Number(document.getElementById('quantity').value)
     };
 
-    try {
-      const url = editingBenefitId ? `${API_URL}/${editingBenefitId}` : API_URL;
-      const method = editingBenefitId ? 'PUT' : 'POST';
+    const isEditing = Boolean(editingBenefitId);
+    const url = isEditing ? `${API_URL}/${editingBenefitId}` : API_URL;
+    const method = isEditing ? 'PUT' : 'POST';
 
+    try {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
@@ -71,7 +114,11 @@ function setupForm() {
         throw new Error(data.error || 'Erro ao salvar benefício.');
       }
 
-      alert(data.message || 'Operação realizada com sucesso.');
+      alert(
+        data.message ||
+        (isEditing ? 'Benefício atualizado com sucesso.' : 'Benefício cadastrado com sucesso.')
+      );
+
       closeFormModal();
       loadBenefits();
     } catch (error) {
@@ -90,7 +137,7 @@ async function loadBenefits() {
       throw new Error(data.error || 'Erro ao carregar benefícios.');
     }
 
-    const benefits = data.benefits || [];
+    benefits = data.benefits || [];
     renderBenefits(benefits);
   } catch (error) {
     console.error(error);
@@ -100,17 +147,17 @@ async function loadBenefits() {
   }
 }
 
-function renderBenefits(benefits) {
+function renderBenefits(benefitsList) {
   benefitsContainer.innerHTML = '';
 
-  if (!benefits.length) {
+  if (!benefitsList.length) {
     emptyState.classList.remove('hidden');
     return;
   }
 
   emptyState.classList.add('hidden');
 
-  benefits.forEach((benefit) => {
+  benefitsList.forEach((benefit) => {
     const card = document.createElement('article');
     card.className = 'benefit-card';
 
@@ -119,8 +166,8 @@ function renderBenefits(benefits) {
     card.innerHTML = `
       <div class="benefit-card-header">
         <div>
-          <h4>${benefit.name || '-'}</h4>
-          <p class="benefit-category">${benefit.category || '-'}</p>
+          <h4 class="benefit-card-title">${benefit.name || '-'}</h4>
+          <span class="benefit-badge">${benefit.category || '-'}</span>
         </div>
         <span class="benefit-status ${status === 'ativo' ? 'is-active' : 'is-inactive'}">
           ${status}
@@ -130,18 +177,25 @@ function renderBenefits(benefits) {
       <p class="benefit-description">${benefit.description || 'Sem descrição.'}</p>
 
       <div class="benefit-meta">
-        <span><strong>${Number(benefit.pointsCost || 0)}</strong> pontos</span>
-        <span><strong>${Number(benefit.quantity || 0)}</strong> unidades</span>
+        <div class="benefit-meta-item">
+          <span>Pontos necessários</span>
+          <strong>${Number(benefit.pointsCost || 0)} pts</strong>
+        </div>
+        <div class="benefit-meta-item">
+          <span>Quantidade</span>
+          <strong>${Number(benefit.quantity || 0)} unidades</strong>
+        </div>
       </div>
 
       <div class="benefit-actions">
-        <button class="btn-secondary" data-action="edit">Editar</button>
-        <button class="btn-danger" data-action="delete">Excluir</button>
+        <button class="action-btn-item" data-action="edit" type="button">Editar</button>
+        <button class="action-btn-item delete" data-action="delete" type="button">Excluir</button>
       </div>
     `;
 
     card.querySelector('[data-action="edit"]').addEventListener('click', () => {
-      openFormModal(benefit);
+      const selectedBenefit = benefits.find((item) => item._id === benefit._id) || benefit;
+      openFormModal(selectedBenefit);
     });
 
     card.querySelector('[data-action="delete"]').addEventListener('click', () => {
@@ -157,9 +211,19 @@ async function deleteBenefit(id, name) {
 
   if (!confirmed) return;
 
+  const token = getToken();
+
+  if (!token) {
+    alert('Você precisa estar autenticado para realizar esta ação.');
+    return;
+  }
+
   try {
     const response = await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     const data = await response.json();
