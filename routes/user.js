@@ -18,39 +18,62 @@ const authMiddleware = (req, res, next) => {
 };
 
 // GET /api/user/wallet
-router.get('/wallet', authMiddleware, async (req, res) => {
+router.get("/wallet", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    res.json({
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    const wallet = {
+      balance: Number(user?.wallet?.balance || 0),
+      totalEarned: Number(user?.wallet?.totalEarned || 0),
+      totalSpent: Number(user?.wallet?.totalSpent || 0),
+      totalRecycledPoints: Number(user?.wallet?.totalRecycledPoints || 0)
+    };
+
+    return res.json({
       success: true,
-      wallet: user.wallet,
+      wallet,
       formatted: {
-        balance: user.wallet.balance.toFixed(2),
-        totalEarned: user.wallet.totalEarned.toFixed(2),
-        totalSpent: user.wallet.totalSpent.toFixed(2)
+        balance: wallet.balance.toFixed(2),
+        totalEarned: wallet.totalEarned.toFixed(2),
+        totalSpent: wallet.totalSpent.toFixed(2),
+        totalRecycledPoints: wallet.totalRecycledPoints.toFixed(2)
       }
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Erro ao carregar wallet:", error);
+    return res.status(500).json({ error: error.message });
   }
 });
 
 // GET /api/user/transactions
-router.get('/transactions', authMiddleware, async (req, res) => {
+router.get("/transactions", authMiddleware, async (req, res) => {
   try {
     const transactions = await Transaction.find({ userId: req.user._id })
-      .populate('tradeId', 'status coinsSurplus')
+      .populate("tradeId", "status coinsSurplus")
       .sort({ createdAt: -1 })
       .limit(20);
 
     const summary = {
-      totalEarned: transactions.filter(t => t.type === 'earn').reduce((sum, t) => sum + t.amount, 0),
-      totalSpent: transactions.filter(t => t.type === 'spend').reduce((sum, t) => sum + t.amount, 0)
+      totalEarned: transactions
+        .filter((t) => t.type === "earn")
+        .reduce((sum, t) => sum + Number(t.amount || 0), 0),
+      totalSpent: transactions
+        .filter((t) => t.type === "spend")
+        .reduce((sum, t) => sum + Number(t.amount || 0), 0)
     };
 
-    res.json({ success: true, transactions, summary });
+    return res.json({
+      success: true,
+      transactions,
+      summary
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Erro ao carregar transactions:", error);
+    return res.status(500).json({ error: error.message });
   }
 });
 

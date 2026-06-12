@@ -4,15 +4,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("login-form");
 
   if (!form) {
-    console.error("Formulário não encontrado!");
+    console.error("Formulário não encontrado.");
     return;
   }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value;
 
     if (!email || !password) {
       alert("Preencha email e senha.");
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (!data.token || !data.user) {
+      if (!data?.token || !data?.user) {
         alert("Resposta de login inválida.");
         return;
       }

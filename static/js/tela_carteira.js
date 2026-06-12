@@ -14,16 +14,24 @@ function isTokenExpired(token) {
   if (!token) return true;
 
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp * 1000 < Date.now();
+    const payloadBase64 = token.split(".")[1];
+    if (!payloadBase64) return true;
+
+    const payload = JSON.parse(atob(payloadBase64));
+    return !payload.exp || payload.exp * 1000 < Date.now();
   } catch (error) {
+    console.error("Erro ao validar token:", error);
     return true;
   }
 }
 
-function logoutAndRedirect(message = "Sua sessão expirou. Faça login novamente.") {
+function clearSession() {
   localStorage.removeItem("token");
   localStorage.removeItem("bemaquiUser");
+}
+
+function logoutAndRedirect(message = "Sua sessão expirou. Faça login novamente.") {
+  clearSession();
   alert(message);
   window.location.href = "tela_login.html";
 }
@@ -32,7 +40,7 @@ function getAuthHeaders() {
   const token = localStorage.getItem("token");
 
   if (!token || isTokenExpired(token)) {
-    logoutAndRedirect();
+    logoutAndRedirect("Sessão inválida ou expirada. Faça login novamente.");
     throw new Error("Token inválido ou expirado.");
   }
 
@@ -40,6 +48,14 @@ function getAuthHeaders() {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json"
   };
+}
+
+async function parseJsonSafe(response) {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
 }
 
 async function loadWalletData() {
@@ -58,8 +74,8 @@ async function loadWalletData() {
       return;
     }
 
-    const walletData = await walletResponse.json();
-    const transactionsData = await transactionsResponse.json();
+    const walletData = await parseJsonSafe(walletResponse);
+    const transactionsData = await parseJsonSafe(transactionsResponse);
 
     if (!walletResponse.ok) {
       console.error("Erro wallet:", walletData);
@@ -73,6 +89,7 @@ async function loadWalletData() {
 
     const wallet = {
       balance: Number(walletData.wallet?.balance || 0),
+      totalEarned: Number(walletData.wallet?.totalEarned || 0),
       totalSpent: Number(walletData.wallet?.totalSpent || 0),
       totalRecycledPoints: Number(walletData.wallet?.totalRecycledPoints || 0)
     };
@@ -84,7 +101,6 @@ async function loadWalletData() {
     renderWallet(wallet, allTransactions);
     renderTransactions(allTransactions);
     updateLocalUserWallet(wallet.balance);
-
   } catch (error) {
     console.error("Erro geral carteira:", error);
     showErrorState(error.message || "Não foi possível carregar os dados da carteira.");
@@ -117,6 +133,8 @@ function renderWallet(wallet, transactions) {
 function renderTransactions(transactions) {
   const container = document.getElementById("transactionsList");
 
+  if (!container) return;
+
   if (!Array.isArray(transactions) || transactions.length === 0) {
     container.innerHTML = `
       <div class="empty-message">
@@ -130,8 +148,8 @@ function renderTransactions(transactions) {
     const amount = Number(transaction.amount || 0);
     const type = transaction.type || "Movimentação";
     const description = transaction.description || "Sem descrição";
-    const date = transaction.date
-      ? new Date(transaction.date).toLocaleDateString("pt-BR")
+    const date = transaction.createdAt || transaction.date
+      ? new Date(transaction.createdAt || transaction.date).toLocaleDateString("pt-BR")
       : "Data indisponível";
 
     return `
@@ -156,8 +174,8 @@ function filterTransactions() {
   const term = document.getElementById("searchTransaction")?.value.trim().toLowerCase() || "";
 
   const filtered = allTransactions.filter((transaction) => {
-    const type = (transaction.type || "").toLowerCase();
-    const description = (transaction.description || "").toLowerCase();
+    const type = String(transaction.type || "").toLowerCase();
+    const description = String(transaction.description || "").toLowerCase();
     return type.includes(term) || description.includes(term);
   });
 
@@ -190,7 +208,7 @@ function updateLocalUserWallet(balance) {
 
     const user = JSON.parse(storedUser);
     user.wallet = user.wallet || {};
-    user.wallet.balance = balance;
+    user.wallet.balance = Number(balance || 0);
 
     localStorage.setItem("bemaquiUser", JSON.stringify(user));
   } catch (error) {

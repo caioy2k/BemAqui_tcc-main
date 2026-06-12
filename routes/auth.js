@@ -110,14 +110,21 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        success: false,
+        error: "JWT_SECRET não configurado no servidor."
+      });
+    }
+
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: 'Informe e-mail e senha.'
+        error: "Informe e-mail e senha."
       });
     }
 
@@ -127,19 +134,19 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: 'E-mail ou senha inválidos.'
+        error: "E-mail ou senha inválidos."
       });
     }
 
     const isPasswordValid =
-      typeof user.comparePassword === 'function'
+      typeof user.comparePassword === "function"
         ? await user.comparePassword(password)
         : await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        error: 'E-mail ou senha inválidos.'
+        error: "E-mail ou senha inválidos."
       });
     }
 
@@ -152,26 +159,27 @@ router.post('/login', async (req, res) => {
         isAdmin: user.isAdmin,
         isEmployee: user.isEmployee
       },
-      process.env.JWT_SECRET || 'sua_chave_secreta_aqui',
-      { expiresIn: '7d' }
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
     const userObject = user.toObject();
     delete userObject.password;
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: 'Login realizado com sucesso.',
+      message: "Login realizado com sucesso.",
       token,
       user: userObject
     });
   } catch (err) {
-    console.error('Erro no login:', err);
-    res.status(500).json({
+    console.error("Erro no login:", err);
+    return res.status(500).json({
       success: false,
-      error: 'Erro no servidor ao fazer login.'
+      error: "Erro no servidor ao fazer login."
     });
   }
 });
+
 
 module.exports = router;
