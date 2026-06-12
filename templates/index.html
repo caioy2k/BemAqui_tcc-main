@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
 </head>
 <body>
 
@@ -34,12 +33,10 @@
                     <li><a href="#materiais">Materiais</a></li>
                     <li><a href="#produtos">Produtos</a></li>
                     <li><a href="#impacto">Impacto</a></li>
-                    
                     <li><a href="#contato">Contato</a></li>
                 </ul>
                 <div class="nav-buttons">
                     <a href="tela_login.html" class="btn-login"><i class="fas fa-user"></i> Entrar</a>
-                    
                     <a href="tela_cadastro.html" class="btn-signup"><i class="fas fa-user-plus"></i> Cadastrar</a>
                 </div>
             </div>
@@ -231,88 +228,6 @@
         </div>
     </section>
 
-    <!-- ==================== SEÇÃO PRODUTOS PARA TROCA ==================== -->
-    <section id="produtos" class="products section-padding">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Produtos Disponíveis</span>
-                <h2>Troque suas <span class="gradient-text">moedas</span> por</h2>
-                <p>Produtos essenciais para sua família</p>
-            </div>
-            <div class="products-slider swiper">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-egg"></i>
-                        </div>
-                        <h3>Arroz</h3>
-                        <p>5kg</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 15 Moedas</div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-seedling"></i>
-                        </div>
-                        <h3>Feijão</h3>
-                        <p>1kg</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 10 moedas</div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                        <h3>Macarrão</h3>
-                        <p>500g</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 7 moedas </div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-tint"></i>
-                        </div>
-                        <h3>Leite</h3>
-                        <p>1L</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 40 moedas</div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-tshirt"></i>
-                        </div>
-                        <h3>Roupas</h3>
-                        <p>Kit básico</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 100 moedas</div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-shoe-prints"></i>
-                        </div>
-                        <h3>Calçados</h3>
-                        <p>Par</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 150 moedas</div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-soap"></i>
-                        </div>
-                        <h3>Sabonete</h3>
-                        <p>Kit 4 unidades</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 20 moedas</div>
-                    </div>
-                    <div class="swiper-slide product-card">
-                        <div class="product-image">
-                            <i class="fas fa-tooth"></i>
-                        </div>
-                        <h3>Pasta de dente</h3>
-                        <p>90g</p>
-                        <div class="product-price"><i class="fas fa-coins"></i> 15 moedas</div>
-                    </div>
-                </div>
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-            </div>
-        </div>
-    </section>
-
     <!-- ==================== SEÇÃO IMPACTO COM GRÁFICOS ==================== -->
     <section id="impacto" class="impact section-padding">
         <div class="container">
@@ -343,16 +258,15 @@
                     <div class="impact-label">Produtos Entregues</div>
                 </div>
             </div>
-            
-            <!-- GRÁFICOS DE IMPACTO -->
+
             <div class="impact-charts">
                 <div class="chart-container">
-                    <h3>Reciclagem por Material (kg)</h3>
-                    <canvas id="recyclingChart" width="400" height="300"></canvas>
+                    <h3>📊 Reciclagem por Material (kg)</h3>
+                    <canvas id="recyclingChart"></canvas>
                 </div>
                 <div class="chart-container">
-                    <h3>Evolução Mensal de Famílias Ajudadas</h3>
-                    <canvas id="familiesChart" width="400" height="300"></canvas>
+                    <h3>📊 Evolução Mensal de Famílias Ajudadas</h3>
+                    <canvas id="familiesChart"></canvas>
                 </div>
             </div>
         </div>
@@ -426,8 +340,6 @@
         </div>
     </section>
 
-    <!-- ==================== SEÇÃO JOGOS COM IMAGENS ==================== -->
-   
     <!-- ==================== SEÇÃO PARCEIROS ==================== -->
     <section class="partners section-padding">
         <div class="container">
@@ -525,10 +437,244 @@
         </div>
     </footer>
 
-    
-
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="../static/js/tela_inicial.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            initHamburger();
+            initImpactCounters();
+            initTestimonialsSlider();
+            initCharts();
+            initContactForm();
+        });
+
+        function initHamburger() {
+            const hamburger = document.querySelector(".hamburger");
+            const navMenu = document.querySelector(".nav-menu");
+
+            if (!hamburger || !navMenu) return;
+
+            hamburger.addEventListener("click", () => {
+                hamburger.classList.toggle("active");
+                navMenu.classList.toggle("active");
+            });
+
+            document.querySelectorAll(".nav-links a").forEach(link => {
+                link.addEventListener("click", () => {
+                    hamburger.classList.remove("active");
+                    navMenu.classList.remove("active");
+                });
+            });
+        }
+
+        function initImpactCounters() {
+            const counters = document.querySelectorAll(".impact-number");
+
+            const animateCounter = (counter) => {
+                const target = Number(counter.getAttribute("data-target")) || 0;
+                const duration = 1800;
+                const startTime = performance.now();
+
+                function update(currentTime) {
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.floor(target * eased);
+
+                    counter.textContent = current.toLocaleString("pt-BR");
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        counter.textContent = target.toLocaleString("pt-BR");
+                    }
+                }
+
+                requestAnimationFrame(update);
+            };
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        function initTestimonialsSlider() {
+            const slider = document.querySelector(".testimonials-slider");
+            if (!slider || typeof Swiper === "undefined") return;
+
+            new Swiper(".testimonials-slider", {
+                loop: true,
+                spaceBetween: 24,
+                grabCursor: true,
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true
+                },
+                breakpoints: {
+                    0: {
+                        slidesPerView: 1
+                    },
+                    768: {
+                        slidesPerView: 2
+                    },
+                    1024: {
+                        slidesPerView: 3
+                    }
+                }
+            });
+        }
+
+        function initCharts() {
+            if (typeof Chart === "undefined") {
+                console.error("Chart.js não foi carregado.");
+                return;
+            }
+
+            const recyclingCanvas = document.getElementById("recyclingChart");
+            const familiesCanvas = document.getElementById("familiesChart");
+
+            if (recyclingCanvas) {
+                new Chart(recyclingCanvas, {
+                    type: "bar",
+                    data: {
+                        labels: ["Plástico", "Papel", "Vidro", "Metal", "Óleo", "Eletrônicos"],
+                        datasets: [{
+                            label: "Kg arrecadados",
+                            data: [420, 360, 280, 240, 150, 110],
+                            backgroundColor: [
+                                "rgba(34, 197, 94, 0.85)",
+                                "rgba(16, 185, 129, 0.85)",
+                                "rgba(132, 204, 22, 0.85)",
+                                "rgba(74, 222, 128, 0.85)",
+                                "rgba(250, 204, 21, 0.85)",
+                                "rgba(45, 212, 191, 0.85)"
+                            ],
+                            borderColor: [
+                                "#22c55e",
+                                "#10b981",
+                                "#84cc16",
+                                "#4ade80",
+                                "#facc15",
+                                "#2dd4bf"
+                            ],
+                            borderWidth: 1.5,
+                            borderRadius: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: "#f3f4f6",
+                                    font: {
+                                        family: "Inter",
+                                        size: 13
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: "#e5e7eb"
+                                },
+                                grid: {
+                                    color: "rgba(255,255,255,0.08)"
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: "#e5e7eb"
+                                },
+                                grid: {
+                                    color: "rgba(255,255,255,0.08)"
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (familiesCanvas) {
+                new Chart(familiesCanvas, {
+                    type: "line",
+                    data: {
+                        labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"],
+                        datasets: [{
+                            label: "Famílias ajudadas",
+                            data: [18, 26, 34, 48, 63, 78, 96, 120],
+                            fill: true,
+                            tension: 0.35,
+                            borderColor: "#86efac",
+                            backgroundColor: "rgba(34, 197, 94, 0.18)",
+                            pointBackgroundColor: "#bbf7d0",
+                            pointBorderColor: "#16a34a",
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: "#f3f4f6",
+                                    font: {
+                                        family: "Inter",
+                                        size: 13
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: "#e5e7eb"
+                                },
+                                grid: {
+                                    color: "rgba(255,255,255,0.08)"
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: "#e5e7eb"
+                                },
+                                grid: {
+                                    color: "rgba(255,255,255,0.08)"
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function initContactForm() {
+            const form = document.getElementById("contactForm");
+            if (!form) return;
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                alert("Mensagem enviada com sucesso!");
+                form.reset();
+            });
+        }
+    </script>
 </body>
 </html>
