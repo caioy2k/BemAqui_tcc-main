@@ -1,11 +1,9 @@
-const API_URL = "https://bemaqui-tcc-main.onrender.com";
-
 let allTransactions = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("refreshBtn").addEventListener("click", loadWalletData);
-  document.getElementById("novaTrocaBtn").addEventListener("click", novaTroca);
-  document.getElementById("searchTransaction").addEventListener("input", filterTransactions);
+  document.getElementById("refreshBtn")?.addEventListener("click", loadWalletData);
+  document.getElementById("novaTrocaBtn")?.addEventListener("click", novaTroca);
+  document.getElementById("searchTransaction")?.addEventListener("input", filterTransactions);
 
   loadWalletData();
 });
@@ -16,38 +14,48 @@ async function loadWalletData() {
 
     if (!token) {
       alert("Faça login primeiro.");
-      window.location.href = "tela_login.html";
+      window.location.href = "/tela_login.html";
       return;
     }
 
     setLoadingState();
 
     const [walletResponse, transactionsResponse] = await Promise.all([
-      fetch(`${API_URL}/api/user/wallet`, {
+      fetch("/api/user/wallet", {
+        method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         }
       }),
-      fetch(`${API_URL}/api/user/transactions`, {
+      fetch("/api/user/transactions", {
+        method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         }
       })
     ]);
+
+    if (walletResponse.status === 401 || transactionsResponse.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("bemaquiUser");
+      alert("Sua sessão expirou. Faça login novamente.");
+      window.location.href = "/tela_login.html";
+      return;
+    }
 
     const walletData = await walletResponse.json();
     const transactionsData = await transactionsResponse.json();
 
     if (!walletResponse.ok) {
       console.error("Erro wallet:", walletData);
-      throw new Error(walletData.error || "Erro ao carregar carteira.");
+      throw new Error(walletData.error || walletData.message || "Erro ao carregar carteira.");
     }
 
     if (!transactionsResponse.ok) {
       console.error("Erro transações:", transactionsData);
-      throw new Error(transactionsData.error || "Erro ao carregar transações.");
+      throw new Error(transactionsData.error || transactionsData.message || "Erro ao carregar transações.");
     }
 
     const wallet = {
@@ -62,12 +70,11 @@ async function loadWalletData() {
 
     renderWallet(wallet, allTransactions);
     renderTransactions(allTransactions);
-
     updateLocalUserWallet(wallet.balance);
 
   } catch (error) {
     console.error("Erro geral carteira:", error);
-    showErrorState("Não foi possível carregar os dados da carteira.");
+    showErrorState(error.message || "Não foi possível carregar os dados da carteira.");
   }
 }
 
@@ -192,5 +199,5 @@ function escapeHtml(text) {
 }
 
 function novaTroca() {
-  window.location.href = "tela_beneficiario_trocar.html";
+  window.location.href = "/tela_beneficiario_trocar.html";
 }
