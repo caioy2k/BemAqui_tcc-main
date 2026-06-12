@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minha Parceria - BemAqui</title>
+  <link rel="stylesheet" href="../static/css/base.css" />
+  <link rel="stylesheet" href="../static/css/tela_parceiros_parceiria.css" />
+</head>
+<body>
+  <header class="dashboard-header">
+    <div class="container dashboard-header-inner">
+      <a href="./index.html" class="brand">
+        <span class="brand-badge">B</span>
+        <div class="brand-text">
+          <strong>BemAqui</strong>
+          <span>Área da empresa parceira</span>
+        </div>
+      </a>
+
+      <nav class="dashboard-nav" aria-label="Menu principal">
+        <a href="./tela_parceiros_dashboard.html">Dashboard</a>
+        <a href="./tela_parceiros_parceiria.html" class="active">Minha parceria</a>
+        <a href="./tela_parceiros_contato.html">Contato</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn-secondary btn-small" id="btn-logout-company" href=./index.html>Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="partnership-shell container">
+    <section class="partnership-hero card">
+      <div class="hero-copy">
+        <span class="eyebrow">Perfil institucional</span>
+        <h1>Minha parceria</h1>
+        <p>
+          Aqui <span data-company-name>Empresa Parceira</span> pode visualizar
+          os principais dados institucionais da relação com o BemAqui, incluindo
+          status da parceria, dados cadastrais, benefícios e próximos passos.
+        </p>
+
+        <div class="hero-badges">
+          <span class="status-badge">Parceria ativa</span>
+          <span class="soft-badge">Ambiente semi funcional</span>
+        </div>
+      </div>
+
+      <div class="hero-side card-inner">
+        <span class="mini-label">Empresa vinculada</span>
+        <strong data-company-name>Empresa Parceira</strong>
+        <p>Conta institucional identificada no ecossistema do BemAqui.</p>
+
+        <div class="mini-meta">
+          <div>
+            <span>Desde</span>
+            <strong>Março de 2026</strong>
+          </div>
+          <div>
+            <span>Nível</span>
+            <strong>Parceira local</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card card">
+        <span class="summary-label">Status</span>
+        <strong class="summary-value">Ativa</strong>
+        <p>Parceria apta para participação institucional e novos contatos.</p>
+      </article>
+
+      <article class="summary-card card">
+        <span class="summary-label">Segmento</span>
+        <strong class="summary-value">Responsabilidade socioambiental</strong>
+        <p>Área ilustrativa para representar o perfil de atuação da empresa.</p>
+      </article>
+
+      <article class="summary-card card">
+        <span class="summary-label">Contato principal</span>
+        <strong class="summary-value" data-company-contact>contato@empresa.com</strong>
+        <p>Canal institucional definido para comunicação com a equipe BemAqui.</p>
+      </article>
+    </section>
+
+    <section class="partnership-content">
+      <div class="content-main">
+        <article class="card section-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Dados da empresa</span>
+              <h2>Informações institucionais</h2>
+            </div>
+            <span class="soft-badge">Dados demonstrativos</span>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <span>Razão social</span>
+              <strong data-company-name>Empresa Parceira</strong>
+            </div>
+
+            <div class="info-item">
+              <span>E-mail corporativo</span>
+              <strong data-company-contact>contato@empresa.com</strong>
+            </div>
+
+            <div class="info-item">
+              <span>Telefone</span>
+              <strong data-company-phone>(11) 99999-9999</strong>
+            </div>
+
+            <div class="info-item">
+              <span>Representante</span>
+              <strong data-company-representative>Responsável institucional</strong>
+            </div>
+
+            <div class="info-item">
+              <span>Cidade de atuação</span>
+              <strong>Atuação regional</strong>
+            </div>
+
+            <div class="info-item">
+              <span>Categoria</span>
+              <strong>Parceira estratégica</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card section-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Benefícios</span>
+              <h2>Vantagens da parceria</h2>
+            </div>
+          </div>
+
+          <div class="benefits-list">
+            <div class="benefit-item">
+              <h3>Maior visibilidade institucional</h3>
+              <p>
+                A empresa parceira pode ser destacada em iniciativas, campanhas
+                e ações do ecossistema BemAqui.
+              </p>
+            </div>
+
+            <div class="benefit-item">
+              <h3>Canal direto com a equipe</h3>
+              <p>
+                O relacionamento com o projeto fica mais próximo por meio de uma
+                área específica de contato e acompanhamento.
+              </p>
+            </div>
+
+            <div class="benefit-item">
+              <h3>Participação em ações futuras</h3>
+              <p>
+                A parceria institucional facilita o envolvimento em novas ações
+                comunitárias e ambientais desenvolvidas pela plataforma.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="card section-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Próximos passos</span>
+              <h2>Planejamento sugerido</h2>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <strong>Revisão cadastral</strong>
+                <p>Confirmar os dados institucionais da empresa no portal de parceiros.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <strong>Contato com a equipe BemAqui</strong>
+                <p>Utilizar a área de contato para alinhar novas possibilidades de colaboração.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <strong>Participação em campanha futura</strong>
+                <p>Demonstrar interesse em apoiar novas ações socioambientais da plataforma.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="content-sidebar">
+        <article class="card sidebar-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Resumo</span>
+              <h2>Visão rápida</h2>
+            </div>
+          </div>
+
+          <ul class="summary-list">
+            <li>
+              <span>Empresa</span>
+              <strong data-company-name>Empresa Parceira</strong>
+            </li>
+            <li>
+              <span>Status</span>
+              <strong class="highlight-text">Ativa</strong>
+            </li>
+            <li>
+              <span>Tipo</span>
+              <strong>Institucional</strong>
+            </li>
+            <li>
+              <span>Canal principal</span>
+              <strong data-company-contact>contato@empresa.com</strong>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card sidebar-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Acesso rápido</span>
+              <h2>Navegação</h2>
+            </div>
+          </div>
+
+          <div class="quick-links">
+            <a href="./tela_parceiros_dashboard.html" class="quick-link">
+              <strong>Voltar ao dashboard</strong>
+              <span>Visualizar indicadores e atividade recente</span>
+            </a>
+
+            <a href="./tela_parceiros_contato.html" class="quick-link">
+              <strong>Entrar em contato</strong>
+              <span>Falar com a equipe responsável</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="card sidebar-card spotlight-card">
+          <span class="eyebrow">Empresa parceira</span>
+          <h2 data-company-name>Empresa Parceira</h2>
+          <p>
+            Esta tela representa como a empresa pode acompanhar sua presença
+            institucional dentro da plataforma BemAqui.
+          </p>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../static/js/tela_parceiros_parceiria.js"></script>
+</body>
+</html>

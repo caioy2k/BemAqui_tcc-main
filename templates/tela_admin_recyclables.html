@@ -1,77 +1,129 @@
-tela admin recyclacles
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerenciar Recicláveis - BemAqui</title>
-  <link rel="stylesheet" href="../static/css/base.css" />
   <link rel="stylesheet" href="../static/css/tela_admin_recyclables.css" />
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div class="ba-logo">BemAqui - Admin</div>
-      <nav class="ba-nav">
-        <a href="tela_admin_menu.html">Dashboard</a>
-        <a href="tela_admin_recyclables.html" class="active">Recicláveis</a>
-        <a href="../tela_inicial.html">Sair</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="ba-main">
-    <section class="admin-section">
-      <div class="section-header">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">B</div>
         <div>
-          <h1>Gerenciar Recicláveis</h1>
-          <p>Adicione e edite os materiais recicláveis do catálogo.</p>
+          <h1>BemAqui</h1>
+          <p>Painel Admin</p>
         </div>
-        <button class="primary-btn" onclick="openFormModal()">
-          + Cadastrar reciclável
-        </button>
       </div>
 
-      <div id="recyclables-container" class="items-list">
-        <!-- carregado via JS -->
-      </div>
+      <nav class="sidebar-nav">
+        <a href="tela_admin_menu.html" class="nav-item">Dashboard</a>
+        <a href="tela_admin_recyclables.html" class="nav-item active">Recicláveis</a>
+        <a href="tela_admin_benefits.html" class="nav-item">Benefícios</a>
+        <a href="tela_admin_trades.html" class="nav-item">Trades</a>
+        <a href="../tela_inicial.html" class="nav-item">Sair</a>
+      </nav>
 
-      <div id="empty-state" class="empty-state hidden">
-        <p>Nenhum reciclável cadastrado ainda.</p>
+      <div class="sidebar-box">
+        <span class="sidebar-label">Catálogo administrativo</span>
+        <h3>Gestão de materiais recicláveis</h3>
+        <p>
+          Cadastre novos materiais, atualize descrições e mantenha o catálogo
+          da plataforma organizado para as operações do BemAqui.
+        </p>
       </div>
-    </section>
-  </main>
+    </aside>
 
-  <!-- Modal de formulário -->
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <span class="topbar-badge">Catálogo interno</span>
+          <h2>Gerenciar recicláveis</h2>
+          <p>Adicione, edite e acompanhe os materiais recicláveis cadastrados no sistema.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="action-btn primary" onclick="openFormModal()">+ Cadastrar reciclável</button>
+        </div>
+      </header>
+
+      <section class="hero-panel">
+        <div class="hero-content">
+          <span class="hero-badge">Organização do catálogo</span>
+          <h3>Centralize o cadastro dos materiais recicláveis</h3>
+          <p>
+            Mantenha a base de materiais padronizada, com nome, tipo, descrição
+            e pontuação por unidade para uso nas demais áreas da plataforma.
+          </p>
+        </div>
+
+        <div class="hero-side-card">
+          <span class="mini-kicker">Gestão rápida</span>
+          <strong>Cadastro e edição</strong>
+          <p>Use esta tela para manter o catálogo sempre atualizado e pronto para operação.</p>
+        </div>
+      </section>
+
+      <section class="content-grid single-column">
+        <article class="panel list-panel">
+          <div class="panel-header">
+            <div>
+              <span class="panel-tag">Lista principal</span>
+              <h3>Materiais cadastrados</h3>
+              <p>Visualize os recicláveis disponíveis e gerencie seus registros.</p>
+            </div>
+            <button class="ghost-btn" onclick="openFormModal()">Novo item</button>
+          </div>
+
+          <div id="recyclables-container" class="items-list">
+            <!-- carregado via JS -->
+          </div>
+
+          <div id="empty-state" class="empty-state hidden">
+            <div class="empty-illustration">♻️</div>
+            <h4>Nenhum reciclável cadastrado ainda</h4>
+            <p>Cadastre o primeiro material para iniciar a organização do catálogo.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
   <div id="form-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Cadastrar Reciclável</h2>
-        <button class="close-btn" onclick="closeFormModal()">✕</button>
-      </div>
-      <form id="recyclable-form" class="admin-form">
-        <div class="form-group">
-          <label for="name">Nome</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Ex: Garrafas plásticas"
-            required
-          />
+        <div>
+          <span class="panel-tag">Formulário</span>
+          <h2>Cadastrar reciclável</h2>
         </div>
+        <button class="close-btn" type="button" onclick="closeFormModal()">✕</button>
+      </div>
 
-        <div class="form-group">
-          <label for="type">Tipo</label>
-          <select id="type" name="type" required>
-            <option value="">Selecione...</option>
-            <option value="plastico">Plástico</option>
-            <option value="papel">Papel</option>
-            <option value="vidro">Vidro</option>
-            <option value="metal">Metal</option>
-            <option value="organico">Orgânico</option>
-          </select>
+      <form id="recyclable-form" class="admin-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Nome</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Ex: Garrafas plásticas"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="type">Tipo</label>
+            <select id="type" name="type" required>
+              <option value="">Selecione...</option>
+              <option value="plastico">Plástico</option>
+              <option value="papel">Papel</option>
+              <option value="vidro">Vidro</option>
+              <option value="metal">Metal</option>
+              <option value="organico">Orgânico</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-group">
@@ -80,7 +132,7 @@ tela admin recyclacles
             id="description"
             name="description"
             placeholder="Descreva o material..."
-            rows="3"
+            rows="4"
             required
           ></textarea>
         </div>
@@ -98,18 +150,12 @@ tela admin recyclacles
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-cancel" onclick="closeFormModal()">
-            Cancelar
-          </button>
-          <button type="submit" class="primary-btn">Cadastrar</button>
+          <button type="button" class="btn-cancel" onclick="closeFormModal()">Cancelar</button>
+          <button type="submit" class="action-btn primary">Cadastrar</button>
         </div>
       </form>
     </div>
   </div>
-
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
-  </footer>
 
   <script src="../static/js/tela_admin_recyclables.js"></script>
 </body>

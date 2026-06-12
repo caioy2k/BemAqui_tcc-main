@@ -1,122 +1,227 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Minhas Submissões - BemAqui</title>
-  <link rel="stylesheet" href="../base.css" />
+  <title>BemAqui - Minhas Submissões</title>
   <link rel="stylesheet" href="../static/css/tela_doador_submissoes.css" />
 </head>
 <body>
-  <main class="dashboard-section">
-    <section class="page-header">
-      <div>
-        <span class="page-badge">Área do doador</span>
-        <h1>Minhas submissões</h1>
-        <p>Acompanhe o status dos itens enviados para análise pela equipe do BemAqui.</p>
-      </div>
-      <button class="btn-new-submission" onclick="window.location.href='tela_doacao.html'">
-        Nova submissão
-      </button>
-    </section>
-
-    <section class="summary-grid">
-      <article class="summary-card">
-        <span class="summary-label">Total enviado</span>
-        <strong id="totalSubmissions">0</strong>
-        <small>Submissões registradas</small>
-      </article>
-
-      <article class="summary-card">
-        <span class="summary-label">Em análise</span>
-        <strong id="pendingSubmissions">0</strong>
-        <small>Aguardando validação</small>
-      </article>
-
-      <article class="summary-card">
-        <span class="summary-label">Aprovadas</span>
-        <strong id="approvedSubmissions">0</strong>
-        <small>Itens aceitos</small>
-      </article>
-
-      <article class="summary-card">
-        <span class="summary-label">Última atualização</span>
-        <strong id="lastUpdate">-</strong>
-        <small>Movimentação recente</small>
-      </article>
-    </section>
-
-    <section class="filter-bar">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Buscar por item, categoria ou status"
-      />
-
-      <select id="statusFilter">
-        <option value="all">Todos os status</option>
-        <option value="em análise">Em análise</option>
-        <option value="aprovada">Aprovada</option>
-        <option value="recusada">Recusada</option>
-      </select>
-    </section>
-
-    <section class="submissions-section">
-      <div class="section-header">
-        <h2>Histórico de submissões</h2>
-        <span id="resultsInfo">0 resultados</span>
-      </div>
-
-      <div id="submissionsList" class="submissions-list"></div>
-    </section>
-  </main>
-
-  <div id="detailsModal" class="modal hidden">
-    <div class="modal-overlay" onclick="closeModal()"></div>
-
-    <div class="modal-card">
-      <div class="modal-header">
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">B</div>
         <div>
-          <span class="modal-badge">Detalhes da submissão</span>
-          <h3 id="modalTitle">Título</h3>
-        </div>
-        <button class="modal-close" onclick="closeModal()">×</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="modal-grid">
-          <div class="modal-item">
-            <span>Status</span>
-            <strong id="modalStatus">-</strong>
-          </div>
-
-          <div class="modal-item">
-            <span>Categoria</span>
-            <strong id="modalCategory">-</strong>
-          </div>
-
-          <div class="modal-item">
-            <span>Quantidade</span>
-            <strong id="modalQuantity">-</strong>
-          </div>
-
-          <div class="modal-item">
-            <span>Data de envio</span>
-            <strong id="modalDate">-</strong>
-          </div>
-        </div>
-
-        <div class="modal-description">
-          <span>Descrição</span>
-          <p id="modalDescription"></p>
-        </div>
-
-        <div class="modal-description">
-          <span>Observação da equipe</span>
-          <p id="modalNote"></p>
+          <h2>BemAqui</h2>
+          <p>Painel do doador</p>
         </div>
       </div>
-    </div>
+
+      <nav class="menu">
+        <a href="tela_doador.html" class="menu-item">Início</a>
+        <a href="tela_doacao.html" class="menu-item">Nova doação</a>
+        <a href="tela_doador_submissoes.html" class="menu-item active">Minhas submissões</a>
+        <a href="tela_doador_perfil.html" class="menu-item">Perfil</a>
+        <a href="index.html" class="menu-item">Sair</a>
+      </nav>
+
+      <div class="sidebar-box">
+        <span class="mini-label">Acompanhamento</span>
+        <h3>Veja o andamento das suas doações</h3>
+        <p>
+          Nesta área você acompanha os itens enviados para análise, os aprovados
+          para estoque e aqueles direcionados para repasse social.
+        </p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <span class="tag">Histórico do doador</span>
+          <h1>Minhas submissões</h1>
+          <p class="subtitle">
+            Acompanhe o status dos itens enviados, visualize informações resumidas
+            de cada submissão e consulte as movimentações mais recentes.
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <a href="tela_doador.html" class="btn btn-secondary">Voltar ao início</a>
+          <a href="tela_doacao.html" class="btn btn-primary">+ Nova doação</a>
+        </div>
+      </header>
+
+      <section class="hero-card">
+        <div class="hero-text">
+          <span class="hero-badge">Painel de acompanhamento</span>
+          <h2>Consulte o andamento das suas submissões em um só lugar.</h2>
+          <p>
+            Esta visão foi pensada para facilitar a leitura do histórico do doador,
+            permitindo acompanhar itens em análise, aprovados, repassados ou não aceitos.
+          </p>
+        </div>
+
+        <div class="hero-status">
+          <div class="status-card">
+            <span>Status predominante</span>
+            <strong id="overallSubmissionStatus">Em acompanhamento</strong>
+            <small>
+              Os itens cadastrados ficam visíveis nesta tela para consulta rápida
+              durante a validação da equipe do BemAqui.
+            </small>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-label">Total enviado</span>
+          <h3 id="submissionTotal">0</h3>
+          <p>Quantidade total de submissões registradas</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Em análise</span>
+          <h3 id="submissionPending">0</h3>
+          <p>Itens aguardando retorno da equipe</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Aprovadas</span>
+          <h3 id="submissionApproved">0</h3>
+          <p>Itens aceitos no fluxo da plataforma</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Repasse social</span>
+          <h3 id="submissionTransferred">0</h3>
+          <p>Itens destinados para ONGs parceiras</p>
+        </article>
+      </section>
+
+      <section class="toolbar-panel panel">
+        <div class="toolbar-header">
+          <div>
+            <h2>Filtrar submissões</h2>
+            <p>Use os filtros abaixo para navegar pelo histórico</p>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="todos">Todos</option>
+              <option value="em análise">Em análise</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="repassado">Repassado</option>
+              <option value="recusado">Recusado</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="typeFilter">Tipo</label>
+            <select id="typeFilter">
+              <option value="todos">Todos</option>
+              <option value="alimento">Alimento</option>
+              <option value="roupa">Roupa</option>
+              <option value="higiene">Higiene</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="filter-group search-group">
+            <label for="searchSubmission">Buscar</label>
+            <input
+              type="text"
+              id="searchSubmission"
+              placeholder="Buscar por item ou observação"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="main-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Lista de submissões</h2>
+              <p id="submissionListInfo">Itens registrados pela sua conta</p>
+            </div>
+          </div>
+
+          <div id="submissionList" class="submission-list">
+            <!-- preenchido via JS -->
+          </div>
+        </div>
+
+        <div class="side-column">
+          <div class="panel info-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Linha do processo</h2>
+                <p>Como funciona a análise do item</p>
+              </div>
+            </div>
+
+            <div class="timeline">
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div>
+                  <strong>1. Cadastro enviado</strong>
+                  <p>Você preenche as informações e envia o item para avaliação.</p>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div>
+                  <strong>2. Análise da equipe</strong>
+                  <p>Fotos, descrição, quantidade e estado do item são avaliados.</p>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div>
+                  <strong>3. Definição de destino</strong>
+                  <p>O item pode ser aprovado para estoque, repassado ou recusado.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel quick-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Legenda de status</h2>
+                <p>Interpretação rápida das submissões</p>
+              </div>
+            </div>
+
+            <div class="legend-list">
+              <div class="legend-item">
+                <span class="submission-status status-analise">Em análise</span>
+                <p>Aguardando validação da equipe.</p>
+              </div>
+              <div class="legend-item">
+                <span class="submission-status status-aprovado">Aprovado</span>
+                <p>Item aceito no fluxo principal.</p>
+              </div>
+              <div class="legend-item">
+                <span class="submission-status status-repassado">Repassado</span>
+                <p>Item destinado para ação social.</p>
+              </div>
+              <div class="legend-item">
+                <span class="submission-status status-recusado">Recusado</span>
+                <p>Item fora do escopo atual da plataforma.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="../static/js/tela_doador_submissoes.js"></script>

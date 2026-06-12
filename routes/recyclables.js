@@ -52,4 +52,43 @@ router.post('/', authMiddleware, isAdminMiddleware, async (req, res) => {
   }
 });
 
+
+// PUT /recyclables/:id (admin)
+router.put('/:id', authMiddleware, isAdminMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, type, description, pointsValue } = req.body;
+
+    if (!name || !type || !description || !pointsValue) {
+      return res.status(400).json({ error: "Preencha todos os campos obrigatórios." });
+    }
+
+    const updatedRecyclable = await Recyclable.findByIdAndUpdate(
+      id,
+      {
+        name,
+        type,
+        description,
+        pointsValue,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedRecyclable) {
+      return res.status(404).json({ error: "Reciclável não encontrado." });
+    }
+
+    res.json({
+      message: "Reciclável atualizado com sucesso.",
+      recyclable: updatedRecyclable,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro ao atualizar reciclável." });
+  }
+});
+
 module.exports = router;

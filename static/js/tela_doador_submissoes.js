@@ -1,146 +1,169 @@
-const mockSubmissions = [
-  {
-    id: 1,
-    title: "Cestas básicas para triagem",
-    category: "Alimentos",
-    quantity: "3 unidades",
-    status: "em análise",
-    description: "Envio de cestas básicas com itens não perecíveis para avaliação da equipe.",
-    date: "18/05/2026",
-    note: "Sua submissão foi recebida e está aguardando conferência dos itens."
-  },
-  {
-    id: 2,
-    title: "Kit de higiene pessoal",
-    category: "Higiene",
-    quantity: "12 kits",
-    status: "aprovada",
-    description: "Kits contendo sabonete, escova de dentes, creme dental e papel higiênico.",
-    date: "14/05/2026",
-    note: "Submissão aprovada. Os itens foram direcionados para atendimento interno."
-  },
-  {
-    id: 3,
-    title: "Roupas infantis usadas",
-    category: "Vestuário",
-    quantity: "18 peças",
-    status: "recusada",
-    description: "Lote com roupas infantis em estado variado para possível reaproveitamento.",
-    date: "09/05/2026",
-    note: "Algumas peças não atenderam aos critérios mínimos de conservação."
-  },
-  {
-    id: 4,
-    title: "Materiais escolares",
-    category: "Educação",
-    quantity: "25 itens",
-    status: "em análise",
-    description: "Cadernos, lápis, borrachas e estojos para avaliação de redistribuição.",
-    date: "06/05/2026",
-    note: "A equipe está validando a quantidade e o estado dos materiais."
-  }
-];
+document.addEventListener("DOMContentLoaded", () => {
+  const submissionList = document.getElementById("submissionList");
+  const statusFilter = document.getElementById("statusFilter");
+  const typeFilter = document.getElementById("typeFilter");
+  const searchSubmission = document.getElementById("searchSubmission");
+  const submissionListInfo = document.getElementById("submissionListInfo");
 
-const submissionsList = document.getElementById("submissionsList");
-const searchInput = document.getElementById("searchInput");
-const statusFilter = document.getElementById("statusFilter");
-const resultsInfo = document.getElementById("resultsInfo");
+  const totalEl = document.getElementById("submissionTotal");
+  const pendingEl = document.getElementById("submissionPending");
+  const approvedEl = document.getElementById("submissionApproved");
+  const transferredEl = document.getElementById("submissionTransferred");
+  const overallStatusEl = document.getElementById("overallSubmissionStatus");
 
-function renderSummary(data) {
-  const total = data.length;
-  const pending = data.filter(item => item.status === "em análise").length;
-  const approved = data.filter(item => item.status === "aprovada").length;
-  const last = data.length ? data[0].date : "-";
+  const mockSubmissions = [
+    {
+      id: 1,
+      item: "Cesta com alimentos não perecíveis",
+      type: "alimento",
+      quantity: "12 unidades",
+      status: "em análise",
+      date: "10/06/2026",
+      note: "Produtos dentro do prazo de validade e bem armazenados."
+    },
+    {
+      id: 2,
+      item: "Jaquetas e agasalhos",
+      type: "roupa",
+      quantity: "8 peças",
+      status: "aprovado",
+      date: "08/06/2026",
+      note: "Itens aprovados para entrada no fluxo da plataforma."
+    },
+    {
+      id: 3,
+      item: "Kits de higiene pessoal",
+      type: "higiene",
+      quantity: "15 kits",
+      status: "repassado",
+      date: "05/06/2026",
+      note: "Materiais direcionados para repasse a ONG parceira."
+    },
+    {
+      id: 4,
+      item: "Itens variados sem descrição completa",
+      type: "outro",
+      quantity: "4 volumes",
+      status: "recusado",
+      date: "02/06/2026",
+      note: "Necessário informar melhor o estado e a categoria dos itens."
+    }
+  ];
 
-  document.getElementById("totalSubmissions").textContent = total;
-  document.getElementById("pendingSubmissions").textContent = pending;
-  document.getElementById("approvedSubmissions").textContent = approved;
-  document.getElementById("lastUpdate").textContent = last;
-}
+  const savedSubmissions =
+    JSON.parse(localStorage.getItem("bemaquiSubmissions")) || mockSubmissions;
 
-function getStatusClass(status) {
-  if (status === "em análise") return "status-analise";
-  if (status === "aprovada") return "status-aprovada";
-  return "status-recusada";
-}
+  function getStatusClass(status) {
+    const map = {
+      "em análise": "status-analise",
+      aprovado: "status-aprovado",
+      repassado: "status-repassado",
+      recusado: "status-recusado"
+    };
 
-function renderSubmissions(data) {
-  submissionsList.innerHTML = "";
-  resultsInfo.textContent = `${data.length} resultado(s)`;
-
-  if (!data.length) {
-    submissionsList.innerHTML = `
-      <div class="empty-state">
-        <h3>Nenhuma submissão encontrada</h3>
-        <p>Tente ajustar a busca ou o filtro para localizar seus envios.</p>
-      </div>
-    `;
-    return;
+    return map[status] || "status-analise";
   }
 
-  data.forEach(item => {
-    const card = document.createElement("article");
-    card.className = "submission-card";
-    card.innerHTML = `
-      <div class="submission-top">
-        <div>
-          <div class="submission-title">${item.title}</div>
-          <div class="submission-meta">${item.category} • ${item.quantity}</div>
+  function formatType(type) {
+    const map = {
+      alimento: "Alimento",
+      roupa: "Roupa",
+      higiene: "Higiene",
+      outro: "Outro"
+    };
+
+    return map[type] || "Outro";
+  }
+
+  function updateSummary(items) {
+    const total = items.length;
+    const pending = items.filter((item) => item.status === "em análise").length;
+    const approved = items.filter((item) => item.status === "aprovado").length;
+    const transferred = items.filter((item) => item.status === "repassado").length;
+
+    totalEl.textContent = total;
+    pendingEl.textContent = pending;
+    approvedEl.textContent = approved;
+    transferredEl.textContent = transferred;
+
+    if (pending > 0) {
+      overallStatusEl.textContent = "Há itens em análise";
+    } else if (approved > 0) {
+      overallStatusEl.textContent = "Itens aprovados recentemente";
+    } else if (transferred > 0) {
+      overallStatusEl.textContent = "Doações com repasse social";
+    } else {
+      overallStatusEl.textContent = "Sem movimentações recentes";
+    }
+  }
+
+  function renderSubmissions(items) {
+    submissionList.innerHTML = "";
+
+    if (!items.length) {
+      submissionList.innerHTML = `
+        <div class="empty-state">
+          <strong>Nenhuma submissão encontrada</strong>
+          <p>Não há itens compatíveis com os filtros selecionados no momento.</p>
         </div>
-        <span class="status-badge ${getStatusClass(item.status)}">${item.status}</span>
-      </div>
+      `;
+      submissionListInfo.textContent = "Nenhum item corresponde aos filtros atuais";
+      return;
+    }
 
-      <p class="submission-description">${item.description}</p>
+    submissionListInfo.textContent = `${items.length} item(ns) exibido(s) no histórico`;
 
-      <div class="submission-footer">
-        <span class="submission-date">Enviado em ${item.date}</span>
-        <button class="btn-details" onclick="openModal(${item.id})">Ver detalhes</button>
-      </div>
-    `;
-    submissionsList.appendChild(card);
-  });
-}
+    items.forEach((item) => {
+      const article = document.createElement("article");
+      article.className = "submission-item";
 
-function filterSubmissions() {
-  const search = searchInput.value.toLowerCase().trim();
-  const status = statusFilter.value;
+      article.innerHTML = `
+        <div class="submission-main">
+          <strong>${item.item}</strong>
+          <p>${item.note}</p>
+          <div class="submission-tags">
+            <span class="submission-tag">${formatType(item.type)}</span>
+            <span class="submission-tag">${item.quantity}</span>
+          </div>
+        </div>
 
-  const filtered = mockSubmissions.filter(item => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(search) ||
-      item.category.toLowerCase().includes(search) ||
-      item.status.toLowerCase().includes(search);
+        <div class="submission-meta">
+          <span class="submission-date">${item.date}</span>
+          <span class="submission-status ${getStatusClass(item.status)}">${item.status}</span>
+        </div>
+      `;
 
-    const matchesStatus = status === "all" || item.status === status;
+      submissionList.appendChild(article);
+    });
+  }
 
-    return matchesSearch && matchesStatus;
-  });
+  function applyFilters() {
+    const selectedStatus = statusFilter.value.toLowerCase();
+    const selectedType = typeFilter.value.toLowerCase();
+    const searchValue = searchSubmission.value.trim().toLowerCase();
 
-  renderSummary(filtered);
-  renderSubmissions(filtered);
-}
+    const filtered = savedSubmissions.filter((item) => {
+      const matchesStatus =
+        selectedStatus === "todos" || item.status.toLowerCase() === selectedStatus;
 
-function openModal(id) {
-  const item = mockSubmissions.find(submission => submission.id === id);
-  if (!item) return;
+      const matchesType =
+        selectedType === "todos" || item.type.toLowerCase() === selectedType;
 
-  document.getElementById("modalTitle").textContent = item.title;
-  document.getElementById("modalStatus").textContent = item.status;
-  document.getElementById("modalCategory").textContent = item.category;
-  document.getElementById("modalQuantity").textContent = item.quantity;
-  document.getElementById("modalDate").textContent = item.date;
-  document.getElementById("modalDescription").textContent = item.description;
-  document.getElementById("modalNote").textContent = item.note;
+      const matchesSearch =
+        item.item.toLowerCase().includes(searchValue) ||
+        item.note.toLowerCase().includes(searchValue);
 
-  document.getElementById("detailsModal").classList.remove("hidden");
-}
+      return matchesStatus && matchesType && matchesSearch;
+    });
 
-function closeModal() {
-  document.getElementById("detailsModal").classList.add("hidden");
-}
+    updateSummary(filtered);
+    renderSubmissions(filtered);
+  }
 
-searchInput.addEventListener("input", filterSubmissions);
-statusFilter.addEventListener("change", filterSubmissions);
+  statusFilter.addEventListener("change", applyFilters);
+  typeFilter.addEventListener("change", applyFilters);
+  searchSubmission.addEventListener("input", applyFilters);
 
-renderSummary(mockSubmissions);
-renderSubmissions(mockSubmissions);
+  updateSummary(savedSubmissions);
+  renderSubmissions(savedSubmissions);
+});

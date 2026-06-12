@@ -3,224 +3,256 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Perfil do Doador - BemAqui</title>
-  <link rel="stylesheet" href="../base.css" />
+  <title>BemAqui - Perfil do Doador</title>
   <link rel="stylesheet" href="../static/css/tela_doador_perfil.css" />
 </head>
 <body>
-  <main class="profile-page">
-    <section class="profile-hero">
-      <div class="profile-identity">
-        <div class="profile-avatar">C</div>
-
-        <div class="profile-texts">
-          <span class="profile-badge">Conta do doador</span>
-          <h1 id="profileName">Caio Henrique</h1>
-          <p id="profileSubtitle">Participando ativamente das ações solidárias e ambientais do BemAqui.</p>
-
-          <div class="profile-tags">
-            <span class="tag">Conta verificada</span>
-            <span class="tag">Doador ativo</span>
-            <span class="tag">São Paulo - SP</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="profile-actions">
-        <button class="btn-primary" id="editProfileBtn">Editar perfil</button>
-        <button class="btn-secondary" onclick="window.location.href='tela_minhas_submissoes.html'">
-          Ver submissões
-        </button>
-      </div>
-    </section>
-
-    <section class="stats-grid">
-      <article class="stat-card">
-        <span class="stat-label">Submissões realizadas</span>
-        <strong id="statSubmissions">12</strong>
-        <small>Total de envios cadastrados</small>
-      </article>
-
-      <article class="stat-card">
-        <span class="stat-label">Submissões aprovadas</span>
-        <strong id="statApproved">7</strong>
-        <small>Itens aceitos pela equipe</small>
-      </article>
-
-      <article class="stat-card">
-        <span class="stat-label">Em análise</span>
-        <strong id="statPending">3</strong>
-        <small>Aguardando retorno</small>
-      </article>
-
-      <article class="stat-card">
-        <span class="stat-label">Última atividade</span>
-        <strong id="statLastActivity">Hoje</strong>
-        <small>Atualização mais recente</small>
-      </article>
-    </section>
-
-    <section class="profile-grid">
-      <article class="info-card">
-        <div class="card-header">
-          <h2>Informações pessoais</h2>
-          <span>Dados principais da conta</span>
-        </div>
-
-        <div class="info-list">
-          <div class="info-item">
-            <span>Nome completo</span>
-            <strong id="infoName">Caio Henrique</strong>
-          </div>
-
-          <div class="info-item">
-            <span>E-mail</span>
-            <strong id="infoEmail">caio@email.com</strong>
-          </div>
-
-          <div class="info-item">
-            <span>Telefone</span>
-            <strong id="infoPhone">(11) 99999-0000</strong>
-          </div>
-
-          <div class="info-item">
-            <span>Cidade</span>
-            <strong id="infoCity">São Paulo - SP</strong>
-          </div>
-
-          <div class="info-item">
-            <span>Tipo de perfil</span>
-            <strong>Doador</strong>
-          </div>
-
-          <div class="info-item">
-            <span>Cadastro no sistema</span>
-            <strong>Março de 2026</strong>
-          </div>
-        </div>
-      </article>
-
-      <article class="info-card">
-        <div class="card-header">
-          <h2>Status da conta</h2>
-          <span>Resumo visual do perfil</span>
-        </div>
-
-        <div class="status-panel">
-          <div class="status-box status-success">
-            <span class="status-title">Situação</span>
-            <strong>Ativa</strong>
-            <p>Sua conta está apta para realizar novas submissões.</p>
-          </div>
-
-          <div class="status-box status-warning">
-            <span class="status-title">Validação recente</span>
-            <strong>3 itens em análise</strong>
-            <p>A equipe está avaliando suas submissões mais recentes.</p>
-          </div>
-
-          <div class="status-box status-neutral">
-            <span class="status-title">Participação</span>
-            <strong>Alta recorrência</strong>
-            <p>Seu perfil tem bom histórico de participação no sistema.</p>
-          </div>
-        </div>
-      </article>
-
-      <article class="info-card wide-card">
-        <div class="card-header">
-          <h2>Atividades recentes</h2>
-          <span>Últimas movimentações registradas</span>
-        </div>
-
-        <div class="activity-list" id="activityList"></div>
-      </article>
-
-      <article class="info-card wide-card">
-        <div class="card-header">
-          <h2>Preferências e segurança</h2>
-          <span>Configurações visuais da conta</span>
-        </div>
-
-        <div class="settings-grid">
-          <div class="setting-item">
-            <div>
-              <strong>Receber notificações por e-mail</strong>
-              <p>Acompanhe o andamento das submissões por mensagem.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="emailNotifications" checked />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div>
-              <strong>Mostrar telefone no perfil interno</strong>
-              <p>Permite visualização do contato pela equipe responsável.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="showPhone" checked />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div>
-              <strong>Receber lembretes de novas campanhas</strong>
-              <p>Ativa avisos sobre ações, eventos e coletas especiais.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="campaignAlerts" />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <div id="editModal" class="modal hidden">
-    <div class="modal-overlay" onclick="closeEditModal()"></div>
-
-    <div class="modal-card">
-      <div class="modal-header">
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">B</div>
         <div>
-          <span class="modal-badge">Editar perfil</span>
-          <h3>Atualizar informações</h3>
+          <h2>BemAqui</h2>
+          <p>Painel do doador</p>
         </div>
-        <button class="modal-close" onclick="closeEditModal()">×</button>
       </div>
 
-      <form class="modal-form" id="editProfileForm">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="editName">Nome completo</label>
-            <input type="text" id="editName" />
+      <nav class="menu">
+        <a href="tela_doador.html" class="menu-item">Início</a>
+        <a href="tela_doacao.html" class="menu-item">Nova doação</a>
+        <a href="tela_doador_submissoes.html" class="menu-item">Minhas submissões</a>
+        <a href="tela_doador_perfil.html" class="menu-item active">Perfil</a>
+        <a href="index.html" class="menu-item">Sair</a>
+      </nav>
+
+      <div class="sidebar-box">
+        <span class="mini-label">Minha conta</span>
+        <h3>Mantenha seus dados atualizados</h3>
+        <p>
+          Nesta área você pode visualizar e editar suas informações básicas
+          de cadastro para manter sua experiência no BemAqui organizada.
+        </p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <span class="tag">Conta do doador</span>
+          <h1>Meu perfil</h1>
+          <p class="subtitle">
+            Consulte seus dados cadastrais, atualize informações principais e
+            visualize um resumo da sua participação dentro do BemAqui.
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <a href="tela_doador.html" class="btn btn-secondary">Voltar ao início</a>
+          <button class="btn btn-primary" id="saveProfileBtn">Salvar alterações</button>
+        </div>
+      </header>
+
+      <section class="profile-hero">
+        <div class="profile-card profile-main-card">
+          <div class="avatar-wrap">
+            <div class="avatar" id="profileAvatar">C</div>
+            <div>
+              <span class="hero-badge">Doador cadastrado</span>
+              <h2 id="profileDisplayName">Caio</h2>
+              <p id="profileDisplayEmail">caio@email.com</p>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="editEmail">E-mail</label>
-            <input type="email" id="editEmail" />
-          </div>
-
-          <div class="form-group">
-            <label for="editPhone">Telefone</label>
-            <input type="text" id="editPhone" />
-          </div>
-
-          <div class="form-group">
-            <label for="editCity">Cidade</label>
-            <input type="text" id="editCity" />
+          <div class="hero-chips">
+            <span class="hero-chip">Conta ativa</span>
+            <span class="hero-chip soft">Ambiente semi funcional</span>
           </div>
         </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
-          <button type="submit" class="btn-primary">Salvar alterações</button>
+        <div class="profile-card hero-summary-card">
+          <span>Status da conta</span>
+          <strong id="accountStatus">Perfil atualizado</strong>
+          <small>
+            Mantenha seus dados corretos para facilitar o acompanhamento das
+            doações e a comunicação com a equipe.
+          </small>
         </div>
-      </form>
-    </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-label">Submissões</span>
+          <h3 id="profileSubmissionCount">0</h3>
+          <p>Total de itens cadastrados no sistema</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Última atividade</span>
+          <h3 id="profileLastActivity">-</h3>
+          <p>Movimentação recente na conta</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Contato principal</span>
+          <h3 id="profileMainContact">-</h3>
+          <p>Telefone informado no cadastro</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Tipo de conta</span>
+          <h3>Pessoa doadora</h3>
+          <p>Conta voltada ao envio de itens para análise</p>
+        </article>
+      </section>
+
+      <section class="main-grid">
+        <div class="main-column">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Dados pessoais</h2>
+                <p>Informações básicas do cadastro do doador</p>
+              </div>
+            </div>
+
+            <form id="profileForm" class="profile-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="fullName">Nome completo</label>
+                  <input type="text" id="fullName" placeholder="Digite seu nome completo" />
+                </div>
+
+                <div class="form-group">
+                  <label for="email">E-mail</label>
+                  <input type="email" id="email" placeholder="Digite seu e-mail" />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Telefone</label>
+                  <input type="text" id="phone" placeholder="(00) 00000-0000" />
+                </div>
+
+                <div class="form-group">
+                  <label for="city">Cidade</label>
+                  <input type="text" id="city" placeholder="Informe sua cidade" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="bio">Observação do perfil</label>
+                <textarea
+                  id="bio"
+                  rows="5"
+                  placeholder="Escreva uma breve observação sobre seu perfil de doador..."
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar perfil</button>
+                <span class="form-feedback" id="profileFeedback"></span>
+              </div>
+            </form>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Preferências</h2>
+                <p>Configurações básicas do ambiente do doador</p>
+              </div>
+            </div>
+
+            <div class="preferences-list">
+              <label class="preference-item">
+                <input type="checkbox" id="prefEmail" />
+                <div>
+                  <strong>Receber atualizações por e-mail</strong>
+                  <p>Notificações simples sobre andamento das submissões.</p>
+                </div>
+              </label>
+
+              <label class="preference-item">
+                <input type="checkbox" id="prefStatus" />
+                <div>
+                  <strong>Receber aviso de mudança de status</strong>
+                  <p>Alertas quando um item mudar de análise para aprovado ou repassado.</p>
+                </div>
+              </label>
+
+              <label class="preference-item">
+                <input type="checkbox" id="prefNews" />
+                <div>
+                  <strong>Receber novidades do BemAqui</strong>
+                  <p>Comunicados institucionais e ações futuras da plataforma.</p>
+                </div>
+              </label>
+            </div>
+          </article>
+        </div>
+
+        <aside class="side-column">
+          <article class="panel side-highlight">
+            <div class="panel-header">
+              <div>
+                <h2>Resumo da conta</h2>
+                <p>Informações rápidas do doador</p>
+              </div>
+            </div>
+
+            <ul class="summary-list">
+              <li>
+                <span>Nome</span>
+                <strong id="summaryName">Caio</strong>
+              </li>
+              <li>
+                <span>E-mail</span>
+                <strong id="summaryEmail">caio@email.com</strong>
+              </li>
+              <li>
+                <span>Telefone</span>
+                <strong id="summaryPhone">(00) 00000-0000</strong>
+              </li>
+              <li>
+                <span>Cidade</span>
+                <strong id="summaryCity">Não informada</strong>
+              </li>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Boas práticas</h2>
+                <p>Antes de enviar suas doações</p>
+              </div>
+            </div>
+
+            <div class="quick-actions">
+              <div class="quick-tip">Mantenha seu telefone atualizado para facilitar o contato.</div>
+              <div class="quick-tip">Revise a descrição dos itens antes de cada submissão.</div>
+              <div class="quick-tip">Acompanhe seus status para entender o destino de cada doação.</div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Segurança da conta</h2>
+                <p>Área ilustrativa do ambiente</p>
+              </div>
+            </div>
+
+            <div class="security-box">
+              <span class="security-badge">Acesso protegido</span>
+              <p>
+                Esta tela representa uma área de perfil semi funcional, com foco
+                em visualização e atualização básica dos dados do doador.
+              </p>
+            </div>
+          </article>
+        </aside>
+      </section>
+    </main>
   </div>
 
   <script src="../static/js/tela_doador_perfil.js"></script>

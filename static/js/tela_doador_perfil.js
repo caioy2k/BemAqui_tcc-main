@@ -1,110 +1,125 @@
-const donorProfile = {
-  name: "Caio Henrique",
-  email: "caio@email.com",
-  phone: "(11) 99999-0000",
-  city: "São Paulo - SP",
-  subtitle: "Participando ativamente das ações solidárias e ambientais do BemAqui.",
-  stats: {
-    submissions: 12,
-    approved: 7,
-    pending: 3,
-    lastActivity: "Hoje"
-  },
-  activities: [
-    {
-      title: "Nova submissão enviada",
-      description: "Você cadastrou uma nova doação de materiais escolares para análise.",
-      date: "Hoje, 18:40"
-    },
-    {
-      title: "Submissão aprovada",
-      description: "Seu kit de higiene foi aceito e direcionado para atendimento interno.",
-      date: "Ontem, 16:15"
-    },
-    {
-      title: "Perfil atualizado",
-      description: "As informações de contato da sua conta foram ajustadas com sucesso.",
-      date: "16/05/2026"
-    },
-    {
-      title: "Submissão em análise",
-      description: "A equipe iniciou a avaliação de uma nova remessa de alimentos.",
-      date: "15/05/2026"
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultProfile = {
+    fullName: "Caio",
+    email: "caio@email.com",
+    phone: "(11) 99999-9999",
+    city: "São Paulo",
+    bio: "Doador cadastrado na plataforma BemAqui.",
+    preferences: {
+      emailUpdates: true,
+      statusAlerts: true,
+      news: false
     }
-  ]
-};
+  };
 
-const profileName = document.getElementById("profileName");
-const profileSubtitle = document.getElementById("profileSubtitle");
-const infoName = document.getElementById("infoName");
-const infoEmail = document.getElementById("infoEmail");
-const infoPhone = document.getElementById("infoPhone");
-const infoCity = document.getElementById("infoCity");
+  const savedProfile =
+    JSON.parse(localStorage.getItem("bemaquiDonorProfile")) || defaultProfile;
 
-function renderProfile() {
-  profileName.textContent = donorProfile.name;
-  profileSubtitle.textContent = donorProfile.subtitle;
-  infoName.textContent = donorProfile.name;
-  infoEmail.textContent = donorProfile.email;
-  infoPhone.textContent = donorProfile.phone;
-  infoCity.textContent = donorProfile.city;
+  const savedSubmissions =
+    JSON.parse(localStorage.getItem("bemaquiSubmissions")) || [];
 
-  document.getElementById("profileAvatar")?.remove();
-  const avatar = document.querySelector(".profile-avatar");
-  avatar.textContent = donorProfile.name.charAt(0).toUpperCase();
+  const form = document.getElementById("profileForm");
+  const feedback = document.getElementById("profileFeedback");
 
-  document.getElementById("statSubmissions").textContent = donorProfile.stats.submissions;
-  document.getElementById("statApproved").textContent = donorProfile.stats.approved;
-  document.getElementById("statPending").textContent = donorProfile.stats.pending;
-  document.getElementById("statLastActivity").textContent = donorProfile.stats.lastActivity;
+  const fullNameInput = document.getElementById("fullName");
+  const emailInput = document.getElementById("email");
+  const phoneInput = document.getElementById("phone");
+  const cityInput = document.getElementById("city");
+  const bioInput = document.getElementById("bio");
 
-  renderActivities();
-}
+  const prefEmail = document.getElementById("prefEmail");
+  const prefStatus = document.getElementById("prefStatus");
+  const prefNews = document.getElementById("prefNews");
 
-function renderActivities() {
-  const activityList = document.getElementById("activityList");
-  activityList.innerHTML = "";
+  const profileDisplayName = document.getElementById("profileDisplayName");
+  const profileDisplayEmail = document.getElementById("profileDisplayEmail");
+  const profileAvatar = document.getElementById("profileAvatar");
+  const summaryName = document.getElementById("summaryName");
+  const summaryEmail = document.getElementById("summaryEmail");
+  const summaryPhone = document.getElementById("summaryPhone");
+  const summaryCity = document.getElementById("summaryCity");
+  const profileMainContact = document.getElementById("profileMainContact");
+  const profileSubmissionCount = document.getElementById("profileSubmissionCount");
+  const profileLastActivity = document.getElementById("profileLastActivity");
+  const accountStatus = document.getElementById("accountStatus");
+  const saveProfileBtn = document.getElementById("saveProfileBtn");
 
-  donorProfile.activities.forEach(activity => {
-    const item = document.createElement("div");
-    item.className = "activity-item";
-    item.innerHTML = `
-      <div class="activity-left">
-        <strong>${activity.title}</strong>
-        <p>${activity.description}</p>
-      </div>
-      <span class="activity-date">${activity.date}</span>
-    `;
-    activityList.appendChild(item);
+  function getInitials(name) {
+    if (!name) return "D";
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+  }
+
+  function fillForm(profile) {
+    fullNameInput.value = profile.fullName || "";
+    emailInput.value = profile.email || "";
+    phoneInput.value = profile.phone || "";
+    cityInput.value = profile.city || "";
+    bioInput.value = profile.bio || "";
+
+    prefEmail.checked = !!profile.preferences?.emailUpdates;
+    prefStatus.checked = !!profile.preferences?.statusAlerts;
+    prefNews.checked = !!profile.preferences?.news;
+  }
+
+  function updateProfileView(profile) {
+    profileDisplayName.textContent = profile.fullName || "Doador";
+    profileDisplayEmail.textContent = profile.email || "email@exemplo.com";
+    profileAvatar.textContent = getInitials(profile.fullName);
+
+    summaryName.textContent = profile.fullName || "-";
+    summaryEmail.textContent = profile.email || "-";
+    summaryPhone.textContent = profile.phone || "-";
+    summaryCity.textContent = profile.city || "Não informada";
+
+    profileMainContact.textContent = profile.phone || "-";
+  }
+
+  function updateStats() {
+    profileSubmissionCount.textContent = savedSubmissions.length;
+
+    if (savedSubmissions.length > 0) {
+      profileLastActivity.textContent = savedSubmissions[0].date || "Recente";
+      accountStatus.textContent = "Perfil vinculado a submissões";
+    } else {
+      profileLastActivity.textContent = "Sem envios";
+      accountStatus.textContent = "Perfil atualizado";
+    }
+  }
+
+  function saveProfile() {
+    const newProfile = {
+      fullName: fullNameInput.value.trim(),
+      email: emailInput.value.trim(),
+      phone: phoneInput.value.trim(),
+      city: cityInput.value.trim(),
+      bio: bioInput.value.trim(),
+      preferences: {
+        emailUpdates: prefEmail.checked,
+        statusAlerts: prefStatus.checked,
+        news: prefNews.checked
+      }
+    };
+
+    localStorage.setItem("bemaquiDonorProfile", JSON.stringify(newProfile));
+    updateProfileView(newProfile);
+    feedback.textContent = "Perfil salvo com sucesso.";
+    accountStatus.textContent = "Dados atualizados recentemente";
+
+    setTimeout(() => {
+      feedback.textContent = "";
+    }, 2500);
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    saveProfile();
   });
-}
 
-function openEditModal() {
-  document.getElementById("editName").value = donorProfile.name;
-  document.getElementById("editEmail").value = donorProfile.email;
-  document.getElementById("editPhone").value = donorProfile.phone;
-  document.getElementById("editCity").value = donorProfile.city;
-  document.getElementById("editModal").classList.remove("hidden");
-}
+  saveProfileBtn.addEventListener("click", saveProfile);
 
-function closeEditModal() {
-  document.getElementById("editModal").classList.add("hidden");
-}
-
-document.getElementById("editProfileBtn").addEventListener("click", openEditModal);
-
-document.getElementById("editProfileForm").addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  donorProfile.name = document.getElementById("editName").value;
-  donorProfile.email = document.getElementById("editEmail").value;
-  donorProfile.phone = document.getElementById("editPhone").value;
-  donorProfile.city = document.getElementById("editCity").value;
-
-  renderProfile();
-  closeEditModal();
-
-  alert("Perfil atualizado com sucesso!");
+  fillForm(savedProfile);
+  updateProfileView(savedProfile);
+  updateStats();
 });
-
-renderProfile();

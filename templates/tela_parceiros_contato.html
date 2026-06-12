@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contato - BemAqui</title>
+  <link rel="stylesheet" href="../static/css/base.css" />
+  <link rel="stylesheet" href="../static/css/tela_parceiros_contato.css" />
+</head>
+<body>
+  <header class="dashboard-header">
+    <div class="container dashboard-header-inner">
+      <a href="./index.html" class="brand">
+        <span class="brand-badge">B</span>
+        <div class="brand-text">
+          <strong>BemAqui</strong>
+          <span>Área da empresa parceira</span>
+        </div>
+      </a>
+
+      <nav class="dashboard-nav" aria-label="Menu principal">
+        <a href="./tela_parceiros_dashboard.html">Dashboard</a>
+        <a href="./tela_parceiros_parceiria.html">Minha parceria</a>
+        <a href="./tela_parceiros_contato.html" class="active">Contato</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn-secondary btn-small" id="btn-logout-company" href=./index.html>Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="contact-shell container">
+    <section class="contact-hero card">
+      <div class="hero-copy">
+        <span class="eyebrow">Canal institucional</span>
+        <h1>Fale com o BemAqui</h1>
+        <p>
+          Esta área foi pensada para que <span data-company-name>Empresa Parceira</span>
+          possa entrar em contato com a equipe BemAqui para tirar dúvidas,
+          alinhar futuras ações e acompanhar oportunidades de parceria.
+        </p>
+
+        <div class="hero-badges">
+          <span class="status-badge">Atendimento parceiro</span>
+          <span class="soft-badge">Resposta em até 2 dias úteis</span>
+        </div>
+      </div>
+
+      <div class="hero-side card-inner">
+        <span class="mini-label">Empresa identificada</span>
+        <strong data-company-name>Empresa Parceira</strong>
+        <p>Canal reservado para comunicação institucional com a equipe do projeto.</p>
+
+        <div class="mini-meta">
+          <div>
+            <span>E-mail principal</span>
+            <strong>parcerias@bemaqui.com</strong>
+          </div>
+          <div>
+            <span>Telefone</span>
+            <strong>(11) 4000-2026</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-grid">
+      <div class="contact-main">
+        <article class="card section-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Formulário</span>
+              <h2>Envie sua mensagem</h2>
+            </div>
+            <span class="soft-badge">Visual semi funcional</span>
+          </div>
+
+          <form id="partner-contact-form" class="contact-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="companyName">Empresa</label>
+                <input
+                  type="text"
+                  id="companyName"
+                  name="companyName"
+                  data-company-input
+                  placeholder="Nome da empresa"
+                  readonly
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="companyEmail">E-mail institucional</label>
+                <input
+                  type="email"
+                  id="companyEmail"
+                  name="companyEmail"
+                  data-company-email-input
+                  placeholder="contato@empresa.com"
+                  readonly
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="subject">Assunto</label>
+                <select id="subject" name="subject">
+                  <option value="">Selecione um assunto</option>
+                  <option value="duvida">Dúvida sobre parceria</option>
+                  <option value="campanha">Interesse em campanha</option>
+                  <option value="cadastro">Atualização cadastral</option>
+                  <option value="outro">Outro assunto</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Telefone</label>
+                <input
+                  type="text"
+                  id="phone"
+                  name="phone"
+                  data-company-phone-input
+                  placeholder="(11) 99999-9999"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Mensagem</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="6"
+                placeholder="Escreva aqui a sua mensagem para a equipe BemAqui..."
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Enviar mensagem</button>
+              <p id="contact-feedback" class="form-feedback" aria-live="polite"></p>
+            </div>
+          </form>
+        </article>
+
+        <article class="card section-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Dúvidas frequentes</span>
+              <h2>Perguntas rápidas</h2>
+            </div>
+          </div>
+
+          <div class="faq-list">
+            <div class="faq-item">
+              <h3>Como funciona a parceria com o BemAqui?</h3>
+              <p>
+                A parceria permite que empresas acompanhem iniciativas, mantenham
+                contato com a equipe e participem de futuras ações institucionais.
+              </p>
+            </div>
+
+            <div class="faq-item">
+              <h3>Posso atualizar os dados da empresa?</h3>
+              <p>
+                Sim. O contato com a equipe pode ser usado para solicitar ajustes
+                cadastrais e alinhar informações institucionais.
+              </p>
+            </div>
+
+            <div class="faq-item">
+              <h3>Como demonstrar interesse em novas campanhas?</h3>
+              <p>
+                Basta utilizar o formulário desta página ou acessar os canais de
+                atendimento indicados ao lado.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="contact-sidebar">
+        <article class="card sidebar-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Canais</span>
+              <h2>Informações de contato</h2>
+            </div>
+          </div>
+
+          <div class="channel-list">
+            <a href="mailto:parcerias@bemaqui.com" class="channel-card">
+              <span class="channel-label">E-mail</span>
+              <strong>parcerias@bemaqui.com</strong>
+              <small>Canal principal de atendimento</small>
+            </a>
+
+            <a href="tel:+551140002026" class="channel-card">
+              <span class="channel-label">Telefone</span>
+              <strong>(11) 4000-2026</strong>
+              <small>Segunda a sexta, das 9h às 17h</small>
+            </a>
+
+            <div class="channel-card static-card">
+              <span class="channel-label">Endereço institucional</span>
+              <strong>Equipe BemAqui</strong>
+              <small>Atendimento institucional e suporte ao parceiro</small>
+            </div>
+          </div>
+        </article>
+
+        <article class="card sidebar-card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Resumo da empresa</span>
+              <h2>Dados identificados</h2>
+            </div>
+          </div>
+
+          <ul class="summary-list">
+            <li>
+              <span>Empresa</span>
+              <strong data-company-name>Empresa Parceira</strong>
+            </li>
+            <li>
+              <span>E-mail</span>
+              <strong data-company-email>contato@empresa.com</strong>
+            </li>
+            <li>
+              <span>Telefone</span>
+              <strong data-company-phone>(11) 99999-9999</strong>
+            </li>
+            <li>
+              <span>Status</span>
+              <strong class="highlight-text">Ativa</strong>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card sidebar-card spotlight-card">
+          <span class="eyebrow">Relacionamento</span>
+          <h2>Canal aberto para <span data-company-name>Empresa Parceira</span></h2>
+          <p>
+            Esta tela demonstra como a empresa parceira poderia se comunicar com
+            a equipe do BemAqui em um ambiente mais completo.
+          </p>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="ba-footer">
+    <p>&copy; 2026 BemAqui. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../static/js/tela_parceiros_contato.js"></script>
+</body>
+</html>

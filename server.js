@@ -15,6 +15,8 @@ const authRoutes = require('./routes/auth');
 const tradeRoutes = require('./routes/trade');
 const authCompanyRoutes = require('./routes/authCompany');
 const companyRoutes = require('./routes/company');
+const recyclablesRoutes = require('./routes/recyclables');
+
 
 const app = express();
 
@@ -139,6 +141,7 @@ app.get('/recyclables', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar recicláveis' });
   }
 });
+app.use('/admin/recyclables', recyclablesRoutes);
 
 app.get('/benefits', async (req, res) => {
   try {

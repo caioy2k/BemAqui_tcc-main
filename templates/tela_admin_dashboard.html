@@ -3,136 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BemAqui | Menu Admin</title>
-
-  <link rel="stylesheet" href="../static/css/base.css" />
+  <title>BemAqui | Admin Dashboard</title>
   <link rel="stylesheet" href="../static/css/tela_admin_dashboard.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header class="ba-header">
-    <div class="ba-header-inner">
-      <div>
-        <h1 class="ba-logo">BemAqui Admin</h1>
-        <p class="ba-subtitle">Menu principal</p>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">B</div>
+        <div>
+          <h1>BemAqui</h1>
+          <p>Painel Admin</p>
+        </div>
       </div>
 
-      <nav class="ba-nav">
-        <a href="index.html">Home</a>
-        <a href="tela_login.html">Login</a>
+      <nav class="sidebar-nav">
+        <a href="tela_admin_dashboard.html" class="nav-item active">Dashboard</a>
+        <a href="tela_admin_recyclables.html" class="nav-item" id="quickRecyclables">Recicláveis</a>
+        <a href="tela_admin_benefits.html" class="nav-item" id="quickBenefits">Benefícios</a>
+        <a href="tela_admin_trades.html" class="nav-item" id="quickTrades">Trocas</a>
+        <a href="index.html" class="nav-item" id="quickTrades">Sair</a>
       </nav>
-    </div>
-  </header>
 
-  <main class="admin-dashboard">
-    <section class="dashboard-hero">
-      <div class="dashboard-hero-text">
-        <span class="hero-badge">Painel Administrativo</span>
-        <h2>Visão geral do BemAqui</h2>
+      <div class="sidebar-box">
+        <span class="sidebar-label">Ambiente administrativo</span>
+        <h3>Gestão central do sistema</h3>
         <p>
-          Acompanhe indicadores do sistema, andamento do projeto e acesse rapidamente
-          as áreas administrativas principais.
+          Acompanhe números gerais, valide trocas e acesse rapidamente os módulos
+          operacionais do BemAqui.
         </p>
       </div>
+    </aside>
 
-      <div class="dashboard-actions">
-        <button class="action-btn primary" id="goRecyclablesBtn">Cadastrar recicláveis</button>
-        <button class="action-btn secondary" id="goBenefitsBtn">Cadastrar benefícios</button>
-        <button class="action-btn dark" id="goTradesBtn">Validar trocas</button>
-      </div>
-    </section>
-
-    <section class="kpi-grid">
-      <article class="kpi-card">
-        <span class="kpi-label">Usuários cadastrados</span>
-        <strong id="usersCount">...</strong>
-        <p>Total de contas registradas na plataforma.</p>
-      </article>
-
-      <article class="kpi-card">
-        <span class="kpi-label">Trocas realizadas</span>
-        <strong id="tradesCount">...</strong>
-        <p>Quantidade total de trades registradas.</p>
-      </article>
-
-      <article class="kpi-card">
-        <span class="kpi-label">Trades pendentes</span>
-        <strong id="pendingTrades">...</strong>
-        <p>Solicitações aguardando validação.</p>
-      </article>
-
-      <article class="kpi-card">
-        <span class="kpi-label">Benefícios ativos</span>
-        <strong id="benefitsCount">...</strong>
-        <p>Itens disponíveis para troca no sistema.</p>
-      </article>
-    </section>
-
-    <section class="dashboard-grid">
-      <article class="panel chart-panel">
-        <div class="panel-header">
-          <div>
-            <h3>Andamento mensal</h3>
-            <p>Comparativo entre trades criadas e aprovadas</p>
-          </div>
-          <button class="mini-btn" id="refreshDashboardBtn">Atualizar</button>
-        </div>
-
-        <div class="chart-container">
-          <canvas id="adminChart"></canvas>
-        </div>
-      </article>
-
-      <article class="panel info-panel">
-        <div class="panel-header">
-          <div>
-            <h3>Consultas operacionais</h3>
-            <p>Leitura rápida do estado atual</p>
-          </div>
-        </div>
-
-        <ul class="insights-list">
-          <li>Total de benefícios ativos: <strong id="insightBenefits">...</strong></li>
-          <li>Total de trades pendentes: <strong id="insightPending">...</strong></li>
-          <li>Status do dashboard: <strong id="dashboardStatus">conectando...</strong></li>
-          <li>Atualização automática: <strong id="refreshMode">a cada 15 segundos</strong></li>
-        </ul>
-      </article>
-    </section>
-
-    <section class="panel quick-panel">
-      <div class="panel-header">
+    <main class="admin-main">
+      <header class="admin-topbar">
         <div>
-          <h3>Ações rápidas</h3>
-          <p>Acesso direto às telas administrativas</p>
+          <span class="topbar-badge">Controle interno</span>
+          <h2>Dashboard administrativo</h2>
+          <p>Visão geral dos principais indicadores e atalhos de operação.</p>
         </div>
-      </div>
 
-      <div class="quick-actions-grid">
-        <button class="quick-card" id="quickRecyclables">
-          <span>♻️</span>
-          <strong>Recicláveis</strong>
-          <p>Gerenciar materiais recicláveis.</p>
-        </button>
+        <div class="topbar-actions">
+          <button class="action-btn secondary" id="goBenefitsBtn">Cadastrar benefícios</button>
+          <button class="action-btn primary" id="goRecyclablesBtn">Cadastrar recicláveis</button>
+        </div>
+      </header>
 
-        <button class="quick-card" id="quickBenefits">
-          <span>🎁</span>
-          <strong>Benefícios</strong>
-          <p>Gerenciar benefícios da plataforma.</p>
-        </button>
+      <section class="hero-panel">
+        <div class="hero-content">
+          <span class="hero-badge">Painel principal</span>
+          <h3>Gerencie o BemAqui com uma visão rápida e organizada</h3>
+          <p>
+            Consulte os dados mais relevantes da plataforma, acompanhe o volume
+            de trocas e valide solicitações pendentes em um único ambiente.
+          </p>
 
-        <button class="quick-card" id="quickTrades">
-          <span>✅</span>
-          <strong>Trades</strong>
-          <p>Validar trocas e acompanhar solicitações.</p>
-        </button>
-      </div>
-    </section>
-  </main>
+          <div class="hero-inline-actions">
+            <button class="action-btn dark" id="goTradesBtn">Validar trocas</button>
+            <button class="ghost-btn" id="refreshDashboardBtn">Atualizar dashboard</button>
+          </div>
+        </div>
 
-  <footer class="ba-footer">
-    <p>&copy; 2026 BemAqui ♻ Uma ajuda para quem necessita.</p>
-  </footer>
+        <div class="hero-side-card">
+          <span class="mini-kicker">Status do sistema</span>
+          <strong id="dashboardStatus">Conectando...</strong>
+          <p>Atualização automática configurada para manter os dados sempre visíveis.</p>
+          <small id="refreshMode">a cada 15 segundos</small>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <article class="kpi-card">
+          <span class="kpi-label">Usuários cadastrados</span>
+          <strong id="usersCount">...</strong>
+          <p>Total de contas registradas na plataforma.</p>
+        </article>
+
+        <article class="kpi-card">
+          <span class="kpi-label">Trocas realizadas</span>
+          <strong id="tradesCount">...</strong>
+          <p>Quantidade total de trades registradas.</p>
+        </article>
+
+        <article class="kpi-card">
+          <span class="kpi-label">Trades pendentes</span>
+          <strong id="pendingTrades">...</strong>
+          <p>Solicitações aguardando validação.</p>
+        </article>
+
+        <article class="kpi-card">
+          <span class="kpi-label">Benefícios ativos</span>
+          <strong id="benefitsCount">...</strong>
+          <p>Itens disponíveis para troca no sistema.</p>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel chart-panel">
+          <div class="panel-header">
+            <div>
+              <span class="panel-tag">Indicadores</span>
+              <h3>Andamento mensal</h3>
+              <p>Comparativo entre trades criadas e aprovadas</p>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="adminChart"></canvas>
+          </div>
+        </article>
+
+        <article class="panel info-panel">
+          <div class="panel-header">
+            <div>
+              <span class="panel-tag soft">Resumo operacional</span>
+              <h3>Consultas rápidas</h3>
+              <p>Leitura objetiva do estado atual do sistema</p>
+            </div>
+          </div>
+
+          <ul class="insights-list">
+            <li>Total de benefícios ativos: <strong id="insightBenefits">...</strong></li>
+            <li>Total de trades pendentes: <strong id="insightPending">...</strong></li>
+            <li>Status do dashboard: <strong id="dashboardStatusMirror">conectando...</strong></li>
+            <li>Atualização automática: <strong id="refreshModeMirror">a cada 15 segundos</strong></li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="panel quick-panel">
+        <div class="panel-header">
+          <div>
+            <span class="panel-tag soft">Atalhos</span>
+            <h3>Ações rápidas</h3>
+            <p>Acesso direto às áreas principais da administração</p>
+          </div>
+        </div>
+
+        <div class="quick-actions-grid">
+          <button class="quick-card" id="goRecyclablesBtnCard">
+            <span>♻️</span>
+            <strong>Recicláveis</strong>
+            <p>Gerenciar materiais recicláveis.</p>
+          </button>
+
+          <button class="quick-card" id="goBenefitsBtnCard">
+            <span>🎁</span>
+            <strong>Benefícios</strong>
+            <p>Gerenciar benefícios da plataforma.</p>
+          </button>
+
+          <button class="quick-card" id="goTradesBtnCard">
+            <span>✅</span>
+            <strong>Trades</strong>
+            <p>Validar trocas e acompanhar solicitações.</p>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script src="../static/js/tela_admin_dashboard.js"></script>
 </body>
