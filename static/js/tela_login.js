@@ -1,5 +1,3 @@
-const API_URL = "https://bemaqui-tcc-main.onrender.com";
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("login-form");
 
@@ -20,37 +18,41 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch("/auth/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Salvar token e usuário no localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("bemaquiUser", JSON.stringify(data.user));
+      if (!response.ok) {
+        alert(data.error || data.message || "Erro ao fazer login.");
+        return;
+      }
 
-        // ✅ REDIRECIONAMENTO BASEADO NO ROLE E BOOLEANOS
-        if (data.user.isAdmin) {
-          window.location.href = "tela_admin_dashboard.html";
-        } else if (data.user.isEmployee) {
-          window.location.href = "tela_funcionario_dashboard.html";
-        } else if (data.user.role === "beneficiario") {
-          window.location.href = "tela_beneficiario.html";
-        } else if (data.user.role === "doador") {
-          window.location.href = "tela_doador.html";
-        } else if (data.user.role === "parceiro") {
-          window.location.href = "tela_parceiros.html";
-        } else {
-          window.location.href = "../telas-beneficiario/tela_beneficiario.html";
-        }
+      if (!data.token || !data.user) {
+        alert("Resposta de login inválida.");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("bemaquiUser", JSON.stringify(data.user));
+
+      if (data.user.isAdmin) {
+        window.location.href = "/tela_admin_dashboard.html";
+      } else if (data.user.isEmployee) {
+        window.location.href = "/tela_funcionario_dashboard.html";
+      } else if (data.user.role === "beneficiario") {
+        window.location.href = "/tela_beneficiario.html";
+      } else if (data.user.role === "doador") {
+        window.location.href = "/tela_doador.html";
+      } else if (data.user.role === "parceiro") {
+        window.location.href = "/tela_parceiros.html";
       } else {
-        alert(data.error || "Erro ao fazer login.");
+        window.location.href = "/tela_beneficiario.html";
       }
     } catch (error) {
       console.error("Erro:", error);
