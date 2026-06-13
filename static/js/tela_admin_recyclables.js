@@ -160,15 +160,36 @@ function editRecyclable(id) {
   formModal.classList.remove("hidden");
 }
 
-async function deleteRecyclable(id) {
-  if (!confirm("Tem certeza que deseja deletar este reciclável?")) {
+async function deleteRecyclable(id, name = "este reciclável") {
+  const confirmed = window.confirm(`Tem certeza que deseja deletar "${name}"?`);
+
+  if (!confirmed) {
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Você precisa estar autenticado para realizar esta ação.");
     return;
   }
 
   try {
-    alert("Funcionalidade de deletar será implementada com rota DELETE");
+    const response = await fetch(`${API_URL}/admin/recyclables/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const result = await parseResponse(response);
+
+    alert(result.message || "Reciclável deletado com sucesso!");
+    loadRecyclables();
   } catch (error) {
     console.error("Erro:", error);
+    alert(error.message || "Não foi possível deletar o reciclável.");
   }
 }
 

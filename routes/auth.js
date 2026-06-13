@@ -5,6 +5,40 @@ const User = require('../models/user.js');
 
 const router = express.Router();
 
+router.post('/check-user', async (req, res) => {
+  try {
+    const { email, cpf } = req.body;
+
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const cleanCpf = String(cpf || '').replace(/\D/g, '');
+
+    let emailExists = false;
+    let cpfExists = false;
+
+    if (cleanEmail) {
+      const existingUserByEmail = await User.findOne({ email: cleanEmail });
+      emailExists = !!existingUserByEmail;
+    }
+
+    if (cleanCpf) {
+      const existingUserByCpf = await User.findOne({ cpf: cleanCpf });
+      cpfExists = !!existingUserByCpf;
+    }
+
+    return res.status(200).json({
+      success: true,
+      emailExists,
+      cpfExists
+    });
+  } catch (err) {
+    console.error('Erro ao verificar usuário:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro ao verificar e-mail e CPF.'
+    });
+  }
+});
+
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role, cpf, phone, city } = req.body;
@@ -95,7 +129,7 @@ router.post('/register', async (req, res) => {
     const userObject = newUser.toObject();
     delete userObject.password;
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Usuário cadastrado com sucesso.',
       token,
@@ -103,7 +137,31 @@ router.post('/register', async (req, res) => {
     });
   } catch (err) {
     console.error('Erro no cadastro:', err);
-    res.status(500).json({
+
+    if (err && err.code === 11000) {
+      const duplicatedField = Object.keys(err.keyPattern || {})[0];
+
+      if (duplicatedField === 'email') {
+        return res.status(409).json({
+          success: false,
+          error: 'Email já cadastrado.'
+        });
+      }
+
+      if (duplicatedField === 'cpf') {
+        return res.status(409).json({
+          success: false,
+          error: 'CPF já cadastrado.'
+        });
+      }
+
+      return res.status(409).json({
+        success: false,
+        error: 'Já existe um cadastro com esses dados.'
+      });
+    }
+
+    return res.status(500).json({
       success: false,
       error: 'Erro ao cadastrar usuário.'
     });

@@ -1,4 +1,4 @@
-const API_URL = 'https://bemaqui-tcc-main.onrender.com';
+const API_URL = 'https://bemaqui-tcc-main.onrender.com/api/benefits';
 
 const benefitsContainer = document.getElementById('benefits-container');
 const emptyState = document.getElementById('empty-state');
@@ -19,6 +19,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function getToken() {
   return localStorage.getItem('token');
+}
+
+async function parseResponse(response) {
+  const rawText = await response.text();
+
+  let data = null;
+  try {
+    data = rawText ? JSON.parse(rawText) : {};
+  } catch (error) {
+    if (rawText.trim().startsWith('<')) {
+      throw new Error('A rota chamada retornou HTML em vez de JSON. Verifique se a URL da API está correta.');
+    }
+    throw new Error('A resposta da API não está em JSON válido.');
+  }
+
+  if (!response.ok) {
+    throw new Error(data.error || data.message || 'Erro na requisição.');
+  }
+
+  return data;
 }
 
 function setCreateMode() {
@@ -103,16 +123,13 @@ function setupForm() {
         method,
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao salvar benefício.');
-      }
+      const data = await parseResponse(response);
 
       alert(
         data.message ||
@@ -130,14 +147,15 @@ function setupForm() {
 
 async function loadBenefits() {
   try {
-    const response = await fetch(API_URL);
-    const data = await response.json();
+    const response = await fetch(API_URL, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Erro ao carregar benefícios.');
-    }
+    const data = await parseResponse(response);
 
-    benefits = data.benefits || [];
+    benefits = data.benefits || data.data || [];
     renderBenefits(benefits);
   } catch (error) {
     console.error(error);
@@ -222,15 +240,12 @@ async function deleteBenefit(id, name) {
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'DELETE',
       headers: {
+        'Accept': 'application/json',
         'Authorization': `Bearer ${token}`
       }
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Erro ao excluir benefício.');
-    }
+    const data = await parseResponse(response);
 
     alert(data.message || 'Benefício excluído com sucesso.');
     loadBenefits();

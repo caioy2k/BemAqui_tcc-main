@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const cpfInput = document.getElementById("cpf");
   const phoneInput = document.getElementById("phone");
+  const emailInput = document.getElementById("email");
 
   if (cpfInput) {
     cpfInput.addEventListener("input", () => {
@@ -20,6 +21,46 @@ document.addEventListener("DOMContentLoaded", () => {
   if (phoneInput) {
     phoneInput.addEventListener("input", () => {
       phoneInput.value = formatPhone(phoneInput.value);
+    });
+  }
+
+  if (emailInput) {
+    emailInput.addEventListener("blur", async () => {
+      const email = emailInput.value.trim();
+      const cpf = document.getElementById("cpf")?.value.trim().replace(/\D/g, "") || "";
+
+      if (!email) return;
+
+      try {
+        const result = await checkUserExists(email, cpf);
+
+        if (result.emailExists) {
+          alert("Este e-mail já está cadastrado.");
+          emailInput.focus();
+        }
+      } catch (error) {
+        console.error("Erro ao verificar e-mail:", error);
+      }
+    });
+  }
+
+  if (cpfInput) {
+    cpfInput.addEventListener("blur", async () => {
+      const email = document.getElementById("email")?.value.trim() || "";
+      const cpf = cpfInput.value.trim().replace(/\D/g, "");
+
+      if (cpf.length !== 11) return;
+
+      try {
+        const result = await checkUserExists(email, cpf);
+
+        if (result.cpfExists) {
+          alert("Este CPF já está cadastrado.");
+          cpfInput.focus();
+        }
+      } catch (error) {
+        console.error("Erro ao verificar CPF:", error);
+      }
     });
   }
 
@@ -63,6 +104,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    try {
+      const existsResult = await checkUserExists(email, cleanCpf);
+
+      if (existsResult.emailExists) {
+        alert("Este e-mail já está cadastrado.");
+        return;
+      }
+
+      if (existsResult.cpfExists) {
+        alert("Este CPF já está cadastrado.");
+        return;
+      }
+    } catch (error) {
+      console.error("Erro ao verificar duplicidade:", error);
+      alert("Não foi possível validar e-mail e CPF antes do cadastro.");
+      return;
+    }
+
     const cadastroData = {
       name,
       email,
@@ -77,25 +136,55 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Accept": "application/json"
         },
         body: JSON.stringify(cadastroData)
       });
 
-      const data = await response.json();
+      const data = await parseResponse(response);
 
-      if (response.ok) {
-        alert("Cadastro realizado com sucesso! Faça login agora.");
-        window.location.href = "tela_login.html";
-      } else {
-        alert(data.error || "Erro ao cadastrar.");
-      }
+      alert(data.message || "Cadastro realizado com sucesso! Faça login agora.");
+      window.location.href = "tela_login.html";
     } catch (error) {
       console.error("Erro:", error);
-      alert("Não foi possível se conectar ao servidor.");
+      alert(error.message || "Não foi possível se conectar ao servidor.");
     }
   });
 });
+
+async function checkUserExists(email, cpf) {
+  const response = await fetch(`${API_URL}/auth/check-user`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ email, cpf })
+  });
+
+  return await parseResponse(response);
+}
+
+async function parseResponse(response) {
+  const text = await response.text();
+
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (error) {
+    if (text.trim().startsWith("<")) {
+      throw new Error("A API retornou HTML em vez de JSON. Verifique a rota no backend.");
+    }
+    throw new Error("Resposta inválida do servidor.");
+  }
+
+  if (!response.ok) {
+    throw new Error(data.error || data.message || "Erro na requisição.");
+  }
+
+  return data;
+}
 
 function formatCPF(value) {
   const numbers = value.replace(/\D/g, "").slice(0, 11);
