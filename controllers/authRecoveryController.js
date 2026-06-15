@@ -1,10 +1,10 @@
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const User = require("../models/User");
-const sendEmail = require("../utils/sendEmail");
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const User = require('../models/user');
+const sendEmail = require('../utils/sendEmail');
 
 function generateNumericCode(length = 6) {
-  let code = "";
+  let code = '';
   for (let i = 0; i < length; i++) {
     code += crypto.randomInt(0, 10).toString();
   }
@@ -16,13 +16,11 @@ exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({
-        error: "Informe o e-mail."
-      });
+      return res.status(400).json({ error: 'Informe o e-mail.' });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const user = await User.findOne({ email: normalizedEmail });
+    const cleanEmail = String(email).trim().toLowerCase();
+    const user = await User.findOne({ email: cleanEmail });
 
     if (user) {
       const code = generateNumericCode(6);
@@ -31,39 +29,36 @@ exports.forgotPassword = async (req, res) => {
       user.resetPasswordCodeHash = codeHash;
       user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
       user.resetPasswordUsed = false;
+      user.resetPasswordAttempts = 0;
 
       await user.save();
 
-      const html = `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
-          <h2>Recuperação de senha - BemAqui</h2>
-          <p>Recebemos uma solicitação para redefinir sua senha.</p>
-          <p>Seu código é:</p>
-          <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #16a34a;">
-            ${code}
-          </div>
-          <p>Esse código expira em 15 minutos e só pode ser usado uma vez.</p>
-          <p>Se você não solicitou a redefinição, ignore este e-mail.</p>
-        </div>
-      `;
-
-      const text = `Recuperação de senha - BemAqui\n\nSeu código é: ${code}\n\nEsse código expira em 15 minutos.`;
-
       await sendEmail({
-        to: normalizedEmail,
-        subject: "Código de redefinição de senha - BemAqui",
-        html,
-        text
+        to: cleanEmail,
+        subject: 'Código de redefinição de senha - BemAqui',
+        text: `Seu código de redefinição é: ${code}. Ele expira em 15 minutos.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #222;">
+            <h2>BemAqui - Redefinição de senha</h2>
+            <p>Seu código de redefinição é:</p>
+            <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #16a34a;">
+              ${code}
+            </div>
+            <p>Esse código expira em 15 minutos.</p>
+          </div>
+        `
       });
     }
 
     return res.status(200).json({
-      message: "Se o e-mail existir em nossa base, um código de recuperação foi enviado."
+      success: true,
+      message: 'Se o e-mail existir em nossa base, um código de recuperação foi enviado.'
     });
-  } catch (error) {
-    console.error("forgotPassword error:", error);
+  } catch (err) {
+    console.error('Erro em forgotPassword:', err);
     return res.status(500).json({
-      error: "Erro ao solicitar código de recuperação."
+      success: false,
+      error: 'Erro ao solicitar código de recuperação.'
     });
   }
 };
@@ -74,67 +69,80 @@ exports.resetPassword = async (req, res) => {
 
     if (!email || !code || !newPassword || !confirmPassword) {
       return res.status(400).json({
-        error: "Preencha todos os campos."
+        success: false,
+        error: 'Preencha todos os campos.'
       });
     }
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
-        error: "As senhas não coincidem."
+        success: false,
+        error: 'As senhas não coincidem.'
       });
     }
 
-    if (newPassword.length < 6) {
+    if (String(newPassword).length < 6) {
       return res.status(400).json({
-        error: "A nova senha deve ter pelo menos 6 caracteres."
+        success: false,
+        error: 'A nova senha deve ter pelo menos 6 caracteres.'
       });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const user = await User.findOne({ email: normalizedEmail });
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanCode = String(code).trim();
+
+    const user = await User.findOne({ email: cleanEmail });
 
     if (!user || !user.resetPasswordCodeHash || !user.resetPasswordExpires) {
       return res.status(400).json({
-        error: "Código inválido ou expirado."
+        success: false,
+        error: 'Código inválido ou expirado.'
       });
     }
 
     if (user.resetPasswordUsed) {
       return res.status(400).json({
-        error: "Esse código já foi utilizado."
+        success: false,
+        error: 'Esse código já foi utilizado.'
       });
     }
 
     if (new Date() > user.resetPasswordExpires) {
       return res.status(400).json({
-        error: "Código expirado. Solicite um novo."
+        success: false,
+        error: 'Código expirado. Solicite um novo.'
       });
     }
 
-    const isCodeValid = await bcrypt.compare(code.trim(), user.resetPasswordCodeHash);
+    const isCodeValid = await bcrypt.compare(cleanCode, user.resetPasswordCodeHash);
 
     if (!isCodeValid) {
+      user.resetPasswordAttempts += 1;
+      await user.save();
+
       return res.status(400).json({
-        error: "Código inválido ou expirado."
+        success: false,
+        error: 'Código inválido ou expirado.'
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    user.senha = hashedPassword;
+    user.password = newPassword;
     user.resetPasswordCodeHash = null;
     user.resetPasswordExpires = null;
     user.resetPasswordUsed = true;
+    user.resetPasswordAttempts = 0;
 
     await user.save();
 
     return res.status(200).json({
-      message: "Senha redefinida com sucesso."
+      success: true,
+      message: 'Senha redefinida com sucesso.'
     });
-  } catch (error) {
-    console.error("resetPassword error:", error);
+  } catch (err) {
+    console.error('Erro em resetPassword:', err);
     return res.status(500).json({
-      error: "Erro ao redefinir senha."
+      success: false,
+      error: 'Erro ao redefinir senha.'
     });
   }
 };

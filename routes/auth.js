@@ -2,6 +2,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user.js');
+const {
+  forgotPassword,
+  resetPassword
+} = require('../controllers/authRecoveryController');
 
 const router = express.Router();
 
@@ -41,7 +45,7 @@ router.post('/check-user', async (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role, cpf, phone, city } = req.body;
+    const { name, email, password, role, cpf, phone, bairro } = req.body;
 
     if (!name || !email || !password || !role || !cpf || !phone) {
       return res.status(400).json({
@@ -61,7 +65,7 @@ router.post('/register', async (req, res) => {
     const cleanEmail = String(email).trim().toLowerCase();
     const cleanCpf = String(cpf).replace(/\D/g, '');
     const cleanPhone = String(phone).replace(/\D/g, '');
-    const cleanCity = String(city || '').trim();
+    const cleanbairro = String(city || '').trim();
     const cleanPassword = String(password);
 
     if (cleanCpf.length !== 11) {
@@ -108,7 +112,7 @@ router.post('/register', async (req, res) => {
       role,
       cpf: cleanCpf,
       phone: cleanPhone,
-      city: cleanCity,
+      bairro: cleanCity,
       isAdmin: false,
       isEmployee: false
     });
@@ -125,9 +129,6 @@ router.post('/register', async (req, res) => {
       process.env.JWT_SECRET || 'sua_chave_secreta_aqui',
       { expiresIn: '7d' }
     );
-
-    const hashedPassword = await bcrypt.hash(senha, 10);
-user.senha = hashedPassword;
 
     const userObject = newUser.toObject();
     delete userObject.password;
@@ -171,12 +172,12 @@ user.senha = hashedPassword;
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({
         success: false,
-        error: "JWT_SECRET não configurado no servidor."
+        error: 'JWT_SECRET não configurado no servidor.'
       });
     }
 
@@ -185,7 +186,7 @@ router.post("/login", async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: "Informe e-mail e senha."
+        error: 'Informe e-mail e senha.'
       });
     }
 
@@ -195,15 +196,18 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: "E-mail ou senha inválidos."
+        error: 'E-mail ou senha inválidos.'
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(senhaInformada, user.senha);
+    const isPasswordValid = await user.comparePassword(password);
 
-if (!isPasswordValid) {
-  return res.status(401).json({ error: "Credenciais inválidas." });
-}
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        error: 'E-mail ou senha inválidos.'
+      });
+    }
 
     const token = jwt.sign(
       {
@@ -215,37 +219,28 @@ if (!isPasswordValid) {
         isEmployee: user.isEmployee
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: '7d' }
     );
-
-   
 
     const userObject = user.toObject();
     delete userObject.password;
 
     return res.status(200).json({
       success: true,
-      message: "Login realizado com sucesso.",
+      message: 'Login realizado com sucesso.',
       token,
       user: userObject
     });
   } catch (err) {
-    console.error("Erro no login:", err);
+    console.error('Erro no login:', err);
     return res.status(500).json({
       success: false,
-      error: "Erro no servidor ao fazer login."
+      error: 'Erro no servidor ao fazer login.'
     });
   }
 });
 
-
-const {
-  forgotPassword,
-  resetPassword
-} = require("../controllers/authRecoveryController");
-
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
-
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 module.exports = router;
