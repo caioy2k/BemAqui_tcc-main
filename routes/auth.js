@@ -65,7 +65,7 @@ router.post('/register', async (req, res) => {
     const cleanEmail = String(email).trim().toLowerCase();
     const cleanCpf = String(cpf).replace(/\D/g, '');
     const cleanPhone = String(phone).replace(/\D/g, '');
-    const cleanbairro = String(city || '').trim();
+    const cleanbairro = String(bairro || '').trim();
     const cleanPassword = String(password);
 
     if (cleanCpf.length !== 11) {
