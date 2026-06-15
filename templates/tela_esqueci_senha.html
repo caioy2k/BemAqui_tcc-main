@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Esqueci minha senha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #0f172a, #14532d);
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+    h1 {
+      font-size: 28px;
+      color: #14532d;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.55;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+    }
+    button {
+      width: 100%;
+      border: none;
+      background: #16a34a;
+      color: #fff;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #15803d;
+    }
+    .message {
+      margin-top: 14px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+    .message.error { color: #b91c1c; }
+    .message.success { color: #15803d; }
+    .back-link {
+      display: inline-block;
+      margin-top: 18px;
+      color: #166534;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Esqueci minha senha</h1>
+    <p>Informe seu e-mail para receber um código numérico de redefinição.</p>
+
+    <form id="forgotPasswordForm">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required />
+      </div>
+
+      <button type="submit">Solicitar código</button>
+      <div id="message" class="message"></div>
+    </form>
+
+    <a class="back-link" href="tela_login.html">Voltar para o login</a>
+  </div>
+
+  <script>
+    const API_URL = "https://bemaqui-tcc-main.onrender.com";
+    const form = document.getElementById("forgotPasswordForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      message.textContent = "";
+      message.className = "message";
+
+      const email = document.getElementById("email").value.trim().toLowerCase();
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Não foi possível solicitar o código.");
+        }
+
+        message.textContent = data.message || "Se o e-mail existir, o código foi enviado.";
+        message.classList.add("success");
+
+        setTimeout(() => {
+          window.location.href = `tela_redefinir_senha.html?email=${encodeURIComponent(email)}`;
+        }, 1200);
+      } catch (error) {
+        message.textContent = error.message;
+        message.classList.add("error");
+      }
+    });
+  </script>
+</body>
+</html>

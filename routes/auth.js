@@ -126,6 +126,9 @@ router.post('/register', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    const hashedPassword = await bcrypt.hash(senha, 10);
+user.senha = hashedPassword;
+
     const userObject = newUser.toObject();
     delete userObject.password;
 
@@ -221,6 +224,11 @@ router.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    const isPasswordValid = await bcrypt.compare(senhaInformada, user.senha);
+if (!isPasswordValid) {
+  return res.status(401).json({ error: "Credenciais inválidas." });
+}
+
     const userObject = user.toObject();
     delete userObject.password;
 
@@ -238,6 +246,15 @@ router.post("/login", async (req, res) => {
     });
   }
 });
+
+
+const {
+  forgotPassword,
+  resetPassword
+} = require("../controllers/authRecoveryController");
+
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 
 module.exports = router;
