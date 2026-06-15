@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const User = require("../models/User");
-const Trade = require("../models/Trade");
+const User = require("../models/user");
+const Trade = require("../models/trade");
 
 router.get("/public", async (req, res) => {
   try {
