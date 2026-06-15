@@ -49,7 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = document.getElementById("email")?.value.trim() || "";
       const cpf = cpfInput.value.trim().replace(/\D/g, "");
 
-      if (cpf.length !== 11) return;
+      if (!cpf) return;
+
+      if (!isValidCPF(cpf)) {
+        alert("CPF inválido.");
+        cpfInput.focus();
+        return;
+      }
 
       try {
         const result = await checkUserExists(email, cpf);
@@ -94,8 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const cleanCpf = cpf.replace(/\D/g, "");
     const cleanPhone = phone.replace(/\D/g, "");
 
-    if (cleanCpf.length !== 11) {
-      alert("CPF inválido. Digite os 11 números do CPF.");
+    if (!isValidCPF(cleanCpf)) {
+      alert("CPF inválido.");
       return;
     }
 
@@ -184,6 +190,35 @@ async function parseResponse(response) {
   }
 
   return data;
+}
+
+function isValidCPF(cpf) {
+  const cleanCpf = String(cpf).replace(/\D/g, "");
+
+  if (cleanCpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += Number(cleanCpf.charAt(i)) * (10 - i);
+  }
+
+  let firstDigit = (sum * 10) % 11;
+  if (firstDigit === 10) firstDigit = 0;
+
+  if (firstDigit !== Number(cleanCpf.charAt(9))) return false;
+
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += Number(cleanCpf.charAt(i)) * (11 - i);
+  }
+
+  let secondDigit = (sum * 10) % 11;
+  if (secondDigit === 10) secondDigit = 0;
+
+  if (secondDigit !== Number(cleanCpf.charAt(10))) return false;
+
+  return true;
 }
 
 function formatCPF(value) {
