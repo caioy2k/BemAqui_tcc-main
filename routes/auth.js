@@ -224,10 +224,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    const isPasswordValid = await bcrypt.compare(senhaInformada, user.senha);
-if (!isPasswordValid) {
-  return res.status(401).json({ error: "Credenciais inválidas." });
-}
+   
 
     const userObject = user.toObject();
     delete userObject.password;
