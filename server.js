@@ -11,7 +11,9 @@ const Trade = require('./models/trade');
 const Recyclable = require('./models/recyclable');
 const Benefit = require('./models/benefit');
 
-const dashboardRoutes = require("./routes/dashboard");
+// DASHBOARD IMPACTO
+// const dashboardRoutes = require("./routes/dashboard");
+
 const authRoutes = require('./routes/auth');
 const tradeRoutes = require('./routes/trade');
 const authCompanyRoutes = require('./routes/authCompany');
