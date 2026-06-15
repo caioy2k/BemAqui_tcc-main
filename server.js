@@ -79,7 +79,7 @@ app.get(['/', '/index.html', '/tela_login.html', '/tela_cadastro.html'], (req, r
 // =========================
 // ROTA DASHBOARD IMPACTO
 // =========================
-app.use("/api/dashboard", dashboardRoutes);
+// app.use("/api/dashboard", dashboardRoutes);
 
 
 // =========================
