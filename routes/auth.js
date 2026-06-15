@@ -199,17 +199,11 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const isPasswordValid =
-      typeof user.comparePassword === "function"
-        ? await user.comparePassword(password)
-        : await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(senhaInformada, user.senha);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        error: "E-mail ou senha inválidos."
-      });
-    }
+if (!isPasswordValid) {
+  return res.status(401).json({ error: "Credenciais inválidas." });
+}
 
     const token = jwt.sign(
       {
