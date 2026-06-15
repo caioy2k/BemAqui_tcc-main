@@ -91,4 +91,18 @@ router.put('/:id', authMiddleware, isAdminMiddleware, async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedRecyclable = await Recyclable.findByIdAndDelete(req.params.id);
+
+    if (!deletedRecyclable) {
+      return res.status(404).json({ error: 'Reciclavel não encontrado.' });
+    }
+
+    res.json({ message: 'Reciclavel excluído com sucesso.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao excluir benefício.' });
+  }
+});
+
 module.exports = router;

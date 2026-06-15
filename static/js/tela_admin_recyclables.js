@@ -10,20 +10,42 @@ const recyclableForm = document.getElementById("recyclable-form");
 const modalTitle = document.querySelector(".modal-header h2");
 const submitButton = recyclableForm.querySelector('button[type="submit"]');
 
+async function parseResponse(response) {
+  const text = await response.text();
+
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (error) {
+    if (text.trim().startsWith("<")) {
+      throw new Error("A API retornou HTML em vez de JSON. Verifique a rota no backend.");
+    }
+    throw new Error("Resposta inválida do servidor.");
+  }
+
+  if (!response.ok) {
+    throw new Error(data.error || data.message || "Erro na requisição.");
+  }
+
+  return data;
+}
+
 async function loadRecyclables() {
   try {
-    const response = await fetch(`${API_URL}/recyclables`);
-    const data = await response.json();
+    const response = await fetch(`${API_URL}/recyclables`, {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
 
-    if (response.ok) {
-      recyclables = data.recyclables || [];
-      renderRecyclables();
-    } else {
-      alert("Erro ao carregar recicláveis.");
-    }
+    const data = await parseResponse(response);
+    recyclables = data.recyclables || [];
+    renderRecyclables();
   } catch (error) {
     console.error("Erro:", error);
-    alert("Não foi possível conectar ao servidor.");
+    recyclablesContainer.innerHTML = "";
+    emptyState.classList.remove("hidden");
+    emptyState.innerHTML = `<p>${error.message || "Não foi possível conectar ao servidor."}</p>`;
   }
 }
 
@@ -49,7 +71,7 @@ function renderRecyclables() {
       <div class="item-points">${item.pointsValue} pts</div>
       <div class="item-actions">
         <button class="action-btn-item" onclick="editRecyclable('${item._id}')">Editar</button>
-        <button class="action-btn-item delete" onclick="deleteRecyclable('${item._id}')">Deletar</button>
+        <button class="action-btn-item delete" onclick="deleteRecyclable('${item._id}', '${String(item.name).replace(/'/g, "\\'")}')">Deletar</button>
       </div>
     `;
     recyclablesContainer.appendChild(row);
@@ -124,27 +146,25 @@ recyclableForm.addEventListener("submit", async (event) => {
       method,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
 
-    const result = await response.json();
+    await parseResponse(response);
 
-    if (response.ok) {
-      alert(
-        isEditing
-          ? "Reciclável atualizado com sucesso!"
-          : "Reciclável cadastrado com sucesso!"
-      );
-      closeFormModal();
-      loadRecyclables();
-    } else {
-      alert(result.error || "Erro ao salvar reciclável.");
-    }
+    alert(
+      isEditing
+        ? "Reciclável atualizado com sucesso!"
+        : "Reciclável cadastrado com sucesso!"
+    );
+
+    closeFormModal();
+    loadRecyclables();
   } catch (error) {
     console.error("Erro:", error);
-    alert("Não foi possível salvar o reciclável.");
+    alert(error.message || "Não foi possível salvar o reciclável.");
   }
 });
 
@@ -163,9 +183,7 @@ function editRecyclable(id) {
 async function deleteRecyclable(id, name = "este reciclável") {
   const confirmed = window.confirm(`Tem certeza que deseja deletar "${name}"?`);
 
-  if (!confirmed) {
-    return;
-  }
+  if (!confirmed) return;
 
   const token = localStorage.getItem("token");
 

@@ -1,4 +1,4 @@
-const API_URL = 'https://bemaqui-tcc-main.onrender.com/api/benefits';
+const API_URL = 'https://bemaqui-tcc-main.onrender.com/benefits';
 
 const benefitsContainer = document.getElementById('benefits-container');
 const emptyState = document.getElementById('empty-state');
