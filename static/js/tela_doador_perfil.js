@@ -1,9 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const defaultProfile = {
-    fullName: "Caio",
-    email: "caio@email.com",
-    phone: "(11) 99999-9999",
-    city: "São Paulo",
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const defaultProfileExtras = {
     bio: "Doador cadastrado na plataforma BemAqui.",
     preferences: {
       emailUpdates: true,
@@ -12,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const savedProfile =
-    JSON.parse(localStorage.getItem("bemaquiDonorProfile")) || defaultProfile;
+  const savedExtras =
+    JSON.parse(localStorage.getItem("bemaquiDonorProfileExtras")) || defaultProfileExtras;
 
   const savedSubmissions =
     JSON.parse(localStorage.getItem("bemaquiSubmissions")) || [];
@@ -24,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fullNameInput = document.getElementById("fullName");
   const emailInput = document.getElementById("email");
   const phoneInput = document.getElementById("phone");
+  const cpfInput = document.getElementById("cpf");
   const cityInput = document.getElementById("city");
   const bioInput = document.getElementById("bio");
 
@@ -37,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const summaryName = document.getElementById("summaryName");
   const summaryEmail = document.getElementById("summaryEmail");
   const summaryPhone = document.getElementById("summaryPhone");
+  const summaryCpf = document.getElementById("summaryCpf");
   const summaryCity = document.getElementById("summaryCity");
   const profileMainContact = document.getElementById("profileMainContact");
   const profileSubmissionCount = document.getElementById("profileSubmissionCount");
@@ -46,34 +46,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getInitials(name) {
     if (!name) return "D";
-    const parts = name.trim().split(" ");
+    const parts = name.trim().split(" ").filter(Boolean);
     if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
     return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
   }
 
-  function fillForm(profile) {
-    fullNameInput.value = profile.fullName || "";
-    emailInput.value = profile.email || "";
-    phoneInput.value = profile.phone || "";
-    cityInput.value = profile.city || "";
-    bioInput.value = profile.bio || "";
+  function formatCPF(cpf) {
+    const numbers = String(cpf || "").replace(/\D/g, "").slice(0, 11);
 
-    prefEmail.checked = !!profile.preferences?.emailUpdates;
-    prefStatus.checked = !!profile.preferences?.statusAlerts;
-    prefNews.checked = !!profile.preferences?.news;
+    return numbers
+      .replace(/^(\d{3})(\d)/, "$1.$2")
+      .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1-$2");
   }
 
-  function updateProfileView(profile) {
-    profileDisplayName.textContent = profile.fullName || "Doador";
-    profileDisplayEmail.textContent = profile.email || "email@exemplo.com";
-    profileAvatar.textContent = getInitials(profile.fullName);
+  function formatPhone(phone) {
+    const numbers = String(phone || "").replace(/\D/g, "").slice(0, 11);
 
-    summaryName.textContent = profile.fullName || "-";
-    summaryEmail.textContent = profile.email || "-";
-    summaryPhone.textContent = profile.phone || "-";
-    summaryCity.textContent = profile.city || "Não informada";
+    if (numbers.length <= 10) {
+      return numbers
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+    }
 
-    profileMainContact.textContent = profile.phone || "-";
+    return numbers
+      .replace(/^(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2");
+  }
+
+  function getToken() {
+    return localStorage.getItem("token");
+  }
+
+  async function parseResponse(response) {
+    const text = await response.text();
+
+    let data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (error) {
+      if (text.trim().startsWith("<")) {
+        throw new Error("A API retornou HTML em vez de JSON. Verifique a rota do perfil no backend.");
+      }
+      throw new Error("Resposta inválida do servidor.");
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || "Erro na requisição.");
+    }
+
+    return data;
+  }
+
+  function fillExtras(extras) {
+    bioInput.value = extras.bio || "";
+    prefEmail.checked = !!extras.preferences?.emailUpdates;
+    prefStatus.checked = !!extras.preferences?.statusAlerts;
+    prefNews.checked = !!extras.preferences?.news;
+  }
+
+  function fillRealUserData(user) {
+    const fullName = user.name || "";
+    const email = user.email || "";
+    const phone = formatPhone(user.phone || "");
+    const cpf = formatCPF(user.cpf || "");
+    const city = user.city || user.bairro || "";
+
+    fullNameInput.value = fullName;
+    emailInput.value = email;
+    phoneInput.value = phone;
+    cpfInput.value = cpf;
+    cityInput.value = city;
+
+    profileDisplayName.textContent = fullName || "Doador";
+    profileDisplayEmail.textContent = email || "email@exemplo.com";
+    profileAvatar.textContent = getInitials(fullName);
+
+    summaryName.textContent = fullName || "-";
+    summaryEmail.textContent = email || "-";
+    summaryPhone.textContent = phone || "-";
+    summaryCpf.textContent = cpf || "-";
+    summaryCity.textContent = city || "Não informada";
+
+    profileMainContact.textContent = phone || "-";
   }
 
   function updateStats() {
@@ -88,12 +143,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function saveProfile() {
-    const newProfile = {
-      fullName: fullNameInput.value.trim(),
-      email: emailInput.value.trim(),
-      phone: phoneInput.value.trim(),
-      city: cityInput.value.trim(),
+  async function loadUserProfile() {
+    const token = getToken();
+
+    if (!token) {
+      throw new Error("Usuário não autenticado.");
+    }
+
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = await parseResponse(response);
+    return data.user || data;
+  }
+
+  function saveExtrasOnly() {
+    const extras = {
       bio: bioInput.value.trim(),
       preferences: {
         emailUpdates: prefEmail.checked,
@@ -102,10 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    localStorage.setItem("bemaquiDonorProfile", JSON.stringify(newProfile));
-    updateProfileView(newProfile);
-    feedback.textContent = "Perfil salvo com sucesso.";
-    accountStatus.textContent = "Dados atualizados recentemente";
+    localStorage.setItem("bemaquiDonorProfileExtras", JSON.stringify(extras));
+    feedback.textContent = "Preferências e observação salvas localmente.";
+    accountStatus.textContent = "Dados visuais atualizados";
 
     setTimeout(() => {
       feedback.textContent = "";
@@ -114,12 +183,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    saveProfile();
+    saveExtrasOnly();
   });
 
-  saveProfileBtn.addEventListener("click", saveProfile);
+  saveProfileBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    saveExtrasOnly();
+  });
 
-  fillForm(savedProfile);
-  updateProfileView(savedProfile);
+  fillExtras(savedExtras);
   updateStats();
+
+  try {
+    const user = await loadUserProfile();
+    fillRealUserData(user);
+  } catch (error) {
+    console.error("Erro ao carregar perfil do doador:", error);
+
+    profileDisplayName.textContent = "Doador";
+    profileDisplayEmail.textContent = "Não foi possível carregar";
+    profileAvatar.textContent = "D";
+    summaryName.textContent = "-";
+    summaryEmail.textContent = "-";
+    summaryPhone.textContent = "-";
+    summaryCpf.textContent = "-";
+    summaryCity.textContent = "Não informada";
+    profileMainContact.textContent = "-";
+    accountStatus.textContent = "Perfil indisponível";
+    feedback.textContent = "Não foi possível carregar os dados do perfil.";
+  }
 });

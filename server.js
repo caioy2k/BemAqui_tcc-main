@@ -11,6 +11,7 @@ const Trade = require('./models/trade');
 const Recyclable = require('./models/recyclable');
 const Benefit = require('./models/benefit');
 
+const dashboardRoutes = require("./routes/dashboard");
 const authRoutes = require('./routes/auth');
 const tradeRoutes = require('./routes/trade');
 const authCompanyRoutes = require('./routes/authCompany');
@@ -60,6 +61,7 @@ function authMiddleware(req, res, next) {
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use(express.static(path.join(__dirname, 'templates')));
 
+
 // =========================
 // PÁGINAS HTML
 // =========================
@@ -71,6 +73,12 @@ app.get(['/', '/index.html', '/tela_login.html', '/tela_cadastro.html'], (req, r
 
   res.sendFile(path.join(__dirname, 'templates', page));
 });
+
+// =========================
+// ROTA DASHBOARD IMPACTO
+// =========================
+app.use("/api/dashboard", dashboardRoutes);
+
 
 // =========================
 // ROTAS DE AUTENTICAÇÃO E TRADE

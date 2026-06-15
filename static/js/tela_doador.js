@@ -1,3 +1,32 @@
+const donorName = document.getElementById("donorName");
+
+async function loadDonorName() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    donorName.textContent = "Doador";
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = await parseResponse(response);
+    const user = data.user || data;
+
+    donorName.textContent = user.name || "Doador";
+  } catch (error) {
+    console.error("Erro ao carregar nome do doador:", error);
+    donorName.textContent = "Doador";
+  }
+}
+
+
 const donorDashboardData = {
   name: "Caio",
   totalSubmissions: 7,
