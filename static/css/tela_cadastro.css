@@ -441,3 +441,10 @@ select.input-default {
     align-items: flex-start;
   }
 }
+
+.termos {
+  justify-content: center;
+   display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+}

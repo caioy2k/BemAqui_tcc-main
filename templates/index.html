@@ -22,7 +22,7 @@
                 </div>
                 <div class="logo-text">
                     <span class="logo-name">BemAqui</span>
-                    <span class="logo-slogan">uma ajuda para quem necessita</span>
+                    <span class="logo-slogan">UMA  AJUDA PARA QUEM NECESSITA</span>
                 </div>
             </div>
             <div class="nav-menu">
@@ -72,16 +72,13 @@
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
-                        <span class="stat-number">+2.000</span>
-                        <span class="stat-label">Famílias ajudadas</span>
+                        
                     </div>
                     <div class="stat">
-                        <span class="stat-number">+15.000kg</span>
-                        <span class="stat-label">Reciclados</span>
+                        
                     </div>
                     <div class="stat">
-                        <span class="stat-number">+50</span>
-                        <span class="stat-label">Pontos de coleta</span>
+                        
                     </div>
                 </div>
             </div>
@@ -367,10 +364,10 @@
                     <h2>Entre em <span class="gradient-text">Contato</span></h2>
                     <p>Estamos aqui para ajudar. Entre em contato conosco!</p>
                     <div class="contact-details">
-                        <div class="contact-item"><i class="fas fa-phone-alt"></i><span>(11) 99999-9999</span></div>
-                        <div class="contact-item"><i class="fas fa-envelope"></i><span>contato@bemaqui.org.br</span></div>
+                        <div class="contact-item"><i class="fas fa-phone-alt"></i><span>(11) 9 4799-1902</span></div>
+                        <div class="contact-item"><i class="fas fa-envelope"></i><span>bemaqui.org@gmail.com.br</span></div>
                         <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Rua da Sustentabilidade, 123 - São Paulo, SP</span></div>
-                        <div class="contact-item"><i class="fas fa-clock"></i><span>Segunda a Sexta: 8h às 18h | Sábado: 8h às 12h</span></div>
+                        <div class="contact-item"><i class="fas fa-clock"></i><span>Segunda a Sexta: 8h às 18h | Sábado: 8h às 14h</span></div>
                     </div>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -415,10 +412,10 @@
                 </div>
                 <div class="footer-links">
                     <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Termos de Uso</a></li>
-                        <li><a href="#">Política de Privacidade</a></li>
-                        <li><a href="#">Política de Cookies</a></li>
+                     <ul>
+                        <li><a href="javascript:void(0)" onclick="mostrarTermos('uso')">Termos de Uso</a></li>
+                        <li><a href="javascript:void(0)" onclick="mostrarTermos('privacidade')">Política de Privacidade</a></li>
+                        <li><a href="javascript:void(0)" onclick="mostrarTermos('cookies')">Política de Cookies</a></li>
                     </ul>
                 </div>
                 <div class="footer-newsletter">
@@ -431,7 +428,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 BemAqui - Plataforma Social de Troca Sustentável. Todos os direitos reservados.</p>
+                <p>&copy; 2025 BemAqui - Plataforma Social de Troca Sustentável. Todos os direitos reservados.</p>
                 <p class="version">Versão 1.0 | Desenvolvido com <i class="fas fa-heart"></i> para um mundo melhor</p>
             </div>
         </div>
@@ -441,6 +438,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <script>
+        // Função para mostrar os termos (apenas 15 linhas adicionadas)
+        function mostrarTermos(tipo) {
+            var termos = {
+                uso: "TERMOS DE USO:\n\n1. Ao utilizar o BemAqui, você concorda com nossas regras.\n2. Moedas virtuais não podem ser convertidas em dinheiro real.\n3. É proibido qualquer tipo de fraude no sistema.\n4. O BemAqui pode suspender contas que violem as regras.\n5. Aceitamos apenas materiais recicláveis limpos e separados.\n\nDeseja continuar?",
+                privacidade: "POLÍTICA DE PRIVACIDADE:\n\n1. Seus dados são protegidos e não serão vendidos.\n2. Coletamos nome, e-mail e endereço para entregas.\n3. Você pode solicitar exclusão dos seus dados a qualquer momento.\n4. Utilizamos cookies para melhorar sua experiência.\n5. Seus dados de reciclagem são usados apenas para estatísticas.\n\nDeseja continuar?",
+                cookies: "POLÍTICA DE COOKIES:\n\nUtilizamos cookies para melhorar sua navegação, lembrar suas preferências e analisar o tráfego do site. Você pode desabilitar os cookies nas configurações do seu navegador a qualquer momento.\n\nDeseja aceitar os cookies?"
+            };
+            
+            var mensagem = termos[tipo] || "Termos e condições disponíveis em nosso site.";
+            
+            if (confirm(mensagem)) {
+                if (tipo === 'uso') window.location.href = "tela_login.html";
+                else if (tipo === 'privacidade') window.location.href = "tela_cadastro.html";
+                else if (tipo === 'cookies') alert("✓ Cookies aceitos!");
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             initHamburger();
             initImpactCounters();

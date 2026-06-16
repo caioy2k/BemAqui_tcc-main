@@ -106,43 +106,56 @@
   </div>
 
   <script>
-    const API_URL = "https://bemaqui-tcc-main.onrender.com";
-    const form = document.getElementById("forgotPasswordForm");
-    const message = document.getElementById("message");
+  const API_URL = "https://bemaqui-tcc-main.onrender.com";
+  const form = document.getElementById("forgotPasswordForm");
+  const message = document.getElementById("message");
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      message.textContent = "";
-      message.className = "message";
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    message.textContent = "Enviando código...";
+    message.className = "message";
 
-      const email = document.getElementById("email").value.trim().toLowerCase();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+
+    try {
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const rawText = await response.text();
+      let data = {};
 
       try {
-        const response = await fetch(`${API_URL}/auth/forgot-password`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Não foi possível solicitar o código.");
-        }
-
-        message.textContent = data.message || "Se o e-mail existir, o código foi enviado.";
-        message.classList.add("success");
-
-        setTimeout(() => {
-          window.location.href = `tela_redefinir_senha.html?email=${encodeURIComponent(email)}`;
-        }, 1200);
-      } catch (error) {
-        message.textContent = error.message;
-        message.classList.add("error");
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        data = { message: rawText };
       }
-    });
-  </script>
+
+      console.log("Status:", response.status);
+      console.log("Resposta:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || "Não foi possível solicitar o código.");
+      }
+
+      message.textContent = data.message || "Se o e-mail existir, o código foi enviado.";
+      message.classList.remove("error");
+      message.classList.add("success");
+
+      setTimeout(() => {
+        window.location.href = `tela_redefinir_senha.html?email=${encodeURIComponent(email)}`;
+      }, 1200);
+    } catch (error) {
+      console.error("Erro ao solicitar código:", error);
+      message.textContent = error.message || "Erro ao solicitar código.";
+      message.classList.remove("success");
+      message.classList.add("error");
+    }
+  });
+</script>
 </body>
 </html>

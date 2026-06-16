@@ -287,6 +287,8 @@ h1, h2, h3, h4, h5, h6 {
     pointer-events: none;
 }
 
+
+
 .hero-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
