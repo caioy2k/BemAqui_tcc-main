@@ -12,17 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const phoneInput = document.getElementById("phone");
   const emailInput = document.getElementById("email");
 
-  if (cpfInput) {
-    cpfInput.addEventListener("input", () => {
-      cpfInput.value = formatCPF(cpfInput.value);
-    });
-  }
+  // if (cpfInput) {
+  //   cpfInput.addEventListener("input", () => {
+  //     cpfInput.value = formatCPF(cpfInput.value);
+  //   });
+  // }
 
-  if (phoneInput) {
-    phoneInput.addEventListener("input", () => {
-      phoneInput.value = formatPhone(phoneInput.value);
-    });
-  }
+  // if (phoneInput) {
+  //   phoneInput.addEventListener("input", () => {
+  //     phoneInput.value = formatPhone(phoneInput.value);
+  //   });
+  // }
 
   // if (emailInput) {
   //   emailInput.addEventListener("blur", async () => {
@@ -44,31 +44,31 @@ document.addEventListener("DOMContentLoaded", () => {
   //   });
   // }
 
-  if (cpfInput) {
-    cpfInput.addEventListener("blur", async () => {
-      const email = document.getElementById("email")?.value.trim() || "";
-      const cpf = cpfInput.value.trim().replace(/\D/g, "");
+  // if (cpfInput) {
+  //   cpfInput.addEventListener("blur", async () => {
+  //     const email = document.getElementById("email")?.value.trim() || "";
+  //     const cpf = cpfInput.value.trim().replace(/\D/g, "");
 
-      if (!cpf) return;
+  //     if (!cpf) return;
 
-      if (!isValidCPF(cpf)) {
-        alert("CPF inválido.");
-        cpfInput.focus();
-        return;
-      }
+  //     if (!isValidCPF(cpf)) {
+  //       alert("CPF inválido.");
+  //       cpfInput.focus();
+  //       return;
+  //     }
 
-      try {
-        const result = await checkUserExists(email, cpf);
+  //     try {
+  //       const result = await checkUserExists(email, cpf);
 
-        if (result.cpfExists) {
-          alert("Este CPF já está cadastrado.");
-          cpfInput.focus();
-        }
-      } catch (error) {
-        console.error("Erro ao verificar CPF:", error);
-      }
-    });
-  }
+  //       if (result.cpfExists) {
+  //         alert("Este CPF já está cadastrado.");
+  //         cpfInput.focus();
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao verificar CPF:", error);
+  //     }
+  //   });
+  // }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -100,33 +100,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const cleanCpf = cpf.replace(/\D/g, "");
     const cleanPhone = phone.replace(/\D/g, "");
 
-    if (!isValidCPF(cleanCpf)) {
-      alert("CPF inválido.");
-      return;
-    }
+    // if (!isValidCPF(cleanCpf)) {
+    //   alert("CPF inválido.");
+    //   return;
+    // }
 
-    if (cleanPhone.length < 10) {
-      alert("Telefone inválido.");
-      return;
-    }
+    // if (cleanPhone.length < 10) {
+    //   alert("Telefone inválido.");
+    //   return;
+    // }
 
-    try {
-      const existsResult = await checkUserExists(email, cleanCpf);
+    // try {
+    //   const existsResult = await checkUserExists(email, cleanCpf);
 
-      if (existsResult.emailExists) {
-        alert("Este e-mail já está cadastrado.");
-        return;
-      }
+    //   if (existsResult.emailExists) {
+    //     alert("Este e-mail já está cadastrado.");
+    //     return;
+    //   }
 
-      if (existsResult.cpfExists) {
-        alert("Este CPF já está cadastrado.");
-        return;
-      }
-    } catch (error) {
-      console.error("Erro ao verificar duplicidade:", error);
-      alert("Não foi possível validar e-mail e CPF antes do cadastro.");
-      return;
-    }
+    //   if (existsResult.cpfExists) {
+    //     alert("Este CPF já está cadastrado.");
+    //     return;
+    //   }
+    // } catch (error) {
+    //   console.error("Erro ao verificar duplicidade:", error);
+    //   alert("Não foi possível validar e-mail e CPF antes do cadastro.");
+    //   return;
+    // }
 
     const cadastroData = {
       name,
