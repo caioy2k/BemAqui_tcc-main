@@ -100,33 +100,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const cleanCpf = cpf.replace(/\D/g, "");
     const cleanPhone = phone.replace(/\D/g, "");
 
-    // if (!isValidCPF(cleanCpf)) {
-    //   alert("CPF inválido.");
-    //   return;
-    // }
+    if (!isValidCPF(cleanCpf)) {
+      alert("CPF inválido.");
+      return;
+    }
 
-    // if (cleanPhone.length < 10) {
-    //   alert("Telefone inválido.");
-    //   return;
-    // }
+    if (cleanPhone.length < 10) {
+      alert("Telefone inválido.");
+      return;
+    }
 
-    // try {
-    //   const existsResult = await checkUserExists(email, cleanCpf);
+    try {
+      const existsResult = await checkUserExists(email, cleanCpf);
 
-    //   if (existsResult.emailExists) {
-    //     alert("Este e-mail já está cadastrado.");
-    //     return;
-    //   }
+      if (existsResult.emailExists) {
+        alert("Este e-mail já está cadastrado.");
+        return;
+      }
 
-    //   if (existsResult.cpfExists) {
-    //     alert("Este CPF já está cadastrado.");
-    //     return;
-    //   }
-    // } catch (error) {
-    //   console.error("Erro ao verificar duplicidade:", error);
-    //   alert("Não foi possível validar e-mail e CPF antes do cadastro.");
-    //   return;
-    // }
+      if (existsResult.cpfExists) {
+        alert("Este CPF já está cadastrado.");
+        return;
+      }
+    } catch (error) {
+      console.error("Erro ao verificar duplicidade:", error);
+      alert("Não foi possível validar e-mail e CPF antes do cadastro.");
+      return;
+    }
 
     const cadastroData = {
       name,
