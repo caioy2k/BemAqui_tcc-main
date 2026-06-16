@@ -311,7 +311,7 @@ function updateUI() {
     comparisonStatus.textContent = `✓ Sua carteira cobre o valor total (${walletUsed} moedas).`;
     comparisonStatus.className = "status-ok";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Usar saldo atual";
+    walletTradeBtn.textContent = "Realizar Troca";
     return;
   }
 
@@ -319,7 +319,7 @@ function updateUI() {
     comparisonStatus.textContent = `Sua carteira cobre ${walletUsed} e faltam ${remainingCost} moedas em recicláveis.`;
     comparisonStatus.className = "status-warning";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Usar saldo + recicláveis";
+    walletTradeBtn.textContent = "Realizar Troca";
     return;
   }
 
@@ -327,12 +327,12 @@ function updateUI() {
     comparisonStatus.textContent = `✓ Carteira cobre ${walletUsed} e recicláveis completam o restante (${remainingCost}).`;
     comparisonStatus.className = "status-ok";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Usar saldo + recicláveis";
+    walletTradeBtn.textContent = "Realizar troca";
   } else {
     comparisonStatus.textContent = `✗ Faltam ${remainingCost - offeredPoints} moedas em recicláveis para completar a troca.`;
     comparisonStatus.className = "status-warning";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Usar saldo + recicláveis";
+    walletTradeBtn.textContent = "Realizar Troca";
   }
 }
 
