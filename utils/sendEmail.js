@@ -6,10 +6,22 @@ apiKey.apiKey = process.env.BREVO_API_KEY;
 
 const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
+
+console.log("BREVO_API_KEY exists?", !!process.env.BREVO_API_KEY);
+console.log("EMAIL_FROM exists?", !!process.env.EMAIL_FROM);
+console.log("EMAIL_FROM_NAME:", process.env.EMAIL_FROM_NAME);
+
+
+
+
+
 async function sendEmail({ to, subject, html, text }) {
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
   const EMAIL_FROM = process.env.EMAIL_FROM;
   const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || "BemAqui";
+
+
+  
 
   if (!BREVO_API_KEY) {
     throw new Error("BREVO_API_KEY não configurada.");
