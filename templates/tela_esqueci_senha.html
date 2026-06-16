@@ -149,13 +149,15 @@
       setTimeout(() => {
         window.location.href = `tela_redefinir_senha.html?email=${encodeURIComponent(email)}`;
       }, 1200);
-    } catch (error) {
-      console.error("Erro ao solicitar código:", error);
-      message.textContent = error.message || "Erro ao solicitar código.";
-      message.classList.remove("success");
-      message.classList.add("error");
-    }
+    } catch (err) {
+  console.error("Erro real em forgotPassword:", err);
+  return res.status(500).json({
+    success: false,
+    error: err.message || "Erro ao solicitar código de recuperação."
   });
+}
+    }
+  );
 </script>
 </body>
 </html>
