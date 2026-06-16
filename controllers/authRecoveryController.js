@@ -13,52 +13,39 @@ function generateNumericCode(length = 6) {
 
 exports.forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    console.log("1 - entrou no forgotPassword");
 
-    if (!email) {
-      return res.status(400).json({ error: 'Informe o e-mail.' });
-    }
+    const { email } = req.body;
+    console.log("2 - email recebido:", email);
 
     const cleanEmail = String(email).trim().toLowerCase();
     const user = await User.findOne({ email: cleanEmail });
+    console.log("3 - user encontrado?", !!user);
 
     if (user) {
-      const code = generateNumericCode(6);
-      const codeHash = await bcrypt.hash(code, 10);
-
-      user.resetPasswordCodeHash = codeHash;
-      user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
-      user.resetPasswordUsed = false;
-      user.resetPasswordAttempts = 0;
-
-      await user.save();
+      const code = "123456"; // temporário só para teste
+      console.log("4 - código gerado");
 
       await sendEmail({
         to: cleanEmail,
-        subject: 'Código de redefinição de senha - BemAqui',
-        text: `Seu código de redefinição é: ${code}. Ele expira em 15 minutos.`,
-        html: `
-          <div style="font-family: Arial, sans-serif; color: #222;">
-            <h2>BemAqui - Redefinição de senha</h2>
-            <p>Seu código de redefinição é:</p>
-            <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #16a34a;">
-              ${code}
-            </div>
-            <p>Esse código expira em 15 minutos.</p>
-          </div>
-        `
+        subject: "Código de recuperação",
+        text: `Seu código é ${code}`,
+        html: `<p>Seu código é <strong>${code}</strong></p>`
       });
+
+      console.log("5 - email enviado");
     }
 
+    console.log("6 - enviando resposta");
     return res.status(200).json({
       success: true,
-      message: 'Se o e-mail existir em nossa base, um código de recuperação foi enviado.'
+      message: "Se o e-mail existir, o código foi enviado."
     });
   } catch (err) {
-    console.error('Erro em forgotPassword:', err);
+    console.error("Erro real em forgotPassword:", err);
     return res.status(500).json({
       success: false,
-      error: 'Erro ao solicitar código de recuperação.'
+      error: err.message || "Erro ao solicitar código de recuperação."
     });
   }
 };
