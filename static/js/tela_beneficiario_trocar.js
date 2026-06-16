@@ -296,7 +296,7 @@ function updateUI() {
 
   walletTradeBtn.style.display = "block";
 
-  const totalCost = getFirstSelectedBenefitTotal();
+  const totalCost = getSelectedBenefitsPoints();
   const { walletUsed, remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
 
   if (selectedRecyclables.length > 0 && offeredPoints >= requestedPoints) {
@@ -349,7 +349,7 @@ walletTradeBtn.addEventListener("click", async () => {
   }
 
   const selectedBenefit = selectedBenefits[0];
-  const totalCost = selectedBenefit.pointsCost * selectedBenefit.quantity;
+  const totalCost = getSelectedBenefitsPoints();
   const offeredPoints = getSelectedRecyclablesPoints();
   const balanceBeforePurchase = currentWalletBalance;
   const { remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
