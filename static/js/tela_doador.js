@@ -1,4 +1,14 @@
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
 const donorName = document.getElementById("donorName");
+
+async function parseResponse(response) {
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {};
+  }
+}
 
 async function loadDonorName() {
   const token = localStorage.getItem("token");
@@ -10,6 +20,7 @@ async function loadDonorName() {
 
   try {
     const response = await fetch(`${API_URL}/auth/me`, {
+      method: "GET",
       headers: {
         "Accept": "application/json",
         "Authorization": `Bearer ${token}`
@@ -17,8 +28,12 @@ async function loadDonorName() {
     });
 
     const data = await parseResponse(response);
-    const user = data.user || data;
 
+    if (!response.ok) {
+      throw new Error(data.error || "Não foi possível carregar o usuário.");
+    }
+
+    const user = data.user || data;
     donorName.textContent = user.name || "Doador";
   } catch (error) {
     console.error("Erro ao carregar nome do doador:", error);
@@ -26,9 +41,7 @@ async function loadDonorName() {
   }
 }
 
-
 const donorDashboardData = {
-  name: "Caio",
   totalSubmissions: 7,
   pendingReview: 3,
   approvedItems: 2,
@@ -65,7 +78,6 @@ function getStatusClass(status) {
 }
 
 function renderDonorDashboard(data) {
-  document.getElementById("donorName").textContent = data.name;
   document.getElementById("totalSubmissions").textContent = data.totalSubmissions;
   document.getElementById("pendingReview").textContent = data.pendingReview;
   document.getElementById("approvedItems").textContent = data.approvedItems;
@@ -110,6 +122,7 @@ function renderDonorDashboard(data) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   renderDonorDashboard(donorDashboardData);
+  await loadDonorName();
 });

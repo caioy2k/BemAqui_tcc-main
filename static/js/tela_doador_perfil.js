@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const emailInput = document.getElementById("email");
   const phoneInput = document.getElementById("phone");
   const cpfInput = document.getElementById("cpf");
-  const cityInput = document.getElementById("city");
+  const bairroInput = document.getElementById("bairro");
   const bioInput = document.getElementById("bio");
 
   const prefEmail = document.getElementById("prefEmail");
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const summaryEmail = document.getElementById("summaryEmail");
   const summaryPhone = document.getElementById("summaryPhone");
   const summaryCpf = document.getElementById("summaryCpf");
-  const summaryCity = document.getElementById("summaryCity");
+  const summaryBairro = document.getElementById("summaryBairro");
   const profileMainContact = document.getElementById("profileMainContact");
   const profileSubmissionCount = document.getElementById("profileSubmissionCount");
   const profileLastActivity = document.getElementById("profileLastActivity");

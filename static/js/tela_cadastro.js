@@ -24,25 +24,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (emailInput) {
-    emailInput.addEventListener("blur", async () => {
-      const email = emailInput.value.trim();
-      const cpf = document.getElementById("cpf")?.value.trim().replace(/\D/g, "") || "";
+  // if (emailInput) {
+  //   emailInput.addEventListener("blur", async () => {
+  //     const email = emailInput.value.trim();
+  //     const cpf = document.getElementById("cpf")?.value.trim().replace(/\D/g, "") || "";
 
-      if (!email) return;
+  //     if (!email) return;
 
-      try {
-        const result = await checkUserExists(email, cpf);
+  //     try {
+  //       const result = await checkUserExists(email, cpf);
 
-        if (result.emailExists) {
-          alert("Este e-mail já está cadastrado.");
-          emailInput.focus();
-        }
-      } catch (error) {
-        console.error("Erro ao verificar e-mail:", error);
-      }
-    });
-  }
+  //       if (result.emailExists) {
+  //         alert("Este e-mail já está cadastrado.");
+  //         emailInput.focus();
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao verificar e-mail:", error);
+  //     }
+  //   });
+  // }
 
   if (cpfInput) {
     cpfInput.addEventListener("blur", async () => {
