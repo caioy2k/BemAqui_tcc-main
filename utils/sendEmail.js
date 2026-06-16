@@ -1,41 +1,33 @@
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const EMAIL_HOST = process.env.EMAIL_HOST;
-const EMAIL_PORT = Number(process.env.EMAIL_PORT || 587);
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASS = process.env.EMAIL_PASS;
-const EMAIL_FROM = process.env.EMAIL_FROM;
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const apiKey = defaultClient.authentications["api-key"];
 
-const transporter = nodemailer.createTransport({
-  host: EMAIL_HOST,
-  port: EMAIL_PORT,
-  secure: EMAIL_PORT === 465,
-  requireTLS: EMAIL_PORT === 587,
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
-  logger: true,
-  debug: true
-});
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 async function sendEmail({ to, subject, html, text }) {
-  if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS || !EMAIL_FROM) {
-    throw new Error("Variáveis de e-mail não configuradas corretamente.");
+  if (!process.env.BREVO_API_KEY || !process.env.EMAIL_FROM) {
+    throw new Error("Variáveis BREVO_API_KEY ou EMAIL_FROM não configuradas.");
   }
 
-  await transporter.verify();
+  const receivers = Array.isArray(to)
+    ? to.map(email => ({ email }))
+    : [{ email: to }];
 
-  return transporter.sendMail({
-    from: EMAIL_FROM,
-    to,
+  const result = await emailApi.sendTransacEmail({
+    sender: {
+      email: process.env.EMAIL_FROM,
+      name: process.env.EMAIL_FROM_NAME || "BemAqui"
+    },
+    to: receivers,
     subject,
-    text,
-    html
+    htmlContent: html || undefined,
+    textContent: text || undefined
   });
+
+  return result;
 }
 
 module.exports = sendEmail;

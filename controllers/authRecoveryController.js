@@ -27,11 +27,18 @@ exports.forgotPassword = async (req, res) => {
       console.log("4 - código gerado");
 
       await sendEmail({
-        to: cleanEmail,
-        subject: "Código de recuperação",
-        text: `Seu código é ${code}`,
-        html: `<p>Seu código é <strong>${code}</strong></p>`
-      });
+  to: cleanEmail,
+  subject: "Código de redefinição de senha - BemAqui",
+  text: `Seu código de recuperação é: ${code}`,
+  html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+      <h2>Código de redefinição</h2>
+      <p>Seu código de recuperação é:</p>
+      <p style="font-size: 24px; font-weight: bold;">${code}</p>
+      <p>Esse código expira em 15 minutos.</p>
+    </div>
+  `
+});
 
       console.log("5 - email enviado");
     }
