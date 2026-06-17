@@ -13,9 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const savedExtras =
     JSON.parse(localStorage.getItem("bemaquiDonorProfileExtras")) || defaultProfileExtras;
 
-  const savedSubmissions =
-    JSON.parse(localStorage.getItem("bemaquiSubmissions")) || [];
-
   const form = document.getElementById("profileForm");
   const feedback = document.getElementById("profileFeedback");
 
@@ -43,6 +40,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const profileLastActivity = document.getElementById("profileLastActivity");
   const accountStatus = document.getElementById("accountStatus");
   const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+  let donorSubmissions = [];
 
   function getInitials(name) {
     if (!name) return "D";
@@ -78,6 +77,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     return localStorage.getItem("token");
   }
 
+  function getCurrentUser() {
+    try {
+      const storedUser = localStorage.getItem("bemaquiUser");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Erro ao ler usuário salvo:", error);
+      return null;
+    }
+  }
+
+  function getCurrentUserId() {
+    const user = getCurrentUser();
+    return user?._id || user?.id || null;
+  }
+
   async function parseResponse(response) {
     const text = await response.text();
 
@@ -98,6 +112,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     return data;
   }
 
+  function formatDateBR(dateValue) {
+    if (!dateValue) return "-";
+
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return "-";
+
+    return date.toLocaleDateString("pt-BR");
+  }
+
   function fillExtras(extras) {
     bioInput.value = extras.bio || "";
     prefEmail.checked = !!extras.preferences?.emailUpdates;
@@ -110,13 +133,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = user.email || "";
     const phone = formatPhone(user.phone || "");
     const cpf = formatCPF(user.cpf || "");
-    const city = user.city || user.bairro || "";
+    const bairro = user.bairro || user.city || "";
 
     fullNameInput.value = fullName;
     emailInput.value = email;
     phoneInput.value = phone;
     cpfInput.value = cpf;
-    cityInput.value = city;
+    bairroInput.value = bairro;
 
     profileDisplayName.textContent = fullName || "Doador";
     profileDisplayEmail.textContent = email || "email@exemplo.com";
@@ -126,17 +149,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     summaryEmail.textContent = email || "-";
     summaryPhone.textContent = phone || "-";
     summaryCpf.textContent = cpf || "-";
-    summaryCity.textContent = city || "Não informada";
+    summaryBairro.textContent = bairro || "Não informado";
 
-    profileMainContact.textContent = phone || "-";
+    profileMainContact.textContent = phone || email || "-";
   }
 
-  function updateStats() {
-    profileSubmissionCount.textContent = savedSubmissions.length;
+  function updateStats(submissions) {
+    profileSubmissionCount.textContent = submissions.length;
 
-    if (savedSubmissions.length > 0) {
-      profileLastActivity.textContent = savedSubmissions[0].date || "Recente";
-      accountStatus.textContent = "Perfil vinculado a submissões";
+    if (submissions.length > 0) {
+      const sorted = [...submissions].sort(
+        (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      );
+
+      const latest = sorted[0];
+      profileLastActivity.textContent = formatDateBR(latest.createdAt);
+
+      const hasPending = submissions.some((item) => {
+        const status = String(item.status || "").trim().toLowerCase();
+        return status === "em análise" || status === "em analise";
+      });
+
+      if (hasPending) {
+        accountStatus.textContent = "Perfil com doações em análise";
+      } else {
+        accountStatus.textContent = "Perfil vinculado a submissões";
+      }
     } else {
       profileLastActivity.textContent = "Sem envios";
       accountStatus.textContent = "Perfil atualizado";
@@ -159,7 +197,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     const data = await parseResponse(response);
-    return data.user || data;
+    const user = data.user || data;
+
+    try {
+      localStorage.setItem("bemaquiUser", JSON.stringify(user));
+    } catch (error) {
+      console.error("Erro ao salvar usuário no localStorage:", error);
+    }
+
+    return user;
+  }
+
+  async function loadDonorSubmissions() {
+    const token = getToken();
+    const donorId = getCurrentUserId();
+
+    if (!token || !donorId) {
+      donorSubmissions = [];
+      updateStats(donorSubmissions);
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/donations?donorId=${encodeURIComponent(donorId)}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = await parseResponse(response);
+    donorSubmissions = Array.isArray(data.donations) ? data.donations : [];
+    updateStats(donorSubmissions);
   }
 
   function saveExtrasOnly() {
@@ -174,7 +243,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     localStorage.setItem("bemaquiDonorProfileExtras", JSON.stringify(extras));
     feedback.textContent = "Preferências e observação salvas localmente.";
-    accountStatus.textContent = "Dados visuais atualizados";
+    accountStatus.textContent = donorSubmissions.length
+      ? "Perfil vinculado a submissões"
+      : "Dados visuais atualizados";
 
     setTimeout(() => {
       feedback.textContent = "";
@@ -192,11 +263,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   fillExtras(savedExtras);
-  updateStats();
 
   try {
     const user = await loadUserProfile();
     fillRealUserData(user);
+    await loadDonorSubmissions();
   } catch (error) {
     console.error("Erro ao carregar perfil do doador:", error);
 
@@ -207,8 +278,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     summaryEmail.textContent = "-";
     summaryPhone.textContent = "-";
     summaryCpf.textContent = "-";
-    summaryCity.textContent = "Não informada";
+    summaryBairro.textContent = "Não informado";
     profileMainContact.textContent = "-";
+    profileSubmissionCount.textContent = "0";
+    profileLastActivity.textContent = "-";
     accountStatus.textContent = "Perfil indisponível";
     feedback.textContent = "Não foi possível carregar os dados do perfil.";
   }

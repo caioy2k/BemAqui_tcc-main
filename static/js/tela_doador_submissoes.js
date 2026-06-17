@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const API_URL = "https://bemaqui-tcc-main.onrender.com";
+
   const submissionList = document.getElementById("submissionList");
   const statusFilter = document.getElementById("statusFilter");
   const typeFilter = document.getElementById("typeFilter");
@@ -11,54 +13,82 @@ document.addEventListener("DOMContentLoaded", () => {
   const transferredEl = document.getElementById("submissionTransferred");
   const overallStatusEl = document.getElementById("overallSubmissionStatus");
 
-  const mockSubmissions = [
-    {
-      id: 1,
-      item: "Cesta com alimentos não perecíveis",
-      type: "alimento",
-      quantity: "12 unidades",
-      status: "em análise",
-      date: "10/06/2026",
-      note: "Produtos dentro do prazo de validade e bem armazenados."
-    },
-    {
-      id: 2,
-      item: "Jaquetas e agasalhos",
-      type: "roupa",
-      quantity: "8 peças",
-      status: "aprovado",
-      date: "08/06/2026",
-      note: "Itens aprovados para entrada no fluxo da plataforma."
-    },
-    {
-      id: 3,
-      item: "Kits de higiene pessoal",
-      type: "higiene",
-      quantity: "15 kits",
-      status: "repassado",
-      date: "05/06/2026",
-      note: "Materiais direcionados para repasse a ONG parceira."
-    },
-    {
-      id: 4,
-      item: "Itens variados sem descrição completa",
-      type: "outro",
-      quantity: "4 volumes",
-      status: "recusado",
-      date: "02/06/2026",
-      note: "Necessário informar melhor o estado e a categoria dos itens."
-    }
-  ];
+  let allSubmissions = [];
 
-  const savedSubmissions =
-    JSON.parse(localStorage.getItem("bemaquiSubmissions")) || mockSubmissions;
+  async function parseResponse(response) {
+    const text = await response.text();
+    try {
+      return text ? JSON.parse(text) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function getCurrentUser() {
+    try {
+      const storedUser = localStorage.getItem("bemaquiUser");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Erro ao ler usuário do localStorage:", error);
+      return null;
+    }
+  }
+
+  function getCurrentUserId() {
+    const user = getCurrentUser();
+    return user?._id || user?.id || null;
+  }
+
+  function normalizeStatus(status) {
+    const value = String(status || "").trim().toLowerCase();
+
+    if (value === "em análise" || value === "em analise") return "em análise";
+    if (value === "aprovado" || value === "aprovada" || value === "aprovadas") return "aprovado";
+    if (value === "repassado" || value === "encaminhado" || value === "encaminhado para ong") return "repassado";
+    if (value === "recusado" || value === "rejeitado") return "recusado";
+
+    return "em análise";
+  }
+
+  function normalizeType(category) {
+    const value = String(category || "").trim().toLowerCase();
+
+    if (
+      value.includes("alimento") ||
+      value.includes("comida") ||
+      value.includes("mantimento")
+    ) {
+      return "alimento";
+    }
+
+    if (
+      value.includes("roupa") ||
+      value.includes("vestuário") ||
+      value.includes("vestuario") ||
+      value.includes("agasalho") ||
+      value.includes("calçado") ||
+      value.includes("calcado")
+    ) {
+      return "roupa";
+    }
+
+    if (
+      value.includes("higiene") ||
+      value.includes("limpeza") ||
+      value.includes("kit higiene")
+    ) {
+      return "higiene";
+    }
+
+    return "outro";
+  }
 
   function getStatusClass(status) {
     const map = {
       "em análise": "status-analise",
-      aprovado: "status-aprovado",
-      repassado: "status-repassado",
-      recusado: "status-recusado"
+      "aprovado": "status-aprovado",
+      "repassado": "status-repassado",
+      "recusado": "status-recusado"
     };
 
     return map[status] || "status-analise";
@@ -73,6 +103,36 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     return map[type] || "Outro";
+  }
+
+  function formatQuantity(item) {
+    const quantity = item.quantity ?? 0;
+    const unit = item.unit || "unidades";
+    return `${quantity} ${unit}`;
+  }
+
+  function formatDateBR(dateValue) {
+    if (!dateValue) return "-";
+
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return "-";
+
+    return date.toLocaleDateString("pt-BR");
+  }
+
+  function mapDonationToSubmission(item) {
+    return {
+      id: item._id,
+      item: item.itemName || "Item sem nome",
+      type: normalizeType(item.category),
+      quantity: formatQuantity(item),
+      status: normalizeStatus(item.status),
+      date: formatDateBR(item.createdAt),
+      note:
+        item.description ||
+        item.pickupInfo ||
+        "Sem observações adicionais cadastradas."
+    };
   }
 
   function updateSummary(items) {
@@ -138,11 +198,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function applyFilters() {
-    const selectedStatus = statusFilter.value.toLowerCase();
-    const selectedType = typeFilter.value.toLowerCase();
+    const selectedStatus = statusFilter.value.trim().toLowerCase();
+    const selectedType = typeFilter.value.trim().toLowerCase();
     const searchValue = searchSubmission.value.trim().toLowerCase();
 
-    const filtered = savedSubmissions.filter((item) => {
+    const filtered = allSubmissions.filter((item) => {
       const matchesStatus =
         selectedStatus === "todos" || item.status.toLowerCase() === selectedStatus;
 
@@ -160,10 +220,51 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSubmissions(filtered);
   }
 
+  async function loadSubmissions() {
+    const token = localStorage.getItem("token");
+    const donorId = getCurrentUserId();
+
+    if (!token || !donorId) {
+      allSubmissions = [];
+      updateSummary(allSubmissions);
+      renderSubmissions(allSubmissions);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/donations?donorId=${encodeURIComponent(donorId)}`, {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      const data = await parseResponse(response);
+
+      if (!response.ok) {
+        throw new Error(data.error || "Não foi possível carregar as submissões.");
+      }
+
+      const donations = Array.isArray(data.donations) ? data.donations : [];
+
+      allSubmissions = donations
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        .map(mapDonationToSubmission);
+
+      updateSummary(allSubmissions);
+      renderSubmissions(allSubmissions);
+    } catch (error) {
+      console.error("Erro ao carregar submissões:", error);
+      allSubmissions = [];
+      updateSummary(allSubmissions);
+      renderSubmissions(allSubmissions);
+    }
+  }
+
   statusFilter.addEventListener("change", applyFilters);
   typeFilter.addEventListener("change", applyFilters);
   searchSubmission.addEventListener("input", applyFilters);
 
-  updateSummary(savedSubmissions);
-  renderSubmissions(savedSubmissions);
+  loadSubmissions();
 });
