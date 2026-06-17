@@ -104,7 +104,7 @@ function renderCatalog(items) {
     const card = document.createElement("article");
     card.className = "catalog-card";
 
-    const imageEmoji = getItemEmoji(item.category, item.name);
+    const imageEmoji = item.emoji || "🎁";
 
     card.innerHTML = `
       <div class="card-image">${imageEmoji}</div>
@@ -127,18 +127,6 @@ function renderCatalog(items) {
 
     catalogGrid.appendChild(card);
   });
-}
-
-function getItemEmoji(category, name) {
-  const text = `${category || ""} ${name || ""}`.toLowerCase();
-
-  if (text.includes("higiene") || text.includes("sabonete")) return "🧼";
-  if (text.includes("alimento") || text.includes("cesta")) return "🥫";
-  if (text.includes("roupa")) return "👕";
-  if (text.includes("material escolar")) return "📚";
-  if (text.includes("limpeza")) return "🧴";
-  if (text.includes("brinquedo")) return "🧸";
-  return "🎁";
 }
 
 function selectBenefit(id) {

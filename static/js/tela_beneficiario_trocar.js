@@ -107,7 +107,7 @@ function renderRecyclables() {
     card.className = "item-card";
     card.id = `recyclable-${item._id}`;
     card.innerHTML = `
-      <div class="item-emoji">♻️</div>
+      <div class="item-emoji">${item.emoji || "♻️"}</div>
       <div class="item-name">${item.name}</div>
       <div class="item-type">${item.type}</div>
       <div class="item-points">${item.pointsValue} pts</div>
@@ -130,7 +130,7 @@ function renderBenefits() {
     card.className = "item-card";
     card.id = `benefit-${item._id}`;
     card.innerHTML = `
-      <div class="item-emoji">🎁</div>
+      <div class="item-emoji">${item.emoji || "🎁"}</div>
       <div class="item-name">${item.name}</div>
       <div class="item-type">${item.category}</div>
       <div class="item-points">${item.pointsCost} pts</div>
@@ -149,6 +149,7 @@ function toggleRecyclable(item) {
     selectedRecyclables.push({
       _id: item._id,
       name: item.name,
+      emoji: item.emoji || "♻️",
       pointsValue: item.pointsValue,
       quantity: 1,
     });
@@ -167,6 +168,7 @@ function toggleBenefit(item) {
     selectedBenefits.push({
       _id: item._id,
       name: item.name,
+      emoji: item.emoji || "🎁",
       pointsCost: item.pointsCost,
       quantity: 1,
     });
@@ -194,7 +196,7 @@ function updateRecyclablesDisplay() {
     const row = document.createElement("div");
     row.className = "selected-item";
     row.innerHTML = `
-      <span class="selected-item-name">${item.name}</span>
+      <span class="selected-item-name">${item.emoji || "♻️"} ${item.name}</span>
       <div class="selected-item-qty">
         <button class="qty-btn" onclick="changeQty('recyclable', ${index}, -1)">−</button>
         <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="setQty('recyclable', ${index}, this.value)" />
@@ -224,7 +226,7 @@ function updateBenefitsDisplay() {
     const row = document.createElement("div");
     row.className = "selected-item";
     row.innerHTML = `
-      <span class="selected-item-name">${item.name}</span>
+      <span class="selected-item-name">${item.emoji || "🎁"} ${item.name}</span>
       <div class="selected-item-qty">
         <button class="qty-btn" onclick="changeQty('benefit', ${index}, -1)">−</button>
         <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="setQty('benefit', ${index}, this.value)" />
@@ -418,9 +420,11 @@ walletTradeBtn.addEventListener("click", async () => {
 
       showUnifiedConfirmationModal({
         benefitName: selectedBenefit.name,
+        benefitEmoji: selectedBenefit.emoji || "🎁",
         benefitQuantity: selectedBenefit.quantity,
         recyclablesOffered: selectedRecyclables.map((item) => ({
           recyclableName: item.name,
+          recyclableEmoji: item.emoji || "♻️",
           quantity: item.quantity,
           totalPoints: item.pointsValue * item.quantity,
         })),
@@ -466,7 +470,7 @@ function showUnifiedConfirmationModal(trade) {
               .map(
                 (item) => `
                   <div class="item">
-                    <span>${item.recyclableName}</span>
+                    <span>${item.recyclableEmoji || "♻️"} ${item.recyclableName}</span>
                     <span class="qty">x${item.quantity}</span>
                   </div>
                 `
@@ -496,7 +500,7 @@ function showUnifiedConfirmationModal(trade) {
             <h3>🎁 Você recebeu:</h3>
             <div class="items-list">
               <div class="item">
-                <span>${trade.benefitName}</span>
+                <span>${trade.benefitEmoji || "🎁"} ${trade.benefitName}</span>
                 <span class="qty">x${trade.benefitQuantity}</span>
               </div>
             </div>
