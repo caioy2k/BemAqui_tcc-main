@@ -15,7 +15,6 @@ const requestedPointsSpan = document.getElementById("requested-points");
 const comparisonOfferedSpan = document.getElementById("comparison-offered");
 const comparisonRequestedSpan = document.getElementById("comparison-requested");
 const comparisonStatus = document.getElementById("comparison-status");
-const confirmBtn = document.getElementById("confirm-trade-btn");
 const walletTradeBtn = document.getElementById("wallet-trade-btn");
 const walletBalanceDisplay = document.getElementById("wallet-balance-display");
 
@@ -289,8 +288,8 @@ function updateUI() {
   if (selectedBenefits.length === 0) {
     comparisonStatus.textContent = "Selecione um benefício";
     comparisonStatus.className = "status-warning";
-    confirmBtn.disabled = true;
     walletTradeBtn.style.display = "none";
+    walletTradeBtn.disabled = true;
     return;
   }
 
@@ -299,19 +298,11 @@ function updateUI() {
   const totalCost = getSelectedBenefitsPoints();
   const { walletUsed, remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
 
-  if (selectedRecyclables.length > 0 && offeredPoints >= requestedPoints) {
-    comparisonStatus.textContent = "✓ Troca tradicional possível!";
-    comparisonStatus.className = "status-ok";
-    confirmBtn.disabled = false;
-  } else {
-    confirmBtn.disabled = true;
-  }
-
   if (currentWalletBalance >= totalCost) {
     comparisonStatus.textContent = `✓ Sua carteira cobre o valor total (${walletUsed} moedas).`;
     comparisonStatus.className = "status-ok";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Realizar Troca";
+    walletTradeBtn.textContent = "Confirmar troca";
     return;
   }
 
@@ -319,7 +310,7 @@ function updateUI() {
     comparisonStatus.textContent = `Sua carteira cobre ${walletUsed} e faltam ${remainingCost} moedas em recicláveis.`;
     comparisonStatus.className = "status-warning";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Realizar Troca";
+    walletTradeBtn.textContent = "Confirmar troca";
     return;
   }
 
@@ -327,12 +318,12 @@ function updateUI() {
     comparisonStatus.textContent = `✓ Carteira cobre ${walletUsed} e recicláveis completam o restante (${remainingCost}).`;
     comparisonStatus.className = "status-ok";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Realizar troca";
+    walletTradeBtn.textContent = "Confirmar troca";
   } else {
     comparisonStatus.textContent = `✗ Faltam ${remainingCost - offeredPoints} moedas em recicláveis para completar a troca.`;
     comparisonStatus.className = "status-warning";
     walletTradeBtn.disabled = false;
-    walletTradeBtn.textContent = "Realizar Troca";
+    walletTradeBtn.textContent = "Confirmar troca";
   }
 }
 
@@ -348,11 +339,16 @@ walletTradeBtn.addEventListener("click", async () => {
     return;
   }
 
+  if (selectedBenefits.length > 1) {
+    alert("Para este fluxo, selecione apenas 1 benefício por vez.");
+    return;
+  }
+
   const selectedBenefit = selectedBenefits[0];
   const totalCost = getSelectedBenefitsPoints();
   const offeredPoints = getSelectedRecyclablesPoints();
   const balanceBeforePurchase = currentWalletBalance;
-  const { remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
+  const { walletUsed, remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
 
   try {
     walletTradeBtn.disabled = true;
@@ -420,17 +416,23 @@ walletTradeBtn.addEventListener("click", async () => {
         console.error("Erro ao atualizar usuário no localStorage:", error);
       }
 
-      showWalletPurchaseModal({
+      showUnifiedConfirmationModal({
         benefitName: selectedBenefit.name,
-        quantity: selectedBenefit.quantity,
+        benefitQuantity: selectedBenefit.quantity,
+        recyclablesOffered: selectedRecyclables.map((item) => ({
+          recyclableName: item.name,
+          quantity: item.quantity,
+          totalPoints: item.pointsValue * item.quantity,
+        })),
+        totalPointsOffered: offeredPoints,
         totalCost,
-        walletUsed: data.walletUsed ?? Math.min(balanceBeforePurchase, totalCost),
-        recyclingPointsUsed: data.recyclingPointsUsed ?? (balanceBeforePurchase >= totalCost ? 0 : remainingCost),
+        walletUsed: data.walletUsed ?? walletUsed,
+        recyclingPointsUsed: data.recyclingPointsUsed ?? Math.max(0, totalCost - (data.walletUsed ?? walletUsed)),
         recyclingPointsGenerated: data.recyclingPointsGenerated ?? offeredPoints,
-        coinsSurplus: data.coinsSurplus ?? 0,
+        coinsSurplus: data.coinsSurplus ?? Math.max(0, offeredPoints - remainingCost),
         walletBalance: currentWalletBalance,
-        tradeId: data.tradeId,
-        isHybrid: balanceBeforePurchase < totalCost || selectedRecyclables.length > 0,
+        tradeId: data.tradeId || data._id || "SUCESSO_" + Date.now(),
+        statusText: "✅ Concluída",
       });
 
       selectedBenefits = [];
@@ -439,43 +441,53 @@ walletTradeBtn.addEventListener("click", async () => {
       updateRecyclablesDisplay();
       updateUI();
     } else {
-      alert(data.error || "Erro ao realizar compra.");
+      alert(data.error || "Erro ao realizar troca.");
     }
   } catch (error) {
     console.error("Erro:", error);
-    alert("Não foi possível realizar a compra.");
+    alert("Não foi possível realizar a troca.");
   } finally {
     walletTradeBtn.disabled = false;
     updateUI();
   }
 });
 
-function showWalletPurchaseModal(trade) {
+function showUnifiedConfirmationModal(trade) {
   const modal = document.createElement("div");
   modal.className = "confirmation-modal";
 
-  const walletInfo = trade.isHybrid
-    ? `
-      <p class="points-info">
-        💳 Usado da carteira: <strong>${trade.walletUsed}</strong><br>
-        ♻️ Usado em recicláveis: <strong>${trade.recyclingPointsUsed}</strong><br>
-        🎯 Total do benefício: <strong>${trade.totalCost}</strong><br>
-        ${trade.coinsSurplus > 0 ? `🪙 Sobra creditada: <strong>${trade.coinsSurplus}</strong><br>` : ""}
-        💰 Novo saldo: <strong>${trade.walletBalance}</strong>
-      </p>
-    `
-    : `
-      <p class="points-info">
-        💰 Moedas gastas: <strong>${trade.totalCost}</strong><br>
-        💳 Novo saldo: <strong>${trade.walletBalance}</strong>
-      </p>
-    `;
+  const recyclablesHtml =
+    trade.recyclablesOffered && trade.recyclablesOffered.length > 0
+      ? `
+        <div class="info-section">
+          <h3>📦 Recicláveis utilizados:</h3>
+          <div class="items-list">
+            ${trade.recyclablesOffered
+              .map(
+                (item) => `
+                  <div class="item">
+                    <span>${item.recyclableName}</span>
+                    <span class="qty">x${item.quantity}</span>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+          <p class="points-info">Total gerado pelos recicláveis: <strong>${trade.totalPointsOffered} pontos</strong></p>
+        </div>
+      `
+      : `
+        <div class="info-section">
+          <h3>📦 Recicláveis utilizados:</h3>
+          <p class="points-info"><strong>Nenhum reciclável foi necessário nesta troca.</strong></p>
+        </div>
+      `;
 
   modal.innerHTML = `
     <div class="confirmation-card">
       <div class="confirmation-header">
         <div class="success-icon">✓</div>
-        <h2>${trade.isHybrid ? "Troca Híbrida Realizada!" : "Compra Realizada com Sucesso!"}</h2>
+        <h2>Troca Realizada com Sucesso!</h2>
       </div>
 
       <div class="confirmation-body">
@@ -485,21 +497,35 @@ function showWalletPurchaseModal(trade) {
             <div class="items-list">
               <div class="item">
                 <span>${trade.benefitName}</span>
-                <span class="qty">x${trade.quantity}</span>
+                <span class="qty">x${trade.benefitQuantity}</span>
               </div>
             </div>
-            ${walletInfo}
+          </div>
+
+          <div class="exchange-arrow">↓ DETALHES DA TROCA ↓</div>
+
+          ${recyclablesHtml}
+
+          <div class="info-section">
+            <h3>💰 Resumo financeiro:</h3>
+            <p class="points-info">
+              💳 Moedas usadas da carteira: <strong>${trade.walletUsed}</strong><br>
+              ♻️ Pontos usados em recicláveis: <strong>${trade.recyclingPointsUsed}</strong><br>
+              🎯 Total do benefício: <strong>${trade.totalCost}</strong><br>
+              ${trade.coinsSurplus > 0 ? `🪙 Sobra creditada: <strong>${trade.coinsSurplus}</strong><br>` : ""}
+              💼 Saldo final da carteira: <strong>${trade.walletBalance}</strong>
+            </p>
           </div>
         </div>
 
         <div class="confirmation-details">
           <div class="detail">
             <span>ID da Troca:</span>
-            <strong>${trade.tradeId?.substring(0, 8).toUpperCase() || "IMEDIATO"}</strong>
+            <strong>${String(trade.tradeId).substring(0, 8).toUpperCase()}</strong>
           </div>
           <div class="detail">
             <span>Status:</span>
-            <strong class="status-completed">✅ Concluída</strong>
+            <strong class="status-completed">${trade.statusText}</strong>
           </div>
         </div>
 
@@ -515,158 +541,6 @@ function showWalletPurchaseModal(trade) {
 
       <div class="confirmation-footer">
         <button onclick="closeConfirmationModal()" class="btn-close">OK, Entendi!</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeConfirmationModal();
-    }
-  });
-}
-
-confirmBtn.addEventListener("click", async () => {
-  const storedUser = localStorage.getItem("bemaquiUser");
-  const token = localStorage.getItem("token");
-
-  if (!storedUser || !token) {
-    alert("Você precisa estar logado.");
-    return;
-  }
-
-  const tradeData = {
-    recyclablesOffered: selectedRecyclables.map((item) => ({
-      recyclableId: item._id,
-      recyclableName: item.name,
-      quantity: item.quantity,
-      pointsPerUnit: item.pointsValue,
-    })),
-    benefitsRequested: selectedBenefits.map((item) => ({
-      benefitId: item._id,
-      benefitName: item.name,
-      quantity: item.quantity,
-      pointsCost: item.pointsCost,
-    })),
-  };
-
-  try {
-    const response = await fetch(`${API_URL}/trade/create-trade-type1`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(tradeData),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      showConfirmationModal({
-        recyclablesOffered: selectedRecyclables.map((r) => ({
-          recyclableName: r.name,
-          quantity: r.quantity,
-        })),
-        benefitsRequested: selectedBenefits.map((b) => ({
-          benefitName: b.name,
-          quantity: b.quantity,
-        })),
-        totalPointsOffered: getSelectedRecyclablesPoints(),
-        totalPointsRequested: getSelectedBenefitsPoints(),
-        _id: data.tradeId || data._id || "SUCESSO_" + Date.now(),
-      });
-
-      selectedRecyclables = [];
-      selectedBenefits = [];
-      updateRecyclablesDisplay();
-      updateBenefitsDisplay();
-      updateUI();
-    } else {
-      alert(data.error || "Erro ao realizar troca.");
-    }
-  } catch (error) {
-    console.error("Erro:", error);
-    alert("Não foi possível realizar a troca.");
-  }
-});
-
-function showConfirmationModal(trade) {
-  console.log("🔍 DEBUG trade:", trade);
-
-  if (!trade) {
-    alert("Erro: Dados da troca não encontrados!");
-    return;
-  }
-
-  const modal = document.createElement("div");
-  modal.className = "confirmation-modal";
-  modal.innerHTML = `
-    <div class="confirmation-card">
-      <div class="confirmation-header">
-        <div class="success-icon">✓</div>
-        <h2>Troca Registrada com Sucesso!</h2>
-      </div>
-
-      <div class="confirmation-body">
-        <div class="trade-info">
-          <div class="info-section">
-            <h3>📦 Você está ofertando:</h3>
-            <div class="items-list">
-              ${trade.recyclablesOffered
-                .map(
-                  (item) =>
-                    `<div class="item"><span>${item.recyclableName}</span><span class="qty">x${item.quantity}</span></div>`
-                )
-                .join("")}
-            </div>
-            <p class="points-info">Total: <strong>${trade.totalPointsOffered} pontos</strong></p>
-          </div>
-
-          <div class="exchange-arrow">↓ TROCA POR ↓</div>
-
-          <div class="info-section">
-            <h3>🎁 Você vai receber:</h3>
-            <div class="items-list">
-              ${trade.benefitsRequested
-                .map(
-                  (item) =>
-                    `<div class="item"><span>${item.benefitName}</span><span class="qty">x${item.quantity}</span></div>`
-                )
-                .join("")}
-            </div>
-            <p class="points-info">Total: <strong>${trade.totalPointsRequested} pontos</strong></p>
-          </div>
-        </div>
-
-        <div class="confirmation-details">
-          <div class="detail">
-            <span>ID da Troca:</span>
-            <strong>${trade._id.substring(0, 8).toUpperCase()}</strong>
-          </div>
-          <div class="detail">
-            <span>Status:</span>
-            <strong class="status-pending">Aguardando Aprovação</strong>
-          </div>
-        </div>
-
-        <div class="next-steps">
-          <h4>Próximos passos:</h4>
-          <ol>
-            <li>Aguarde a aprovação do administrador</li>
-            <li>Compareça a um de nossos pontos de coleta</li>
-            <li>Apresente o ID da troca ao funcionário</li>
-            <li>Realize a troca pessoalmente</li>
-          </ol>
-        </div>
-      </div>
-
-      <div class="confirmation-footer">
-        <button onclick="closeConfirmationModal()" class="btn-close">
-          OK, Entendi!
-        </button>
       </div>
     </div>
   `;
