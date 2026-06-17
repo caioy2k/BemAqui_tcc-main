@@ -53,7 +53,9 @@ router.get("/", async (req, res) => {
       filter.donorId = donorId;
     }
 
-    const donations = await Donation.find(filter).sort({ createdAt: -1 });
+    const donations = await Donation.find(filter)
+      .populate("donorId", "name email phone")
+      .sort({ createdAt: -1 });
 
     return res.json({ donations });
   } catch (error) {
