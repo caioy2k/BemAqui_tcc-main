@@ -38,6 +38,21 @@ function setError(fieldId, message) {
   if (error) error.textContent = message;
 }
 
+function getCurrentUser() {
+  try {
+    const storedUser = localStorage.getItem("bemaquiUser");
+    return storedUser ? JSON.parse(storedUser) : null;
+  } catch (error) {
+    console.error("Erro ao ler usuário do localStorage:", error);
+    return null;
+  }
+}
+
+function getCurrentUserId() {
+  const user = getCurrentUser();
+  return user?._id || user?.id || null;
+}
+
 function getFormData() {
   return {
     itemName: document.getElementById("itemName").value.trim(),
@@ -117,8 +132,37 @@ function buildSummary(data) {
 }
 
 function formatDate(dateString) {
-  const [year, month, day] = dateString.split("-");
-  return `${day}/${month}/${year}`;
+  if (!dateString) return "Data não informada";
+
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    const parts = String(dateString).split("-");
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      return `${day}/${month}/${year}`;
+    }
+    return String(dateString);
+  }
+
+  return date.toLocaleDateString("pt-BR");
+}
+
+function mapDonationFromApi(item) {
+  return {
+    _id: item._id,
+    itemName: item.itemName,
+    category: item.category,
+    quantity: item.quantity,
+    unit: item.unit,
+    expiryDate: item.expiryDate,
+    condition: item.condition,
+    description: item.description,
+    pickupInfo: item.pickupInfo,
+    images: item.images || [],
+    status: item.status || "Em análise",
+    dateLabel: `Enviado em ${formatDate(item.createdAt || item.updatedAt || new Date())}`
+  };
 }
 
 function renderRecentList() {
@@ -135,13 +179,16 @@ function renderRecentList() {
   recentList.innerHTML = "";
 
   sessionDonations.slice().reverse().forEach(item => {
+    const firstImage = item.images && item.images.length > 0 ? item.images[0] : null;
+
     const div = document.createElement("div");
     div.className = "recent-item";
     div.innerHTML = `
+      ${firstImage ? `<img src="${firstImage}" alt="Foto da doação ${item.itemName}" class="recent-item-image">` : ""}
       <strong>${item.itemName}</strong>
       <p>${item.quantity} ${item.unit} • ${item.category}</p>
       <p>${item.dateLabel}</p>
-      <span class="status-pill">Em análise</span>
+      <span class="status-pill">${item.status || "Em análise"}</span>
     `;
     recentList.appendChild(div);
   });
@@ -209,6 +256,36 @@ async function uploadImagesToCloudinary(files) {
   return uploadedUrls;
 }
 
+async function loadRecentDonations() {
+  try {
+    const donorId = getCurrentUserId();
+
+    if (!donorId) {
+      renderRecentList();
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/donations?donorId=${encodeURIComponent(donorId)}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Erro ao carregar doações.");
+    }
+
+    sessionDonations = (data.donations || []).map(mapDonationFromApi);
+    renderRecentList();
+  } catch (error) {
+    console.error("Erro ao carregar envios recentes:", error);
+    renderRecentList();
+  }
+}
+
 donationForm.addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -225,8 +302,7 @@ donationForm.addEventListener("submit", async event => {
 
     const imageUrls = await uploadImagesToCloudinary(currentImages);
 
-    const storedUser = localStorage.getItem("bemaquiUser");
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    const user = getCurrentUser();
 
     const payload = {
       donorId: user?._id || user?.id || null,
@@ -256,13 +332,15 @@ donationForm.addEventListener("submit", async event => {
       throw new Error(result.error || "Erro ao salvar doação.");
     }
 
-    const newDonation = {
-      ...payload,
-      status: "Em análise",
-      dateLabel: `Enviado em ${new Date().toLocaleDateString("pt-BR")}`
-    };
+    const savedDonation = result.donation
+      ? mapDonationFromApi(result.donation)
+      : {
+          ...payload,
+          status: "Em análise",
+          dateLabel: `Enviado em ${new Date().toLocaleDateString("pt-BR")}`
+        };
 
-    sessionDonations.push(newDonation);
+    sessionDonations.push(savedDonation);
     renderRecentList();
     resetFormUI();
     showAlert("Doação enviada para análise com sucesso.", "success");
@@ -272,4 +350,6 @@ donationForm.addEventListener("submit", async event => {
   }
 });
 
-renderRecentList();
+document.addEventListener("DOMContentLoaded", () => {
+  loadRecentDonations();
+});
