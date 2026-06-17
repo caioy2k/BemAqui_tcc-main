@@ -20,6 +20,7 @@ const authCompanyRoutes = require('./routes/authCompany');
 const companyRoutes = require('./routes/company');
 const recyclablesRoutes = require('./routes/recyclables');
 const benefitRoutes = require('./routes/benefits');
+const donationsRoutes = require("./routes/donations");
 
 
 const app = express();
@@ -80,6 +81,15 @@ app.get(['/', '/index.html', '/tela_login.html', '/tela_cadastro.html'], (req, r
 // ROTA DASHBOARD IMPACTO
 // =========================
 // app.use("/api/dashboard", dashboardRoutes);
+
+
+
+// =========================
+// ROTA Doações
+// =========================
+app.use("/donations", donationsRoutes);
+
+
 
 
 // =========================
