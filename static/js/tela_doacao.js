@@ -1,3 +1,7 @@
+const API_URL = "https://bemaqui-tcc-main.onrender.com";
+const CLOUD_NAME = "SEU_CLOUD_NAME";
+const UPLOAD_PRESET = "SEU_UPLOAD_PRESET";
+
 const donationForm = document.getElementById("donationForm");
 const previewBtn = document.getElementById("previewBtn");
 const summaryBox = document.getElementById("summaryBox");
@@ -180,7 +184,32 @@ previewBtn.addEventListener("click", () => {
   showAlert("Resumo gerado com sucesso.", "success");
 });
 
-donationForm.addEventListener("submit", event => {
+async function uploadImagesToCloudinary(files) {
+  const uploadedUrls = [];
+
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || "Erro ao enviar imagem.");
+    }
+
+    uploadedUrls.push(data.secure_url);
+  }
+
+  return uploadedUrls;
+}
+
+donationForm.addEventListener("submit", async event => {
   event.preventDefault();
 
   if (!validateForm()) {
@@ -191,16 +220,56 @@ donationForm.addEventListener("submit", event => {
   const data = getFormData();
   buildSummary(data);
 
-  const newDonation = {
-    ...data,
-    status: "Em análise",
-    dateLabel: `Enviado em ${new Date().toLocaleDateString("pt-BR")}`
-  };
+  try {
+    showAlert("Enviando imagens...", "success");
 
-  sessionDonations.push(newDonation);
-  renderRecentList();
-  resetFormUI();
-  showAlert("Doação enviada para análise com sucesso.", "success");
+    const imageUrls = await uploadImagesToCloudinary(currentImages);
+
+    const storedUser = localStorage.getItem("bemaquiUser");
+    const user = storedUser ? JSON.parse(storedUser) : null;
+
+    const payload = {
+      donorId: user?._id || user?.id || null,
+      itemName: data.itemName,
+      category: data.category,
+      quantity: Number(data.quantity),
+      unit: data.unit,
+      expiryDate: data.expiryDate,
+      condition: data.condition,
+      description: data.description,
+      pickupInfo: data.pickupInfo,
+      images: imageUrls
+    };
+
+    const response = await fetch(`${API_URL}/donations`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Erro ao salvar doação.");
+    }
+
+    const newDonation = {
+      ...payload,
+      status: "Em análise",
+      dateLabel: `Enviado em ${new Date().toLocaleDateString("pt-BR")}`
+    };
+
+    sessionDonations.push(newDonation);
+    renderRecentList();
+    resetFormUI();
+    showAlert("Doação enviada para análise com sucesso.", "success");
+  } catch (error) {
+    console.error("Erro ao enviar doação:", error);
+    showAlert(error.message || "Erro ao enviar doação.", "error");
+  }
 });
 
 renderRecentList();
