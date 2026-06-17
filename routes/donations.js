@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Donation = require("../models/donation");
+const Donation = require("../models/Donation");
 
 router.post("/", async (req, res) => {
   try {
@@ -46,7 +46,15 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const donations = await Donation.find().sort({ createdAt: -1 });
+    const { donorId } = req.query;
+
+    const filter = {};
+    if (donorId) {
+      filter.donorId = donorId;
+    }
+
+    const donations = await Donation.find(filter).sort({ createdAt: -1 });
+
     return res.json({ donations });
   } catch (error) {
     console.error("Erro ao listar doações:", error);
