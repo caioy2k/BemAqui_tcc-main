@@ -1,6 +1,6 @@
 const API_URL = "https://bemaqui-tcc-main.onrender.com";
-const CLOUD_NAME = "SEU_CLOUD_NAME";
-const UPLOAD_PRESET = "SEU_UPLOAD_PRESET";
+const CLOUD_NAME = "dkcfcrcyi";
+const UPLOAD_PRESET = "bemaqui_unsigned";
 
 const donationForm = document.getElementById("donationForm");
 const previewBtn = document.getElementById("previewBtn");
