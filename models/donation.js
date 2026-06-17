@@ -52,6 +52,19 @@ const donationSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Em análise"
+    },
+    reviewNote: {
+      type: String,
+      default: ""
+    },
+    reviewedAt: {
+      type: Date,
+      default: null
+    },
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null
     }
   },
   { timestamps: true }

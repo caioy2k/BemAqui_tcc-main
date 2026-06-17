@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BemAqui | Análise de Doações</title>
+  <link rel="stylesheet" href="../static/css/tela_funcionario_doacao.css" />
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">B</div>
+          <div>
+            <h1>BemAqui</h1>
+            <p>Funcionário</p>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="tela_funcionario_dashboard.html" class="nav-link">Dashboard</a>
+          <a href="tela_funcionario_trade.html" class="nav-link">Operações</a>
+          <a href="tela_funcionario_consultar.html" class="nav-link">Consulta de Usuário</a>
+          <a href="tela_funcionario_doacao.html" class="nav-link">Doações</a>
+          <a href="index.html" class="nav-link">Sair</a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <p>Painel de validação ativo</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="welcome-label">Fluxo de doações</p>
+          <h2>Validação de itens recebidos</h2>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="ghost-btn">Atualizar</button>
+          <div class="profile-chip">
+            <span>FT</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero-card">
+        <div>
+          <span class="hero-badge">Fila de análise</span>
+          <h3>Confira fotos, detalhes e destino sugerido antes de validar cada doação.</h3>
+          <p>
+            Itens aprovados podem seguir para estoque. Itens compatíveis com repasse podem ser
+            direcionados a ONGs parceiras. Itens recusados ficam registrados com observação.
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#donationsPanel" class="primary-btn">Ver pendências</a>
+          <button id="reloadHeroBtn" class="secondary-btn">Recarregar lista</button>
+        </div>
+      </section>
+
+      <section class="cards-grid">
+        <article class="metric-card">
+          <p>Pendentes</p>
+          <strong id="pendingCount">0</strong>
+          <span class="metric-detail">Aguardando avaliação</span>
+        </article>
+
+        <article class="metric-card">
+          <p>Aprovadas hoje</p>
+          <strong id="approvedCount">0</strong>
+          <span class="metric-detail">Direcionadas ao estoque</span>
+        </article>
+
+        <article class="metric-card">
+          <p>Repassadas</p>
+          <strong id="transferredCount">0</strong>
+          <span class="metric-detail">Encaminhadas para ONG</span>
+        </article>
+
+        <article class="metric-card">
+          <p>Recusadas</p>
+          <strong id="rejectedCount">0</strong>
+          <span class="metric-detail">Com justificativa registrada</span>
+        </article>
+      </section>
+
+      <section class="content-grid" id="donationsPanel">
+        <article class="panel">
+          <div class="panel-header panel-header-row">
+            <div>
+              <h3>Doações pendentes</h3>
+              <p id="listInfo">Carregando itens para análise...</p>
+            </div>
+
+            <div class="filters-inline">
+              <select id="statusFilter" class="filter-select">
+                <option value="pendentes">Somente pendentes</option>
+                <option value="todos">Todos</option>
+                <option value="aprovado">Aprovadas</option>
+                <option value="repassado">Repassadas</option>
+                <option value="recusado">Recusadas</option>
+              </select>
+
+              <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="Buscar por item, doador ou categoria"
+              />
+            </div>
+          </div>
+
+          <div id="donationList" class="donation-list"></div>
+        </article>
+
+        <article class="panel details-panel">
+          <div class="panel-header">
+            <div>
+              <h3>Detalhes da análise</h3>
+              <p>Selecione uma doação para visualizar a foto e validar.</p>
+            </div>
+          </div>
+
+          <div id="detailsEmpty" class="details-empty">
+            <strong>Nenhuma doação selecionada</strong>
+            <p>Escolha um item da lista para visualizar todos os dados e concluir a análise.</p>
+          </div>
+
+          <div id="donationDetails" class="donation-details hidden">
+            <div class="details-image-wrap">
+              <img
+                id="detailImage"
+                src=""
+                alt="Foto da doação"
+                class="details-image"
+              />
+            </div>
+
+            <div class="details-grid">
+              <div class="detail-block">
+                <span class="detail-label">Item</span>
+                <strong id="detailItem">-</strong>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Categoria</span>
+                <strong id="detailCategory">-</strong>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Quantidade</span>
+                <strong id="detailQuantity">-</strong>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Status atual</span>
+                <strong id="detailStatus">-</strong>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Doador</span>
+                <strong id="detailDonor">-</strong>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Contato</span>
+                <strong id="detailContact">-</strong>
+              </div>
+
+              <div class="detail-block full">
+                <span class="detail-label">Descrição</span>
+                <p id="detailDescription">-</p>
+              </div>
+
+              <div class="detail-block full">
+                <span class="detail-label">Informações de retirada</span>
+                <p id="detailPickup">-</p>
+              </div>
+            </div>
+
+            <div class="analysis-box">
+              <label for="reviewNote" class="detail-label">Observação da análise</label>
+              <textarea
+                id="reviewNote"
+                rows="4"
+                placeholder="Registre observações sobre a validação, destino ou motivo de recusa"
+              ></textarea>
+
+              <div class="action-buttons">
+                <button id="approveBtn" class="action-btn approve-btn">Aprovar</button>
+                <button id="transferBtn" class="action-btn transfer-btn">Repassar</button>
+                <button id="rejectBtn" class="action-btn reject-btn">Recusar</button>
+              </div>
+
+              <p id="actionFeedback" class="action-feedback"></p>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="../static/js/tela_funcionario_doacao.js"></script>
+</body>
+</html>

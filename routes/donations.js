@@ -62,4 +62,42 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+
+router.put("/:id/status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, reviewNote } = req.body;
+
+    const allowedStatus = ["Em análise", "Aprovado", "Repassado", "Recusado"];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ error: "Status inválido." });
+    }
+
+    const updatedDonation = await Donation.findByIdAndUpdate(
+      id,
+      {
+        status,
+        reviewNote: reviewNote || "",
+        reviewedAt: new Date()
+      },
+      { new: true }
+    );
+
+    if (!updatedDonation) {
+      return res.status(404).json({ error: "Doação não encontrada." });
+    }
+
+    return res.json({
+      message: "Status atualizado com sucesso.",
+      donation: updatedDonation
+    });
+  } catch (error) {
+    console.error("Erro ao atualizar status da doação:", error);
+    return res.status(500).json({ error: "Erro interno ao atualizar a doação." });
+  }
+});
+
+
 module.exports = router;
