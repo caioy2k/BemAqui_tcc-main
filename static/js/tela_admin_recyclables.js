@@ -64,7 +64,7 @@ function renderRecyclables() {
     row.className = "item-row";
     row.innerHTML = `
       <div class="item-info">
-        <p class="item-name">${item.name}</p>
+        <p class="item-name">${item.emoji || "♻️"} ${item.name}</p>
         <p class="item-type">${item.type}</p>
         <p class="item-details">${item.description}</p>
       </div>
@@ -82,6 +82,11 @@ function setCreateMode() {
   editingRecyclableId = null;
   recyclableForm.reset();
 
+  const emojiField = document.getElementById("emoji");
+  if (emojiField) {
+    emojiField.value = "";
+  }
+
   if (modalTitle) {
     modalTitle.textContent = "Cadastrar Reciclável";
   }
@@ -98,6 +103,11 @@ function setEditMode(item) {
   document.getElementById("type").value = item.type || "";
   document.getElementById("description").value = item.description || "";
   document.getElementById("pointsValue").value = item.pointsValue ?? "";
+
+  const emojiField = document.getElementById("emoji");
+  if (emojiField) {
+    emojiField.value = item.emoji || "";
+  }
 
   if (modalTitle) {
     modalTitle.textContent = "Editar Reciclável";
@@ -132,8 +142,9 @@ recyclableForm.addEventListener("submit", async (event) => {
   const type = document.getElementById("type").value;
   const description = document.getElementById("description").value.trim();
   const pointsValue = parseInt(document.getElementById("pointsValue").value, 10);
+  const emoji = document.getElementById("emoji").value.trim();
 
-  const data = { name, type, description, pointsValue };
+  const data = { name, type, description, pointsValue, emoji };
 
   const isEditing = Boolean(editingRecyclableId);
   const url = isEditing

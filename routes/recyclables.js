@@ -35,12 +35,12 @@ router.get('/', async (req, res) => {
 // POST /recyclables (admin)
 router.post('/', authMiddleware, isAdminMiddleware, async (req, res) => {
   try {
-    const { name, type, description, pointsValue } = req.body;
-    if (!name || !type || !description || !pointsValue) {
+    const { name, type, description, pointsValue, emoji } = req.body;
+    if (!name || !type || !description || !pointsValue || !emoji) {
       return res.status(400).json({ error: "Preencha todos os campos obrigatórios." });
     }
     const newRecyclable = await Recyclable.create({
-      name, type, description, pointsValue, status: "ativo",
+      name, type, description, pointsValue, emoji, status: "ativo",
     });
     res.status(201).json({
       message: "Reciclável cadastrado com sucesso.",
@@ -57,9 +57,9 @@ router.post('/', authMiddleware, isAdminMiddleware, async (req, res) => {
 router.put('/:id', authMiddleware, isAdminMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, type, description, pointsValue } = req.body;
+    const { name, type, description, pointsValue, emoji } = req.body;
 
-    if (!name || !type || !description || !pointsValue) {
+    if (!name || !type || !description || !pointsValue || !emoji) {
       return res.status(400).json({ error: "Preencha todos os campos obrigatórios." });
     }
 
@@ -70,6 +70,7 @@ router.put('/:id', authMiddleware, isAdminMiddleware, async (req, res) => {
         type,
         description,
         pointsValue,
+        emoji,
       },
       {
         new: true,

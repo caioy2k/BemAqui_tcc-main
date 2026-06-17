@@ -21,6 +21,11 @@ const recyclableSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
+    emoji: {
+      type: String,
+      default: "♻️",
+      trim: true,
+    },
     status: {
       type: String,
       enum: ["ativo", "inativo"],
