@@ -45,6 +45,11 @@ function setCreateMode() {
   editingBenefitId = null;
   benefitForm.reset();
 
+  const emojiField = document.getElementById('emoji');
+  if (emojiField) {
+    emojiField.value = '';
+  }
+
   if (modalBadge) {
     modalBadge.textContent = 'Novo benefício';
   }
@@ -74,6 +79,11 @@ function setEditMode(benefit) {
   document.getElementById('description').value = benefit.description || '';
   document.getElementById('pointsCost').value = Number(benefit.pointsCost || 0);
   document.getElementById('quantity').value = Number(benefit.quantity || 0);
+
+  const emojiField = document.getElementById('emoji');
+  if (emojiField) {
+    emojiField.value = benefit.emoji || '';
+  }
 
   if (submitButton) {
     submitButton.textContent = 'Salvar alterações';
@@ -111,7 +121,8 @@ function setupForm() {
       category: document.getElementById('category').value,
       description: document.getElementById('description').value.trim(),
       pointsCost: Number(document.getElementById('pointsCost').value),
-      quantity: Number(document.getElementById('quantity').value)
+      quantity: Number(document.getElementById('quantity').value),
+      emoji: document.getElementById('emoji').value.trim()
     };
 
     const isEditing = Boolean(editingBenefitId);
@@ -184,7 +195,7 @@ function renderBenefits(benefitsList) {
     card.innerHTML = `
       <div class="benefit-card-header">
         <div>
-          <h4 class="benefit-card-title">${benefit.name || '-'}</h4>
+          <h4 class="benefit-card-title">${benefit.emoji || '🎁'} ${benefit.name || '-'}</h4>
           <span class="benefit-badge">${benefit.category || '-'}</span>
         </div>
         <span class="benefit-status ${status === 'ativo' ? 'is-active' : 'is-inactive'}">

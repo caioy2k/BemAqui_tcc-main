@@ -26,6 +26,13 @@ const benefitSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+
+    emoji: {
+      type: String,
+      default: '🎁',
+      trim: true,
+    },
+
     status: {
       type: String,
       enum: ["ativo", "inativo"],

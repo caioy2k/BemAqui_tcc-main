@@ -35,9 +35,9 @@ router.get('/', async (req, res) => {
 // POST /benefits (apenas admin)
 router.post('/', authMiddleware, isAdminMiddleware, async (req, res) => {
   try {
-    const { name, category, description, pointsCost, quantity } = req.body;
+    const { name, category, description, pointsCost, quantity, emoji } = req.body;
 
-    if (!name || !category || !description || !pointsCost) {
+    if (!name || !category || !description || !pointsCost || !emoji) {
       return res.status(400).json({ error: "Preencha todos os campos obrigatórios." });
     }
 
@@ -47,6 +47,7 @@ router.post('/', authMiddleware, isAdminMiddleware, async (req, res) => {
       description,
       pointsCost,
       quantity,
+      emoji,
       status: "ativo",
     });
 

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerenciar Benefícios - BemAqui</title>
   <link rel="stylesheet" href="../static/css/tela_admin_benefits.css" />
 </head>
+
 <body>
   <div class="admin-layout">
     <aside class="admin-sidebar">
@@ -106,13 +108,7 @@
       <form id="benefit-form" class="admin-form">
         <div class="form-group">
           <label for="name">Nome</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Ex: Arroz integral (5kg)"
-            required
-          />
+          <input type="text" id="name" name="name" placeholder="Ex: Arroz integral (5kg)" required />
         </div>
 
         <div class="form-group">
@@ -129,40 +125,24 @@
 
         <div class="form-group">
           <label for="description">Descrição</label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Descreva o benefício..."
-            rows="4"
-            required
-          ></textarea>
+          <textarea id="description" name="description" placeholder="Descreva o benefício..." rows="4"
+            required></textarea>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="pointsCost">Pontos para receber</label>
-            <input
-              type="number"
-              id="pointsCost"
-              name="pointsCost"
-              placeholder="Ex: 150"
-              min="1"
-              required
-            />
+            <input type="number" id="pointsCost" name="pointsCost" placeholder="Ex: 150" min="1" required />
           </div>
 
           <div class="form-group">
             <label for="quantity">Quantidade disponível</label>
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              placeholder="Ex: 20"
-              min="0"
-              required
-            />
+            <input type="number" id="quantity" name="quantity" placeholder="Ex: 20" min="0" required />
           </div>
         </div>
+
+        <label for="emoji">Emoji</label>
+        <input type="text" id="emoji" name="emoji" placeholder="Ex: 🎁" maxlength="4" />
 
         <div class="modal-footer">
           <button type="button" class="btn-cancel" onclick="closeFormModal()">Cancelar</button>
@@ -174,4 +154,5 @@
 
   <script src="../static/js/tela_admin_benefits.js"></script>
 </body>
+
 </html>
