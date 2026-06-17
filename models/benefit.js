@@ -10,7 +10,7 @@ const benefitSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["alimentos", "roupas", "utensilio", "higiene", "outro"],
+      enum: ["alimentos", "roupas", "utensilio", "higiene", "eletronico", "outro"],
     },
     description: {
       type: String,
