@@ -470,22 +470,54 @@ CHATBOT
 
 
     <script>
-        // Função para mostrar os termos (apenas 15 linhas adicionadas)
-        function mostrarTermos(tipo) {
-            var termos = {
-                uso: "TERMOS DE USO:\n\n1. Ao utilizar o BemAqui, você concorda com nossas regras.\n2. Moedas virtuais não podem ser convertidas em dinheiro real.\n3. É proibido qualquer tipo de fraude no sistema.\n4. O BemAqui pode suspender contas que violem as regras.\n5. Aceitamos apenas materiais recicláveis limpos e separados.\n\nDeseja continuar?",
-                privacidade: "POLÍTICA DE PRIVACIDADE:\n\n1. Seus dados são protegidos e não serão vendidos.\n2. Coletamos nome, e-mail e endereço para entregas.\n3. Você pode solicitar exclusão dos seus dados a qualquer momento.\n4. Utilizamos cookies para melhorar sua experiência.\n5. Seus dados de reciclagem são usados apenas para estatísticas.\n\nDeseja continuar?",
-                cookies: "POLÍTICA DE COOKIES:\n\nUtilizamos cookies para melhorar sua navegação, lembrar suas preferências e analisar o tráfego do site. Você pode desabilitar os cookies nas configurações do seu navegador a qualquer momento.\n\nDeseja aceitar os cookies?"
-            };
-
-            var mensagem = termos[tipo] || "Termos e condições disponíveis em nosso site.";
-
-            if (confirm(mensagem)) {
-                if (tipo === 'uso') window.location.href = "tela_login.html";
-                else if (tipo === 'privacidade') window.location.href = "tela_cadastro.html";
-                else if (tipo === 'cookies') alert("✓ Cookies aceitos!");
-            }
+       
+       function mostrarTermos(tipo) {
+    const textos = {
+        uso: {
+            titulo: "Termos de Uso",
+            texto: `
+                <p>Ao usar o BemAqui, você concorda com as regras da plataforma.</p>
+                <ul>
+                    <li>As moedas virtuais não podem ser convertidas em dinheiro.</li>
+                    <li>Fraudes e informações falsas podem levar ao bloqueio da conta.</li>
+                    <li>Somente materiais recicláveis aceitos poderão gerar benefícios.</li>
+                </ul>
+            `
+        },
+        privacidade: {
+            titulo: "Política de Privacidade",
+            texto: `
+                <p>Seus dados são utilizados apenas para operação da plataforma.</p>
+                <ul>
+                    <li>Podemos coletar nome, e-mail, telefone e dados de uso.</li>
+                    <li>Você pode solicitar correção ou exclusão dos seus dados.</li>
+                    <li>Os dados não são vendidos a terceiros.</li>
+                </ul>
+            `
+        },
+        cookies: {
+            titulo: "Política de Cookies",
+            texto: `
+                <p>Utilizamos cookies para funcionamento, segurança e melhoria da experiência.</p>
+                <ul>
+                    <li>Cookies essenciais mantêm o site funcionando corretamente.</li>
+                    <li>Cookies opcionais podem ser usados para métricas e preferência.</li>
+                    <li>Você pode desativá-los no navegador.</li>
+                </ul>
+            `
         }
+    };
+
+    const conteudo = textos[tipo] || {
+        titulo: "Informações Legais",
+        texto: "<p>Conteúdo indisponível no momento.</p>"
+    };
+
+    document.getElementById("legalModalTitle").innerHTML = conteudo.titulo;
+    document.getElementById("legalModalBody").innerHTML = conteudo.texto;
+    document.getElementById("legalModal").classList.add("active");
+}
+        //cabo
 
         document.addEventListener("DOMContentLoaded", () => {
             initHamburger();
@@ -722,6 +754,142 @@ CHATBOT
             });
         }
     </script>
+
+    <!-- Modal Legal -->
+<div id="legalModal" class="legal-modal" aria-hidden="true">
+    <div class="legal-modal-box" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+        <button class="legal-close" onclick="fecharModalLegal()" aria-label="Fechar modal">&times;</button>
+        <h3 id="legalModalTitle">Informações Legais</h3>
+        <div id="legalModalBody"></div>
+        <div class="legal-actions">
+            <button class="legal-btn secondary" onclick="fecharModalLegal()">Fechar</button>
+            <button class="legal-btn primary" id="legalAcceptBtn" onclick="aceitarModalLegal()">Entendi</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .legal-modal{
+        position:fixed; inset:0; background:rgba(0,0,0,.55);
+        display:flex; align-items:center; justify-content:center;
+        padding:20px; opacity:0; visibility:hidden; transition:.25s ease; z-index:9999;
+    }
+    .legal-modal.active{opacity:1; visibility:visible;}
+    .legal-modal-box{
+        width:100%; max-width:560px; background:#fff; border-radius:18px;
+        padding:24px; box-shadow:0 20px 50px rgba(0,0,0,.2); position:relative;
+        font-family:'Inter', sans-serif; color:#1f2937;
+    }
+    .legal-modal-box h3{
+        margin-bottom:14px; color:#166534; font-size:1.4rem;
+    }
+    .legal-modal-box p{margin-bottom:12px; line-height:1.6;}
+    .legal-modal-box ul{padding-left:20px; margin-bottom:8px;}
+    .legal-modal-box li{margin-bottom:8px; line-height:1.5;}
+    .legal-close{
+        position:absolute; top:12px; right:14px; background:none; border:none;
+        font-size:1.8rem; cursor:pointer; color:#4b5563;
+    }
+    .legal-actions{
+        display:flex; gap:10px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap;
+    }
+    .legal-btn{
+        border:none; border-radius:10px; padding:10px 16px; cursor:pointer; font-weight:600;
+    }
+    .legal-btn.primary{background:#16a34a; color:#fff;}
+    .legal-btn.secondary{background:#e5e7eb; color:#111827;}
+    body.modal-open{overflow:hidden;}
+</style>
+
+<script>
+    let legalTipoAtual = "";
+
+    function fecharModalLegal() {
+        document.getElementById("legalModal").classList.remove("active");
+        document.body.classList.remove("modal-open");
+        document.getElementById("legalModal").setAttribute("aria-hidden", "true");
+    }
+
+    function aceitarModalLegal() {
+        if (legalTipoAtual === "cookies") {
+            alert("✓ Preferência de cookies registrada!");
+        }
+        fecharModalLegal();
+    }
+
+    const _mostrarTermosOriginal = mostrarTermos;
+
+    mostrarTermos = function(tipo) {
+        legalTipoAtual = tipo;
+        const modal = document.getElementById("legalModal");
+        const titulo = document.getElementById("legalModalTitle");
+        const corpo = document.getElementById("legalModalBody");
+        const botao = document.getElementById("legalAcceptBtn");
+
+        const textos = {
+            uso: {
+                titulo: "Termos de Uso",
+                botao: "Entendi",
+                texto: `
+                    <p>Ao usar o BemAqui, você concorda com as regras da plataforma.</p>
+                    <ul>
+                        <li>As moedas virtuais são de uso interno.</li>
+                        <li>Fraudes podem gerar suspensão da conta.</li>
+                        <li>Materiais devem seguir os critérios da plataforma.</li>
+                    </ul>
+                `
+            },
+            privacidade: {
+                titulo: "Política de Privacidade",
+                botao: "Entendi",
+                texto: `
+                    <p>Seus dados são tratados para cadastro, acesso e operação do serviço.</p>
+                    <ul>
+                        <li>Podemos usar nome, e-mail, telefone e histórico de uso.</li>
+                        <li>Você pode solicitar atualização ou exclusão dos dados.</li>
+                        <li>Seus dados não são vendidos.</li>
+                    </ul>
+                `
+            },
+            cookies: {
+                titulo: "Política de Cookies",
+                botao: "Aceitar",
+                texto: `
+                    <p>Usamos cookies para funcionamento, segurança e melhoria da navegação.</p>
+                    <ul>
+                        <li>Cookies essenciais mantêm o site ativo.</li>
+                        <li>Cookies opcionais ajudam em métricas e preferências.</li>
+                        <li>Você pode gerenciar isso no navegador.</li>
+                    </ul>
+                `
+            }
+        };
+
+        const conteudo = textos[tipo] || {
+            titulo: "Informações Legais",
+            botao: "Fechar",
+            texto: "<p>Conteúdo indisponível no momento.</p>"
+        };
+
+        titulo.innerHTML = conteudo.titulo;
+        corpo.innerHTML = conteudo.texto;
+        botao.textContent = conteudo.botao;
+
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+    };
+
+    document.addEventListener("click", function(e) {
+        const modal = document.getElementById("legalModal");
+        if (e.target === modal) fecharModalLegal();
+    });
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") fecharModalLegal();
+    });
+</script>
+
 </body>
 
 </html>

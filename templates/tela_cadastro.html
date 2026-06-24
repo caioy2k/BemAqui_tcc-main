@@ -177,23 +177,48 @@
   </main>
 
   <script>
-  function mostrarTermos(tipo) {
-            var termos = {
-                uso: "TERMOS DE USO:\n\n1. Ao utilizar o BemAqui, você concorda com nossas regras.\n2. Moedas virtuais não podem ser convertidas em dinheiro real.\n3. É proibido qualquer tipo de fraude no sistema.\n4. O BemAqui pode suspender contas que violem as regras.\n5. Aceitamos apenas materiais recicláveis limpos e separados.\n\nDeseja continuar?",
-                privacidade: "POLÍTICA DE PRIVACIDADE:\n\n1. Seus dados são protegidos e não serão vendidos.\n2. Coletamos nome, e-mail e endereço para entregas.\n3. Você pode solicitar exclusão dos seus dados a qualquer momento.\n4. Utilizamos cookies para melhorar sua experiência.\n5. Seus dados de reciclagem são usados apenas para estatísticas.\n\nDeseja continuar?",
-                cookies: "POLÍTICA DE COOKIES:\n\nUtilizamos cookies para melhorar sua navegação, lembrar suas preferências e analisar o tráfego do site. Você pode desabilitar os cookies nas configurações do seu navegador a qualquer momento.\n\nDeseja aceitar os cookies?"
-            };
-            
-            var mensagem = termos[tipo] || "Termos e condições disponíveis em nosso site.";
-            
-            if (confirm(mensagem)) {
-                if (tipo === 'uso') window.location.href = "tela_login.html";
-                else if (tipo === 'privacidade') window.location.href = "tela_cadastro.html";
-                else if (tipo === 'cookies') alert("✓ Cookies aceitos!");
-            }
-        }</script>
+function mostrarTermos(tipo) {
+    const textos = {
+        uso: {
+            titulo: "Termos de Uso",
+            botao: "Entendi",
+            texto: `
+                <p>Ao criar sua conta no BemAqui, você concorda com as regras da plataforma.</p>
+                <ul>
+                    <li>A conta é pessoal e a senha deve ser mantida em sigilo.</li>
+                    <li>Fraudes ou dados falsos podem levar ao bloqueio da conta.</li>
+                    <li>As moedas virtuais são válidas apenas dentro da plataforma.</li>
+                </ul>
+            `
+        },
+        privacidade: {
+            titulo: "Política de Privacidade",
+            botao: "Entendi",
+            texto: `
+                <p>Seus dados são usados para cadastro, acesso e funcionamento da plataforma.</p>
+                <ul>
+                    <li>Podemos tratar nome, e-mail, CPF, telefone e perfil informado.</li>
+                    <li>Você pode solicitar correção ou exclusão de dados, quando aplicável.</li>
+                    <li>Os dados não são vendidos a terceiros.</li>
+                </ul>
+            `
+        }
+    };
 
+    const conteudo = textos[tipo] || {
+        titulo: "Informações Legais",
+        botao: "Fechar",
+        texto: "<p>Conteúdo indisponível no momento.</p>"
+    };
 
+    document.getElementById("legalModalTitle").innerHTML = conteudo.titulo;
+    document.getElementById("legalModalBody").innerHTML = conteudo.texto;
+    document.getElementById("legalAcceptBtn").textContent = conteudo.botao;
+    document.getElementById("legalModal").classList.add("active");
+    document.getElementById("legalModal").setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+}
+</script>
 
 <!-- CHATBOT -->
   <script src="https://bots.easy-peasy.ai/chat.min.js"
@@ -201,5 +226,87 @@
     data-widget-btn-color="#4ab74d " defer> </script>
 
   <script src="../static/js/tela_cadastro.js"></script>
+
+  <!-- Modal de Termos -->
+<div id="legalModal" class="legal-modal" aria-hidden="true">
+  <div class="legal-modal-box" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+    <button class="legal-close" onclick="fecharModalLegal()" aria-label="Fechar">&times;</button>
+    <h3 id="legalModalTitle">Informações Legais</h3>
+    <div id="legalModalBody"></div>
+    <div class="legal-actions">
+      <button class="legal-btn secondary" onclick="fecharModalLegal()">Fechar</button>
+      <button class="legal-btn primary" id="legalAcceptBtn" onclick="fecharModalLegal()">Entendi</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .legal-modal{
+    position:fixed; inset:0; z-index:9999;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; background:rgba(15,23,42,.55);
+    opacity:0; visibility:hidden; transition:.25s ease;
+  }
+  .legal-modal.active{opacity:1; visibility:visible;}
+  .legal-modal-box{
+    width:100%; max-width:540px; background:#fff; color:#1f2937;
+    border-radius:18px; padding:24px; position:relative;
+    box-shadow:0 20px 45px rgba(0,0,0,.18);
+    font-family:Arial, sans-serif;
+  }
+  .legal-modal-box h3{
+    margin:0 0 14px; font-size:1.35rem; color:#15803d;
+  }
+  .legal-modal-box p{
+    margin-bottom:12px; line-height:1.6;
+  }
+  .legal-modal-box ul{
+    margin:0; padding-left:20px;
+  }
+  .legal-modal-box li{
+    margin-bottom:8px; line-height:1.5;
+  }
+  .legal-close{
+    position:absolute; top:10px; right:14px;
+    border:none; background:none; cursor:pointer;
+    font-size:1.8rem; color:#6b7280;
+  }
+  .legal-actions{
+    display:flex; justify-content:flex-end; gap:10px;
+    margin-top:20px; flex-wrap:wrap;
+  }
+  .legal-btn{
+    border:none; padding:10px 16px; border-radius:10px;
+    font-weight:600; cursor:pointer;
+  }
+  .legal-btn.primary{
+    background:#16a34a; color:#fff;
+  }
+  .legal-btn.secondary{
+    background:#e5e7eb; color:#111827;
+  }
+  body.modal-open{
+    overflow:hidden;
+  }
+</style>
+
+<script>
+  function fecharModalLegal() {
+    const modal = document.getElementById("legalModal");
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+  }
+
+  document.addEventListener("click", function(e) {
+    const modal = document.getElementById("legalModal");
+    if (e.target === modal) fecharModalLegal();
+  });
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") fecharModalLegal();
+  });
+</script>
+
 </body>
 </html>

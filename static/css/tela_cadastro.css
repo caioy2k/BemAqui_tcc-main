@@ -443,8 +443,16 @@ select.input-default {
 }
 
 .termos {
+  display: flex;
   justify-content: center;
-   display: flex;
+  align-items: center;
   gap: 20px;
-  justify-content: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.termos a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
