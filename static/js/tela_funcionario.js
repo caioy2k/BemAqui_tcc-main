@@ -34,8 +34,17 @@ function normalizeText(value) {
     .trim();
 }
 
-function getStatusClass(status) {
+function normalizeTradeStatus(status) {
   const normalized = normalizeText(status || "pendente");
+
+  if (["aprovado", "confirmado"].includes(normalized)) return "aprovado";
+  if (["recusado", "cancelado"].includes(normalized)) return "recusado";
+  if (["concluido", "concluído", "finalizado"].includes(normalized)) return "concluido";
+  return "pendente";
+}
+
+function getStatusClass(status) {
+  const normalized = normalizeTradeStatus(status);
 
   if (normalized === "aprovado") return "status-aprovado";
   if (normalized === "concluido") return "status-concluido";
@@ -44,7 +53,7 @@ function getStatusClass(status) {
 }
 
 function getStatusLabel(status) {
-  const normalized = normalizeText(status || "pendente");
+  const normalized = normalizeTradeStatus(status);
 
   if (normalized === "aprovado") return "Aprovado";
   if (normalized === "concluido") return "Concluído";
@@ -110,6 +119,8 @@ function renderTradesTable(trades) {
     const points = trade.totalPointsOffered || 0;
     const surplus = trade.coinsSurplus || 0;
     const status = trade.status || "pendente";
+    const normalizedStatus = normalizeTradeStatus(status);
+    const isPending = normalizedStatus === "pendente";
 
     row.innerHTML = `
       <td>
@@ -132,53 +143,62 @@ function renderTradesTable(trades) {
         <span class="status-badge ${getStatusClass(status)}">${getStatusLabel(status)}</span>
       </td>
       <td class="actions-cell">
-  <div class="table-actions">
-    
+        <div class="table-actions">
+          ${
+            isPending
+              ? `
+                <button
+                  class="icon-btn approve"
+                  type="button"
+                  title="Aprovar troca"
+                  aria-label="Aprovar troca"
+                  onclick="approveTrade('${escapeHtml(tradeId)}')"
+                >
+                  <span class="btn-icon">✓</span>
+                  <span class="btn-label">Aprovar</span>
+                </button>
 
-    <button
-      class="icon-btn approve"
-      type="button"
-      title="Aprovar troca"
-      aria-label="Aprovar troca"
-      onclick="approveTrade('${escapeHtml(tradeId)}')"
-    >
-      <span class="btn-icon">✓</span>
-      <span class="btn-label">Aprovar</span>
-    </button>
-
-    <button
-      class="icon-btn reject"
-      type="button"
-      title="Recusar troca"
-      aria-label="Recusar troca"
-      onclick="rejectTrade('${escapeHtml(tradeId)}')"
-    >
-      <span class="btn-icon">✕</span>
-      <span class="btn-label">Recusar</span>
-    </button>
-  </div>
-</td>
+                <button
+                  class="icon-btn reject"
+                  type="button"
+                  title="Recusar troca"
+                  aria-label="Recusar troca"
+                  onclick="rejectTrade('${escapeHtml(tradeId)}')"
+                >
+                  <span class="btn-icon">✕</span>
+                  <span class="btn-label">Recusar</span>
+                </button>
+              `
+              : `
+                
+              `
+          }
+        </div>
+      </td>
     `;
   });
 }
 
 function applyFilters() {
   const searchTerm = normalizeText(searchInput?.value || "");
-  const selectedStatus = normalizeText(statusFilter?.value || "");
+  const selectedStatus = normalizeTradeStatus(statusFilter?.value || "");
 
   filteredTrades = allTrades.filter((trade) => {
     const beneficiaryName = normalizeText(trade.beneficiaryId?.name || "");
     const tradeId = normalizeText(trade._id || "");
     const offered = normalizeText(formatList(trade.recyclablesOffered, "recyclableName"));
     const requested = normalizeText(formatList(trade.benefitsRequested, "benefitName"));
-    const status = normalizeText(trade.status || "pendente");
+    const status = normalizeTradeStatus(trade.status || "pendente");
+    const statusLabel = normalizeText(getStatusLabel(trade.status || "pendente"));
 
     const matchesSearch =
       !searchTerm ||
       beneficiaryName.includes(searchTerm) ||
       tradeId.includes(searchTerm) ||
       offered.includes(searchTerm) ||
-      requested.includes(searchTerm);
+      requested.includes(searchTerm) ||
+      status.includes(searchTerm) ||
+      statusLabel.includes(searchTerm);
 
     const matchesStatus = !selectedStatus || status === selectedStatus;
 
@@ -332,7 +352,7 @@ function openTradeModal(tradeId) {
   renderTradeModal(trade);
 
   if (modalActions) {
-    const normalizedStatus = normalizeText(trade.status || "pendente");
+    const normalizedStatus = normalizeTradeStatus(trade.status || "pendente");
     const showDecisionButtons = normalizedStatus === "pendente";
     modalActions.classList.toggle("hidden", !showDecisionButtons);
   }
