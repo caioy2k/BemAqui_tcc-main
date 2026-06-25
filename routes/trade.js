@@ -262,6 +262,157 @@ router.post('/buy-with-wallet-and-recyclables', authMiddleware, async (req, res)
 });
 
 
+//rota para trocar utilizando 2 ou mais beneficios
+router.post('/buy-multiple-with-wallet-and-recyclables', authMiddleware, async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { benefits, recyclablesOffered = [] } = req.body;
+
+    if (!Array.isArray(benefits) || benefits.length === 0) {
+      await session.abortTransaction();
+      return res.status(400).json({ error: "Selecione pelo menos um benefício." });
+    }
+
+    const normalizedBenefitsInput = benefits.map((item) => ({
+      benefitId: item.benefitId,
+      quantity: Math.max(1, parseInt(item.quantity) || 1),
+    }));
+
+    const invalidBenefit = normalizedBenefitsInput.find((item) => !item.benefitId);
+    if (invalidBenefit) {
+      await session.abortTransaction();
+      return res.status(400).json({ error: "Todos os benefícios precisam de benefitId." });
+    }
+
+    const benefitIds = normalizedBenefitsInput.map((item) => item.benefitId);
+    const dbBenefits = await Benefit.find({ _id: { $in: benefitIds } }).session(session);
+
+    if (dbBenefits.length !== normalizedBenefitsInput.length) {
+      await session.abortTransaction();
+      return res.status(404).json({ error: "Um ou mais benefícios não foram encontrados." });
+    }
+
+    const user = await User.findById(req.user._id).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
+
+    const benefitsRequested = normalizedBenefitsInput.map((item) => {
+      const dbBenefit = dbBenefits.find((b) => String(b._id) === String(item.benefitId));
+      const unitCost = Number(dbBenefit.coinsCost || dbBenefit.pointsCost || 0);
+
+      if (unitCost <= 0) {
+        throw new Error(`Preço inválido para o benefício ${dbBenefit.name}`);
+      }
+
+      return {
+        benefitId: dbBenefit._id,
+        benefitName: dbBenefit.name,
+        benefitEmoji: dbBenefit.emoji || "🎁",
+        quantity: item.quantity,
+        pointsCost: unitCost,
+      };
+    });
+
+    const totalBenefitCost = benefitsRequested.reduce((sum, item) => {
+      return sum + (Number(item.pointsCost) * Number(item.quantity));
+    }, 0);
+
+    const walletBalanceBefore = Number(user.wallet?.balance || 0);
+    const walletUsed = Math.min(walletBalanceBefore, totalBenefitCost);
+    const remainingCost = totalBenefitCost - walletUsed;
+
+    const normalizedRecyclables = Array.isArray(recyclablesOffered)
+      ? recyclablesOffered.map((item) => ({
+          recyclableId: item.recyclableId,
+          recyclableName: item.recyclableName || "Reciclável",
+          recyclableEmoji: item.recyclableEmoji || "♻️",
+          quantity: Math.max(1, parseInt(item.quantity) || 1),
+          pointsPerUnit: Number(item.pointsPerUnit) || 0,
+        }))
+      : [];
+
+    const totalRecyclingPoints = normalizedRecyclables.reduce((sum, item) => {
+      return sum + (Number(item.quantity) * Number(item.pointsPerUnit));
+    }, 0);
+
+    if (remainingCost > 0 && normalizedRecyclables.length === 0) {
+      await session.abortTransaction();
+      return res.status(400).json({
+        error: `Sua carteira cobre ${walletUsed} e faltam ${remainingCost} moedas em recicláveis.`,
+      });
+    }
+
+    if (totalRecyclingPoints < remainingCost) {
+      await session.abortTransaction();
+      return res.status(400).json({
+        error: `Faltam ${remainingCost - totalRecyclingPoints} moedas em recicláveis para completar a troca.`,
+      });
+    }
+
+    const coinsSurplus = Math.max(0, totalRecyclingPoints - remainingCost);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $inc: {
+          "wallet.balance": (-walletUsed + coinsSurplus),
+          "wallet.totalRecycledPoints": totalRecyclingPoints
+        }
+      },
+      {
+        session,
+        new: true,
+        runValidators: true
+      }
+    );
+
+    const tradeData = {
+      beneficiaryId: req.user._id,
+      recyclablesOffered: normalizedRecyclables,
+      benefitsRequested,
+      coinsOfferedFromWallet: walletUsed,
+      totalRecyclingPoints,
+      totalBenefitCost,
+      coinsSurplus,
+      tradeType: "with_benefit",
+      status: "pendente"
+    };
+
+    const newTrade = new Trade(tradeData);
+    await newTrade.save({ session });
+
+    await session.commitTransaction();
+
+    return res.json({
+      success: true,
+      message: "Troca múltipla realizada com sucesso!",
+      tradeId: newTrade._id,
+      trade: newTrade,
+      benefitsRequested,
+      recyclablesOffered: normalizedRecyclables,
+      totalBenefitCost,
+      walletUsed,
+      remainingCost,
+      recyclingPointsUsed: remainingCost,
+      recyclingPointsGenerated: totalRecyclingPoints,
+      coinsSurplus,
+      walletBalanceBefore,
+      walletBalanceAfter: updatedUser.wallet.balance
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("❌ ERRO TROCA MÚLTIPLA:", error);
+    return res.status(500).json({ error: error.message });
+  } finally {
+    session.endSession();
+  }
+});
+
+
 
 // ✅ NOVA ROTA: COMPRA COM SALDO DA CARTEIRA
 router.post('/buy-with-wallet', authMiddleware, async (req, res) => {
