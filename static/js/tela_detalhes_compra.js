@@ -191,7 +191,7 @@ function renderRecyclables(recyclables) {
     const emoji = item.recyclableEmoji || item.emoji || "♻️";
     const name = item.recyclableName || item.name || "Reciclável";
     const quantity = item.quantity || 1;
-    const totalPoints = item.totalPoints ?? ((item.pointsPerUnit || item.pointsValue || 0) * quantity);
+    const totalPoints = item.totalPoints ?? ((item.pointsPerUnit || 0) * quantity);
 
     return `
       <div class="item-line">
@@ -202,14 +202,54 @@ function renderRecyclables(recyclables) {
   }).join("");
 }
 
+function normalizeTradeResponse(apiData) {
+  const trade = apiData.trade || apiData.pendingTrade || apiData || {};
+  const walletBalanceFromResponse = apiData.walletBalance ?? 0;
+
+  const benefitsRequested = Array.isArray(trade.benefitsRequested) ? trade.benefitsRequested : [];
+  const recyclablesOffered = Array.isArray(trade.recyclablesOffered) ? trade.recyclablesOffered : [];
+
+  return {
+    _id: trade._id,
+    tradeId: trade._id,
+    status: trade.status || "pendente",
+    createdAt: trade.createdAt,
+    statusHistory: trade.statusHistory || [],
+    pickupPoint: trade.pickupPoint || {
+      name: "Ponto de retirada a definir",
+      address: "Endereço ainda não informado"
+    },
+    benefitsReceived: benefitsRequested.map((item) => ({
+      benefitName: item.benefitName || "Benefício",
+      benefitEmoji: item.benefitEmoji || "🎁",
+      benefitQuantity: item.quantity || 1,
+      pointsCost: item.pointsCost || 0,
+      totalPoints: (item.pointsCost || 0) * (item.quantity || 1)
+    })),
+    recyclablesOffered: recyclablesOffered.map((item) => ({
+      recyclableName: item.recyclableName || "Reciclável",
+      recyclableEmoji: item.recyclableEmoji || "♻️",
+      quantity: item.quantity || 1,
+      pointsPerUnit: item.pointsPerUnit || 0,
+      totalPoints: (item.pointsPerUnit || 0) * (item.quantity || 1)
+    })),
+    totalCost: trade.totalBenefitCost || 0,
+    walletUsed: trade.walletUsed || 0,
+    recyclingPointsUsed: trade.recyclingPointsUsed || trade.totalBenefitCost || 0,
+    recyclingPointsGenerated: trade.totalRecyclingPoints || 0,
+    coinsSurplus: trade.coinsSurplus || 0,
+    walletBalanceAfter: trade.walletBalanceAfter || walletBalanceFromResponse || 0
+  };
+}
+
 function fillTradeData(trade) {
   const normalizedStatus = normalizeStatus(trade.status);
   const tradeId = trade.tradeId || trade._id || "---";
-  const totalCost = trade.totalCost ?? trade.totalBenefitsCost ?? 0;
+  const totalCost = trade.totalCost ?? 0;
   const walletUsed = trade.walletUsed ?? 0;
   const recyclingPointsUsed = trade.recyclingPointsUsed ?? 0;
   const coinsSurplus = trade.coinsSurplus ?? 0;
-  const walletBalance = trade.walletBalanceAfter ?? trade.walletBalance ?? 0;
+  const walletBalance = trade.walletBalanceAfter ?? 0;
 
   currentStatusLabel.textContent = getStatusText(normalizedStatus);
   currentStatusDescription.textContent = getStatusDescription(normalizedStatus);
@@ -222,11 +262,8 @@ function fillTradeData(trade) {
   summaryWalletUsed.textContent = `${walletUsed} moedas`;
   summaryWalletBalance.textContent = `${walletBalance} moedas`;
 
-  pickupName.textContent = trade.pickupPoint?.name || trade.pickupLocation?.name || "Ponto não informado";
-  pickupAddress.textContent =
-    trade.pickupPoint?.address ||
-    trade.pickupLocation?.address ||
-    "Endereço não informado";
+  pickupName.textContent = trade.pickupPoint?.name || "Ponto não informado";
+  pickupAddress.textContent = trade.pickupPoint?.address || "Endereço não informado";
 
   pickupNote.textContent =
     normalizedStatus === "ready"
@@ -234,10 +271,10 @@ function fillTradeData(trade) {
       : "Retirada liberada somente quando o status mudar para “Pronto para retirada”.";
 
   renderTimeline(trade);
-  renderBenefits(trade.benefitsReceived || trade.benefits || []);
+  renderBenefits(trade.benefitsReceived || []);
   renderRecyclables(trade.recyclablesOffered || []);
 
-  recyclablesTotalPoints.textContent = `${trade.totalPointsOffered ?? trade.recyclingPointsGenerated ?? 0} pontos`;
+  recyclablesTotalPoints.textContent = `${trade.recyclingPointsGenerated ?? 0} pontos`;
   benefitsTotalPoints.textContent = `${totalCost} pontos`;
 
   financialWalletUsed.textContent = walletUsed;
@@ -265,25 +302,25 @@ async function loadPendingTrade() {
       },
     });
 
+    const data = await response.json().catch(() => ({}));
+
     if (response.status === 404) {
       showEmpty();
       return;
     }
 
-    const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.error || "Erro ao carregar a troca pendente.");
     }
 
-    const trade = data.trade || data.pendingTrade || data;
+    const normalizedTrade = normalizeTradeResponse(data);
 
-    if (!trade || Object.keys(trade).length === 0) {
+    if (!normalizedTrade || !normalizedTrade._id) {
       showEmpty();
       return;
     }
 
-    fillTradeData(trade);
+    fillTradeData(normalizedTrade);
     showDetails();
   } catch (error) {
     console.error("Erro ao buscar troca pendente:", error);
