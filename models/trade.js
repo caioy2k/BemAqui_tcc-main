@@ -7,13 +7,13 @@ const tradeSchema = new mongoose.Schema({
     required: true,
   },
 
-  // TIPO 1: Reciclagem + Benefício
   recyclablesOffered: [
     {
       recyclableId: { type: mongoose.Schema.Types.ObjectId, ref: "Recyclable" },
       recyclableName: String,
-      quantity: { type: Number, required: true, min: 0 },
-      pointsPerUnit: Number,
+      recyclableEmoji: String,
+      quantity: { type: Number, required: true, min: 1 },
+      pointsPerUnit: { type: Number, default: 0, min: 0 },
     },
   ],
 
@@ -21,12 +21,12 @@ const tradeSchema = new mongoose.Schema({
     {
       benefitId: { type: mongoose.Schema.Types.ObjectId, ref: "Benefit" },
       benefitName: String,
-      quantity: { type: Number, required: true, min: 0 },
-      pointsCost: Number,
+      benefitEmoji: String,
+      quantity: { type: Number, required: true, min: 1 },
+      pointsCost: { type: Number, default: 0, min: 0 },
     },
   ],
 
-  // 🪙 ECOSSISTEMA DE MOEDAS (CAMPOS PRINCIPAIS)
   coinsOfferedFromWallet: {
     type: Number,
     default: 0,
@@ -35,13 +35,13 @@ const tradeSchema = new mongoose.Schema({
 
   totalRecyclingPoints: {
     type: Number,
-    
+    default: 0,
     min: 0,
   },
 
   totalBenefitCost: {
     type: Number,
-    
+    default: 0,
     min: 0,
   },
 
@@ -51,7 +51,6 @@ const tradeSchema = new mongoose.Schema({
     min: 0,
   },
 
-  // Configurações da troca
   tradeType: {
     type: String,
     enum: ["with_benefit", "recyclable_only"],
@@ -64,17 +63,12 @@ const tradeSchema = new mongoose.Schema({
     default: "pendente",
   },
 
-  // Datas
   confirmedAt: Date,
   completedAt: Date,
 
-  // Campos legados (compatibilidade)
   totalPointsOffered: Number,
   totalPointsRequested: Number,
   recyclableOnlyTrade: { type: Boolean, default: false },
-}, 
-{ 
-  timestamps: true 
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Trade", tradeSchema);
