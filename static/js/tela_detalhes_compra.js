@@ -2,285 +2,142 @@ const API_URL = "https://bemaqui-tcc-main.onrender.com";
 
 const loadingState = document.getElementById("loading-state");
 const emptyState = document.getElementById("empty-state");
-const detailsContent = document.getElementById("details-content");
+const detailsState = document.getElementById("details-state");
 
-const currentStatusLabel = document.getElementById("current-status-label");
-const currentStatusDescription = document.getElementById("current-status-description");
+const tradeIdEl = document.getElementById("trade-id");
+const tradeStatusEl = document.getElementById("trade-status");
+const tradeDateEl = document.getElementById("trade-date");
 
-const orderCode = document.getElementById("order-code");
-const purchaseTimeline = document.getElementById("purchaseTimeline");
+const benefitsListEl = document.getElementById("benefits-list");
+const recyclablesListEl = document.getElementById("recyclables-list");
 
-const summaryTradeId = document.getElementById("summary-trade-id");
-const summaryDate = document.getElementById("summary-date");
-const summaryTotalCost = document.getElementById("summary-total-cost");
-const summaryWalletUsed = document.getElementById("summary-wallet-used");
-const summaryWalletBalance = document.getElementById("summary-wallet-balance");
-
-const pickupName = document.getElementById("pickup-name");
-const pickupAddress = document.getElementById("pickup-address");
-const pickupNote = document.getElementById("pickup-note");
-
-const recyclablesList = document.getElementById("recyclables-list");
-const benefitsList = document.getElementById("benefits-list");
-const recyclablesTotalPoints = document.getElementById("recyclables-total-points");
-const benefitsTotalPoints = document.getElementById("benefits-total-points");
-
-const financialWalletUsed = document.getElementById("financial-wallet-used");
-const financialRecyclingUsed = document.getElementById("financial-recycling-used");
-const financialSurplus = document.getElementById("financial-surplus");
-const financialWalletBalance = document.getElementById("financial-wallet-balance");
-
-const STATUS_FLOW = [
-  {
-    key: "requested",
-    title: "Troca solicitada",
-    description: "Seu pedido foi criado com sucesso no sistema."
-  },
-  {
-    key: "analyzing",
-    title: "Em análise",
-    description: "A equipe está conferindo os itens e a disponibilidade para retirada."
-  },
-  {
-    key: "separating",
-    title: "Separando itens",
-    description: "Os benefícios estão sendo preparados para retirada."
-  },
-  {
-    key: "ready",
-    title: "Pronto para retirada",
-    description: "Sua troca já pode ser retirada no ponto informado."
-  },
-  {
-    key: "picked_up",
-    title: "Retirado",
-    description: "Etapa final após a retirada dos itens pelo beneficiário."
-  }
-];
+const totalBenefitCostEl = document.getElementById("total-benefit-cost");
+const walletUsedEl = document.getElementById("wallet-used");
+const recyclingPointsUsedEl = document.getElementById("recycling-points-used");
+const recyclingPointsGeneratedEl = document.getElementById("recycling-points-generated");
+const coinsSurplusEl = document.getElementById("coins-surplus");
+const walletBalanceEl = document.getElementById("wallet-balance");
 
 function showLoading() {
-  loadingState.classList.remove("hidden");
-  emptyState.classList.add("hidden");
-  detailsContent.classList.add("hidden");
+  if (loadingState) loadingState.style.display = "block";
+  if (emptyState) emptyState.style.display = "none";
+  if (detailsState) detailsState.style.display = "none";
 }
 
 function showEmpty() {
-  loadingState.classList.add("hidden");
-  emptyState.classList.remove("hidden");
-  detailsContent.classList.add("hidden");
+  if (loadingState) loadingState.style.display = "none";
+  if (emptyState) emptyState.style.display = "block";
+  if (detailsState) detailsState.style.display = "none";
 }
 
 function showDetails() {
-  loadingState.classList.add("hidden");
-  emptyState.classList.add("hidden");
-  detailsContent.classList.remove("hidden");
+  if (loadingState) loadingState.style.display = "none";
+  if (emptyState) emptyState.style.display = "none";
+  if (detailsState) detailsState.style.display = "block";
 }
 
-function formatDate(dateValue) {
-  if (!dateValue) return "---";
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return "---";
-  return date.toLocaleDateString("pt-BR") + " - " + date.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+function formatDate(date) {
+  if (!date) return "-";
+  return new Date(date).toLocaleString("pt-BR");
 }
 
-function formatShortDate(dateValue) {
-  if (!dateValue) return "---";
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return "---";
-  return date.toLocaleDateString("pt-BR");
+function formatStatus(status) {
+  switch (status) {
+    case "pendente":
+      return "⏳ Pendente";
+    case "confirmado":
+      return "✅ Confirmado";
+    case "concluido":
+      return "🎉 Concluído";
+    case "cancelado":
+      return "❌ Cancelado";
+    default:
+      return status || "-";
+  }
 }
 
-function normalizeStatus(status) {
-  const value = String(status || "").toLowerCase().trim();
+function renderBenefits(benefitsRequested = []) {
+  if (!benefitsListEl) return;
 
-  if (["solicitada", "requested", "pending", "pendente"].includes(value)) return "requested";
-  if (["em análise", "em analise", "analyzing", "analysis"].includes(value)) return "analyzing";
-  if (["separando", "separating", "preparing"].includes(value)) return "separating";
-  if (["pronto", "ready", "ready_for_pickup", "pronto para retirada"].includes(value)) return "ready";
-  if (["retirado", "picked_up", "pickedup", "completed", "concluida", "concluída"].includes(value)) return "picked_up";
+  if (!Array.isArray(benefitsRequested) || benefitsRequested.length === 0) {
+    benefitsListEl.innerHTML = `<p class="placeholder">Nenhum benefício encontrado.</p>`;
+    return;
+  }
 
-  return "requested";
-}
-
-function getStatusText(statusKey) {
-  const statusMap = {
-    requested: "Troca solicitada",
-    analyzing: "Em análise",
-    separating: "Separando itens",
-    ready: "Pronto para retirada",
-    picked_up: "Retirado",
-  };
-
-  return statusMap[statusKey] || "Troca solicitada";
-}
-
-function getStatusDescription(statusKey) {
-  const item = STATUS_FLOW.find((step) => step.key === statusKey);
-  return item?.description || "Acompanhe os detalhes da sua troca.";
-}
-
-function renderTimeline(trade) {
-  const currentStatus = normalizeStatus(trade.status);
-  const currentIndex = STATUS_FLOW.findIndex((step) => step.key === currentStatus);
-
-  purchaseTimeline.innerHTML = STATUS_FLOW.map((step, index) => {
-    let className = "timeline-item";
-
-    if (index < currentIndex) className += " completed";
-    if (index === currentIndex) className += " active";
-
-    let stepDate = "Aguardando atualização";
-
-    if (index === 0 && trade.createdAt) {
-      stepDate = formatDate(trade.createdAt);
-    }
-
-    if (trade.statusHistory && Array.isArray(trade.statusHistory)) {
-      const historyItem = trade.statusHistory.find(
-        (entry) => normalizeStatus(entry.status) === step.key
-      );
-      if (historyItem?.date) {
-        stepDate = formatDate(historyItem.date);
-      }
-    }
-
-    return `
-      <div class="${className}">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <h3>${step.title}</h3>
-          <p>${step.description}</p>
-          <span>${stepDate}</span>
+  benefitsListEl.innerHTML = benefitsRequested
+    .map((item) => {
+      const totalItem = Number(item.pointsCost || 0) * Number(item.quantity || 1);
+      return `
+        <div class="detail-item">
+          <div>
+            <strong>${item.benefitEmoji || "🎁"} ${item.benefitName || "Benefício"}</strong>
+            <div>${item.pointsCost || 0} pts por unidade</div>
+          </div>
+          <div>
+            <strong>x${item.quantity || 1}</strong>
+            <div>Total: ${totalItem}</div>
+          </div>
         </div>
-      </div>
-    `;
-  }).join("");
+      `;
+    })
+    .join("");
 }
 
-function renderBenefits(benefits) {
-  if (!benefits || benefits.length === 0) {
-    benefitsList.innerHTML = '<p class="placeholder">Nenhum benefício informado.</p>';
+function renderRecyclables(recyclablesOffered = []) {
+  if (!recyclablesListEl) return;
+
+  if (!Array.isArray(recyclablesOffered) || recyclablesOffered.length === 0) {
+    recyclablesListEl.innerHTML = `<p class="placeholder">Nenhum reciclável utilizado.</p>`;
     return;
   }
 
-  benefitsList.innerHTML = benefits.map((item) => {
-    const emoji = item.benefitEmoji || item.emoji || "🎁";
-    const name = item.benefitName || item.name || "Benefício";
-    const quantity = item.benefitQuantity || item.quantity || 1;
-    const totalPoints = item.totalPoints ?? ((item.pointsCost || 0) * quantity);
-
-    return `
-      <div class="item-line">
-        <strong>${emoji} ${name}</strong>
-        <span>${quantity} un • ${totalPoints} pts</span>
-      </div>
-    `;
-  }).join("");
+  recyclablesListEl.innerHTML = recyclablesOffered
+    .map((item) => {
+      const totalItem = Number(item.pointsPerUnit || 0) * Number(item.quantity || 1);
+      return `
+        <div class="detail-item">
+          <div>
+            <strong>${item.recyclableEmoji || "♻️"} ${item.recyclableName || "Reciclável"}</strong>
+            <div>${item.pointsPerUnit || 0} pts por unidade</div>
+          </div>
+          <div>
+            <strong>x${item.quantity || 1}</strong>
+            <div>Total: ${totalItem}</div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
-function renderRecyclables(recyclables) {
-  if (!recyclables || recyclables.length === 0) {
-    recyclablesList.innerHTML = '<p class="placeholder">Nenhum reciclável foi necessário nesta troca.</p>';
-    return;
+function fillTradeData(trade, walletBalance) {
+  if (tradeIdEl) {
+    tradeIdEl.textContent = String(trade._id || trade.tradeId || "-").substring(0, 8).toUpperCase();
   }
 
-  recyclablesList.innerHTML = recyclables.map((item) => {
-    const emoji = item.recyclableEmoji || item.emoji || "♻️";
-    const name = item.recyclableName || item.name || "Reciclável";
-    const quantity = item.quantity || 1;
-    const totalPoints = item.totalPoints ?? ((item.pointsPerUnit || 0) * quantity);
+  if (tradeStatusEl) {
+    tradeStatusEl.textContent = formatStatus(trade.status);
+  }
 
-    return `
-      <div class="item-line">
-        <strong>${emoji} ${name}</strong>
-        <span>${quantity} un • ${totalPoints} pts</span>
-      </div>
-    `;
-  }).join("");
-}
+  if (tradeDateEl) {
+    tradeDateEl.textContent = formatDate(trade.createdAt);
+  }
 
-function normalizeTradeResponse(apiData) {
-  const trade = apiData.trade || apiData.pendingTrade || apiData || {};
-  const walletBalanceFromResponse = apiData.walletBalance ?? 0;
-
-  const benefitsRequested = Array.isArray(trade.benefitsRequested) ? trade.benefitsRequested : [];
-  const recyclablesOffered = Array.isArray(trade.recyclablesOffered) ? trade.recyclablesOffered : [];
-
-  return {
-    _id: trade._id,
-    tradeId: trade._id,
-    status: trade.status || "pendente",
-    createdAt: trade.createdAt,
-    statusHistory: trade.statusHistory || [],
-    pickupPoint: trade.pickupPoint || {
-      name: "Ponto de retirada a definir",
-      address: "Endereço ainda não informado"
-    },
-    benefitsReceived: benefitsRequested.map((item) => ({
-      benefitName: item.benefitName || "Benefício",
-      benefitEmoji: item.benefitEmoji || "🎁",
-      benefitQuantity: item.quantity || 1,
-      pointsCost: item.pointsCost || 0,
-      totalPoints: (item.pointsCost || 0) * (item.quantity || 1)
-    })),
-    recyclablesOffered: recyclablesOffered.map((item) => ({
-      recyclableName: item.recyclableName || "Reciclável",
-      recyclableEmoji: item.recyclableEmoji || "♻️",
-      quantity: item.quantity || 1,
-      pointsPerUnit: item.pointsPerUnit || 0,
-      totalPoints: (item.pointsPerUnit || 0) * (item.quantity || 1)
-    })),
-    totalCost: trade.totalBenefitCost || 0,
-    walletUsed: trade.walletUsed || 0,
-    recyclingPointsUsed: trade.recyclingPointsUsed || trade.totalBenefitCost || 0,
-    recyclingPointsGenerated: trade.totalRecyclingPoints || 0,
-    coinsSurplus: trade.coinsSurplus || 0,
-    walletBalanceAfter: trade.walletBalanceAfter || walletBalanceFromResponse || 0
-  };
-}
-
-function fillTradeData(trade) {
-  const normalizedStatus = normalizeStatus(trade.status);
-  const tradeId = trade.tradeId || trade._id || "---";
-  const totalCost = trade.totalCost ?? 0;
-  const walletUsed = trade.walletUsed ?? 0;
-  const recyclingPointsUsed = trade.recyclingPointsUsed ?? 0;
-  const coinsSurplus = trade.coinsSurplus ?? 0;
-  const walletBalance = trade.walletBalanceAfter ?? 0;
-
-  currentStatusLabel.textContent = getStatusText(normalizedStatus);
-  currentStatusDescription.textContent = getStatusDescription(normalizedStatus);
-
-  orderCode.textContent = `Pedido #${String(tradeId).substring(0, 8).toUpperCase()}`;
-
-  summaryTradeId.textContent = String(tradeId).substring(0, 8).toUpperCase();
-  summaryDate.textContent = formatShortDate(trade.createdAt);
-  summaryTotalCost.textContent = `${totalCost} moedas`;
-  summaryWalletUsed.textContent = `${walletUsed} moedas`;
-  summaryWalletBalance.textContent = `${walletBalance} moedas`;
-
-  pickupName.textContent = trade.pickupPoint?.name || "Ponto não informado";
-  pickupAddress.textContent = trade.pickupPoint?.address || "Endereço não informado";
-
-  pickupNote.textContent =
-    normalizedStatus === "ready"
-      ? "Sua troca já está liberada para retirada no ponto informado."
-      : "Retirada liberada somente quando o status mudar para “Pronto para retirada”.";
-
-  renderTimeline(trade);
-  renderBenefits(trade.benefitsReceived || []);
+  renderBenefits(trade.benefitsRequested || []);
   renderRecyclables(trade.recyclablesOffered || []);
 
-  recyclablesTotalPoints.textContent = `${trade.recyclingPointsGenerated ?? 0} pontos`;
-  benefitsTotalPoints.textContent = `${totalCost} pontos`;
+  if (totalBenefitCostEl) totalBenefitCostEl.textContent = trade.totalBenefitCost || 0;
+  if (walletUsedEl) walletUsedEl.textContent = trade.coinsOfferedFromWallet || 0;
 
-  financialWalletUsed.textContent = walletUsed;
-  financialRecyclingUsed.textContent = recyclingPointsUsed;
-  financialSurplus.textContent = coinsSurplus;
-  financialWalletBalance.textContent = walletBalance;
+  const recyclingPointsUsed = Math.max(
+    0,
+    Number(trade.totalBenefitCost || 0) - Number(trade.coinsOfferedFromWallet || 0)
+  );
+
+  if (recyclingPointsUsedEl) recyclingPointsUsedEl.textContent = recyclingPointsUsed;
+  if (recyclingPointsGeneratedEl) recyclingPointsGeneratedEl.textContent = trade.totalRecyclingPoints || 0;
+  if (coinsSurplusEl) coinsSurplusEl.textContent = trade.coinsSurplus || 0;
+  if (walletBalanceEl) walletBalanceEl.textContent = walletBalance || 0;
 }
 
 async function loadPendingTrade() {
@@ -310,17 +167,15 @@ async function loadPendingTrade() {
     }
 
     if (!response.ok) {
-      throw new Error(data.error || "Erro ao carregar a troca pendente.");
+      throw new Error(data.error || "Erro ao carregar detalhes da troca.");
     }
 
-    const normalizedTrade = normalizeTradeResponse(data);
-
-    if (!normalizedTrade || !normalizedTrade._id) {
+    if (!data.trade) {
       showEmpty();
       return;
     }
 
-    fillTradeData(normalizedTrade);
+    fillTradeData(data.trade, data.walletBalance || 0);
     showDetails();
   } catch (error) {
     console.error("Erro ao buscar troca pendente:", error);
@@ -328,6 +183,6 @@ async function loadPendingTrade() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadPendingTrade();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadPendingTrade();
 });
