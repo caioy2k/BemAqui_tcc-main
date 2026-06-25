@@ -20,16 +20,19 @@ const walletBalanceDisplay = document.getElementById("wallet-balance-display");
 
 function updateWalletDisplay() {
   if (walletBalanceDisplay) {
-    walletBalanceDisplay.textContent = `${currentWalletBalance} moedas`;
+    walletBalanceDisplay.textContent = `${Number(currentWalletBalance || 0)} moedas`;
   }
 }
 
 async function loadUserWallet() {
   try {
     const storedUser = localStorage.getItem("bemaquiUser");
+
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      currentWalletBalance = user?.wallet?.balance || 0;
+      currentWalletBalance = Number(user?.wallet?.balance || 0);
+    } else {
+      currentWalletBalance = 0;
     }
   } catch (error) {
     console.error("Erro ao carregar saldo da carteira:", error);
@@ -41,20 +44,17 @@ async function loadUserWallet() {
 
 async function loadItems() {
   try {
-    console.log("Carregando itens...");
-
-    const recyclablesRes = await fetch(`${API_URL}/recyclables`);
-    const benefitsRes = await fetch(`${API_URL}/benefits`);
+    const [recyclablesRes, benefitsRes] = await Promise.all([
+      fetch(`${API_URL}/recyclables`),
+      fetch(`${API_URL}/benefits`)
+    ]);
 
     if (!recyclablesRes.ok || !benefitsRes.ok) {
-      throw new Error("Erro na resposta do servidor");
+      throw new Error("Erro na resposta do servidor ao carregar itens.");
     }
 
     const recyclablesData = await recyclablesRes.json();
     const benefitsData = await benefitsRes.json();
-
-    console.log("Recicláveis:", recyclablesData);
-    console.log("Benefícios:", benefitsData);
 
     recyclables = recyclablesData.recyclables || [];
     benefits = benefitsData.benefits || [];
@@ -69,32 +69,34 @@ async function loadItems() {
 }
 
 function getSelectedRecyclablesPoints() {
-  return selectedRecyclables.reduce(
-    (sum, item) => sum + item.pointsValue * item.quantity,
-    0
-  );
+  return selectedRecyclables.reduce((sum, item) => {
+    return sum + (Number(item.pointsValue || 0) * Number(item.quantity || 0));
+  }, 0);
 }
 
 function getSelectedBenefitsPoints() {
-  return selectedBenefits.reduce(
-    (sum, item) => sum + item.pointsCost * item.quantity,
-    0
-  );
+  return selectedBenefits.reduce((sum, item) => {
+    return sum + (Number(item.pointsCost || 0) * Number(item.quantity || 0));
+  }, 0);
 }
 
-
-
 function getWalletCoverage(cost, walletBalance) {
+  const normalizedCost = Number(cost || 0);
+  const normalizedWallet = Number(walletBalance || 0);
+  const walletUsed = Math.min(normalizedWallet, normalizedCost);
+
   return {
-    walletUsed: Math.min(walletBalance, cost),
-    remainingCost: Math.max(0, cost - Math.min(walletBalance, cost)),
+    walletUsed,
+    remainingCost: Math.max(0, normalizedCost - walletUsed),
   };
 }
 
 function renderRecyclables() {
+  if (!recyclablesContainer) return;
+
   recyclablesContainer.innerHTML = "";
 
-  if (recyclables.length === 0) {
+  if (!Array.isArray(recyclables) || recyclables.length === 0) {
     recyclablesContainer.innerHTML = "<p>Nenhum reciclável disponível</p>";
     return;
   }
@@ -105,19 +107,21 @@ function renderRecyclables() {
     card.id = `recyclable-${item._id}`;
     card.innerHTML = `
       <div class="item-emoji">${item.emoji || "♻️"}</div>
-      <div class="item-name">${item.name}</div>
-      <div class="item-type">${item.type}</div>
-      <div class="item-points">${item.pointsValue} pts</div>
+      <div class="item-name">${item.name || "Reciclável"}</div>
+      <div class="item-type">${item.type || "-"}</div>
+      <div class="item-points">${Number(item.pointsValue || 0)} pts</div>
     `;
-    card.onclick = () => toggleRecyclable(item);
+    card.addEventListener("click", () => toggleRecyclable(item));
     recyclablesContainer.appendChild(card);
   });
 }
 
 function renderBenefits() {
+  if (!benefitsContainer) return;
+
   benefitsContainer.innerHTML = "";
 
-  if (benefits.length === 0) {
+  if (!Array.isArray(benefits) || benefits.length === 0) {
     benefitsContainer.innerHTML = "<p>Nenhum benefício disponível</p>";
     return;
   }
@@ -128,11 +132,11 @@ function renderBenefits() {
     card.id = `benefit-${item._id}`;
     card.innerHTML = `
       <div class="item-emoji">${item.emoji || "🎁"}</div>
-      <div class="item-name">${item.name}</div>
-      <div class="item-type">${item.category}</div>
-      <div class="item-points">${item.pointsCost} pts</div>
+      <div class="item-name">${item.name || "Benefício"}</div>
+      <div class="item-type">${item.category || "-"}</div>
+      <div class="item-points">${Number(item.pointsCost || item.coinsCost || 0)} pts</div>
     `;
-    card.onclick = () => toggleBenefit(item);
+    card.addEventListener("click", () => toggleBenefit(item));
     benefitsContainer.appendChild(card);
   });
 }
@@ -147,7 +151,7 @@ function toggleRecyclable(item) {
       _id: item._id,
       name: item.name,
       emoji: item.emoji || "♻️",
-      pointsValue: item.pointsValue,
+      pointsValue: Number(item.pointsValue || 0),
       quantity: 1,
     });
   }
@@ -166,7 +170,7 @@ function toggleBenefit(item) {
       _id: item._id,
       name: item.name,
       emoji: item.emoji || "🎁",
-      pointsCost: item.pointsCost,
+      pointsCost: Number(item.pointsCost || item.coinsCost || 0),
       quantity: 1,
     });
   }
@@ -176,10 +180,15 @@ function toggleBenefit(item) {
 }
 
 function updateRecyclablesDisplay() {
-  document.querySelectorAll('[id^="recyclable-"]').forEach((c) => c.classList.remove("selected"));
+  if (!selectedRecyclablesList) return;
+
+  document
+    .querySelectorAll('[id^="recyclable-"]')
+    .forEach((c) => c.classList.remove("selected"));
+
   selectedRecyclables.forEach((item) => {
-    const c = document.getElementById(`recyclable-${item._id}`);
-    if (c) c.classList.add("selected");
+    const card = document.getElementById(`recyclable-${item._id}`);
+    if (card) card.classList.add("selected");
   });
 
   selectedRecyclablesList.innerHTML = "";
@@ -195,21 +204,28 @@ function updateRecyclablesDisplay() {
     row.innerHTML = `
       <span class="selected-item-name">${item.emoji || "♻️"} ${item.name}</span>
       <div class="selected-item-qty">
-        <button class="qty-btn" onclick="changeQty('recyclable', ${index}, -1)">−</button>
-        <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="setQty('recyclable', ${index}, this.value)" />
-        <button class="qty-btn" onclick="changeQty('recyclable', ${index}, 1)">+</button>
-        <button class="remove-btn" onclick="removeItem('recyclable', ${index})">✕</button>
+        <button class="qty-btn" data-type="recyclable" data-index="${index}" data-change="-1">−</button>
+        <input type="number" class="qty-input" value="${item.quantity}" min="1" data-type="recyclable" data-index="${index}" />
+        <button class="qty-btn" data-type="recyclable" data-index="${index}" data-change="1">+</button>
+        <button class="remove-btn" data-remove-type="recyclable" data-remove-index="${index}">✕</button>
       </div>
     `;
     selectedRecyclablesList.appendChild(row);
   });
+
+  bindDynamicControls();
 }
 
 function updateBenefitsDisplay() {
-  document.querySelectorAll('[id^="benefit-"]').forEach((c) => c.classList.remove("selected"));
+  if (!selectedBenefitsList) return;
+
+  document
+    .querySelectorAll('[id^="benefit-"]')
+    .forEach((c) => c.classList.remove("selected"));
+
   selectedBenefits.forEach((item) => {
-    const c = document.getElementById(`benefit-${item._id}`);
-    if (c) c.classList.add("selected");
+    const card = document.getElementById(`benefit-${item._id}`);
+    if (card) card.classList.add("selected");
   });
 
   selectedBenefitsList.innerHTML = "";
@@ -225,19 +241,51 @@ function updateBenefitsDisplay() {
     row.innerHTML = `
       <span class="selected-item-name">${item.emoji || "🎁"} ${item.name}</span>
       <div class="selected-item-qty">
-        <button class="qty-btn" onclick="changeQty('benefit', ${index}, -1)">−</button>
-        <input type="number" class="qty-input" value="${item.quantity}" min="1" onchange="setQty('benefit', ${index}, this.value)" />
-        <button class="qty-btn" onclick="changeQty('benefit', ${index}, 1)">+</button>
-        <button class="remove-btn" onclick="removeItem('benefit', ${index})">✕</button>
+        <button class="qty-btn" data-type="benefit" data-index="${index}" data-change="-1">−</button>
+        <input type="number" class="qty-input" value="${item.quantity}" min="1" data-type="benefit" data-index="${index}" />
+        <button class="qty-btn" data-type="benefit" data-index="${index}" data-change="1">+</button>
+        <button class="remove-btn" data-remove-type="benefit" data-remove-index="${index}">✕</button>
       </div>
     `;
     selectedBenefitsList.appendChild(row);
+  });
+
+  bindDynamicControls();
+}
+
+function bindDynamicControls() {
+  document.querySelectorAll(".qty-btn").forEach((btn) => {
+    btn.onclick = () => {
+      const type = btn.dataset.type;
+      const index = Number(btn.dataset.index);
+      const change = Number(btn.dataset.change);
+      changeQty(type, index, change);
+    };
+  });
+
+  document.querySelectorAll(".qty-input").forEach((input) => {
+    input.onchange = () => {
+      const type = input.dataset.type;
+      const index = Number(input.dataset.index);
+      setQty(type, index, input.value);
+    };
+  });
+
+  document.querySelectorAll(".remove-btn").forEach((btn) => {
+    btn.onclick = () => {
+      const type = btn.dataset.removeType;
+      const index = Number(btn.dataset.removeIndex);
+      removeItem(type, index);
+    };
   });
 }
 
 function changeQty(type, index, change) {
   const array = type === "recyclable" ? selectedRecyclables : selectedBenefits;
-  array[index].quantity = Math.max(1, array[index].quantity + change);
+
+  if (!array[index]) return;
+
+  array[index].quantity = Math.max(1, Number(array[index].quantity || 1) + Number(change || 0));
 
   if (type === "recyclable") {
     updateRecyclablesDisplay();
@@ -249,8 +297,11 @@ function changeQty(type, index, change) {
 }
 
 function setQty(type, index, value) {
-  const qty = Math.max(1, parseInt(value) || 1);
+  const qty = Math.max(1, parseInt(value, 10) || 1);
   const array = type === "recyclable" ? selectedRecyclables : selectedBenefits;
+
+  if (!array[index]) return;
+
   array[index].quantity = qty;
 
   if (type === "recyclable") {
@@ -270,6 +321,7 @@ function removeItem(type, index) {
     selectedBenefits.splice(index, 1);
     updateBenefitsDisplay();
   }
+
   updateUI();
 }
 
@@ -279,10 +331,12 @@ function updateUI() {
 
   updateWalletDisplay();
 
-  offeredPointsSpan.textContent = offeredPoints;
-  requestedPointsSpan.textContent = requestedPoints;
-  comparisonOfferedSpan.textContent = offeredPoints;
-  comparisonRequestedSpan.textContent = requestedPoints;
+  if (offeredPointsSpan) offeredPointsSpan.textContent = offeredPoints;
+  if (requestedPointsSpan) requestedPointsSpan.textContent = requestedPoints;
+  if (comparisonOfferedSpan) comparisonOfferedSpan.textContent = offeredPoints;
+  if (comparisonRequestedSpan) comparisonRequestedSpan.textContent = requestedPoints;
+
+  if (!comparisonStatus || !walletTradeBtn) return;
 
   if (selectedBenefits.length === 0) {
     comparisonStatus.textContent = "Selecione pelo menos um benefício";
@@ -294,7 +348,7 @@ function updateUI() {
 
   walletTradeBtn.style.display = "block";
 
-  const totalCost = getSelectedBenefitsPoints();
+  const totalCost = requestedPoints;
   const { walletUsed, remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
 
   if (currentWalletBalance >= totalCost) {
@@ -326,7 +380,7 @@ function updateUI() {
   }
 }
 
-walletTradeBtn.addEventListener("click", async () => {
+async function handleTradeSubmit() {
   if (selectedBenefits.length === 0) {
     alert("Selecione pelo menos um benefício primeiro!");
     return;
@@ -362,7 +416,7 @@ walletTradeBtn.addEventListener("click", async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         benefits: selectedBenefits.map((item) => ({
@@ -385,7 +439,7 @@ walletTradeBtn.addEventListener("click", async () => {
       throw new Error(data.error || "Não foi possível realizar a troca.");
     }
 
-    currentWalletBalance = data.walletBalanceAfter ?? currentWalletBalance;
+    currentWalletBalance = Number(data.walletBalanceAfter ?? currentWalletBalance);
     updateWalletDisplay();
 
     try {
@@ -413,14 +467,14 @@ walletTradeBtn.addEventListener("click", async () => {
         quantity: item.quantity,
         totalPoints: Number(item.pointsPerUnit || 0) * Number(item.quantity || 1),
       })),
-      totalPointsOffered: data.recyclingPointsGenerated || 0,
-      totalCost: data.totalBenefitCost || totalCost,
-      walletUsed: data.walletUsed || 0,
-      recyclingPointsUsed: data.recyclingPointsUsed || 0,
-      recyclingPointsGenerated: data.recyclingPointsGenerated || 0,
-      coinsSurplus: data.coinsSurplus || 0,
-      walletBalance: data.walletBalanceAfter ?? currentWalletBalance,
-      tradeId: data.tradeId || "SUCESSO_" + Date.now(),
+      totalPointsOffered: Number(data.recyclingPointsGenerated || 0),
+      totalCost: Number(data.totalBenefitCost || totalCost),
+      walletUsed: Number(data.walletUsed || walletUsed),
+      recyclingPointsUsed: Number(data.recyclingPointsUsed || 0),
+      recyclingPointsGenerated: Number(data.recyclingPointsGenerated || 0),
+      coinsSurplus: Number(data.coinsSurplus || 0),
+      walletBalance: Number(data.walletBalanceAfter ?? currentWalletBalance),
+      tradeId: data.tradeId || `SUCESSO_${Date.now()}`,
       statusText: "✅ Pendente",
     });
 
@@ -436,122 +490,17 @@ walletTradeBtn.addEventListener("click", async () => {
     walletTradeBtn.disabled = false;
     updateUI();
   }
-});
-
-
-
-    const tradesExecuted = [];
-    let walletBalanceTemp = currentWalletBalance;
-
-    for (const selectedBenefit of selectedBenefits) {
-      const benefitTotalCost = selectedBenefit.pointsCost * selectedBenefit.quantity;
-      const coverage = getWalletCoverage(benefitTotalCost, walletBalanceTemp);
-
-      let response;
-
-      if (walletBalanceTemp >= benefitTotalCost) {
-        response = await fetch(`${API_URL}/trade/buy-with-wallet`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            benefitId: selectedBenefit._id,
-            quantity: selectedBenefit.quantity,
-          }),
-        });
-      } else {
-        response = await fetch(`${API_URL}/trade/buy-with-wallet-and-recyclables`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            benefitId: selectedBenefit._id,
-            quantity: selectedBenefit.quantity,
-            recyclablesOffered: selectedRecyclables.map((item) => ({
-              recyclableId: item._id,
-              recyclableName: item.name,
-              quantity: item.quantity,
-              pointsPerUnit: item.pointsValue,
-            })),
-          }),
-        });
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || `Erro ao realizar troca do benefício ${selectedBenefit.name}`);
-      }
-
-      walletBalanceTemp = data.walletBalanceAfter ?? data.walletBalance ?? walletBalanceTemp;
-
-      tradesExecuted.push({
-        benefitName: selectedBenefit.name,
-        benefitEmoji: selectedBenefit.emoji || "🎁",
-        benefitQuantity: selectedBenefit.quantity,
-        totalPoints: benefitTotalCost,
-        tradeId: data.tradeId || data._id || "SUCESSO_" + Date.now(),
-      });
-    }
-
-    currentWalletBalance = walletBalanceTemp;
-    updateWalletDisplay();
-
-    try {
-      const storedUser = localStorage.getItem("bemaquiUser");
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        user.wallet = user.wallet || {};
-        user.wallet.balance = currentWalletBalance;
-        localStorage.setItem("bemaquiUser", JSON.stringify(user));
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar usuário no localStorage:", error);
-    }
-
-    showUnifiedConfirmationModal({
-      benefitsReceived: tradesExecuted,
-      recyclablesOffered: selectedRecyclables.map((item) => ({
-        recyclableName: item.name,
-        recyclableEmoji: item.emoji || "♻️",
-        quantity: item.quantity,
-        totalPoints: item.pointsValue * item.quantity,
-      })),
-      totalPointsOffered: offeredPoints,
-      totalCost,
-      walletUsed,
-      recyclingPointsUsed: Math.max(0, totalCost - walletUsed),
-      recyclingPointsGenerated: offeredPoints,
-      coinsSurplus: Math.max(0, offeredPoints - remainingCost),
-      walletBalance: currentWalletBalance,
-      tradeId: tradesExecuted[0]?.tradeId || "SUCESSO_" + Date.now(),
-      statusText: "✅ Concluída",
-    });
-
-    selectedBenefits = [];
-    selectedRecyclables = [];
-    updateBenefitsDisplay();
-    updateRecyclablesDisplay();
-    updateUI();
-  } catch (error) {
-    console.error("Erro:", error);
-    alert(error.message || "Não foi possível realizar a troca.");
-  } finally {
-    walletTradeBtn.disabled = false;
-    updateUI();
-  }
-});
+}
 
 function showUnifiedConfirmationModal(trade) {
+  const oldModal = document.querySelector(".confirmation-modal");
+  if (oldModal) oldModal.remove();
+
   const modal = document.createElement("div");
   modal.className = "confirmation-modal";
 
   const recyclablesHtml =
-    trade.recyclablesOffered && trade.recyclablesOffered.length > 0
+    Array.isArray(trade.recyclablesOffered) && trade.recyclablesOffered.length > 0
       ? `
         <div class="info-section">
           <h3>📦 Recicláveis utilizados:</h3>
@@ -567,7 +516,7 @@ function showUnifiedConfirmationModal(trade) {
               )
               .join("")}
           </div>
-          <p class="points-info">Total gerado pelos recicláveis: <strong>${trade.totalPointsOffered} pontos</strong></p>
+          <p class="points-info">Total gerado pelos recicláveis: <strong>${trade.totalPointsOffered}</strong></p>
         </div>
       `
       : `
@@ -578,7 +527,7 @@ function showUnifiedConfirmationModal(trade) {
       `;
 
   const benefitsHtml =
-    trade.benefitsReceived && trade.benefitsReceived.length > 0
+    Array.isArray(trade.benefitsReceived) && trade.benefitsReceived.length > 0
       ? `
         <div class="info-section">
           <h3>🎁 Você recebeu:</h3>
@@ -652,12 +601,17 @@ function showUnifiedConfirmationModal(trade) {
       </div>
 
       <div class="confirmation-footer">
-        <button onclick="closeConfirmationModal()" class="btn-close">OK, Entendi!</button>
+        <button type="button" class="btn-close" id="close-confirmation-btn">OK, Entendi!</button>
       </div>
     </div>
   `;
 
   document.body.appendChild(modal);
+
+  const closeBtn = document.getElementById("close-confirmation-btn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeConfirmationModal);
+  }
 
   modal.addEventListener("click", (e) => {
     if (e.target === modal) {
@@ -673,7 +627,13 @@ function closeConfirmationModal() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async function () {
   await loadUserWallet();
   await loadItems();
+
+  if (walletTradeBtn) {
+    walletTradeBtn.addEventListener("click", async function () {
+      await handleTradeSubmit();
+    });
+  }
 });
