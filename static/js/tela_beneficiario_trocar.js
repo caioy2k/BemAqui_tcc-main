@@ -288,7 +288,7 @@ function updateUI() {
   comparisonRequestedSpan.textContent = requestedPoints;
 
   if (selectedBenefits.length === 0) {
-    comparisonStatus.textContent = "Selecione um benefício";
+    comparisonStatus.textContent = "Selecione pelo menos um benefício";
     comparisonStatus.className = "status-warning";
     walletTradeBtn.style.display = "none";
     walletTradeBtn.disabled = true;
@@ -331,7 +331,7 @@ function updateUI() {
 
 walletTradeBtn.addEventListener("click", async () => {
   if (selectedBenefits.length === 0) {
-    alert("Selecione um benefício primeiro!");
+    alert("Selecione pelo menos um benefício primeiro!");
     return;
   }
 
@@ -341,12 +341,11 @@ walletTradeBtn.addEventListener("click", async () => {
     return;
   }
 
-  if (selectedBenefits.length > 1) {
-    alert("Para este fluxo, selecione apenas 1 benefício por vez.");
-    return;
-  }
+  const selectedBenefitsPayload = selectedBenefits.map((item) => ({
+    benefitId: item._id,
+    quantity: item.quantity,
+  }));
 
-  const selectedBenefit = selectedBenefits[0];
   const totalCost = getSelectedBenefitsPoints();
   const offeredPoints = getSelectedRecyclablesPoints();
   const balanceBeforePurchase = currentWalletBalance;
@@ -366,8 +365,7 @@ walletTradeBtn.addEventListener("click", async () => {
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
-          benefitId: selectedBenefit._id,
-          quantity: selectedBenefit.quantity,
+          benefits: selectedBenefitsPayload,
         }),
       });
     } else {
@@ -388,8 +386,7 @@ walletTradeBtn.addEventListener("click", async () => {
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
-          benefitId: selectedBenefit._id,
-          quantity: selectedBenefit.quantity,
+          benefits: selectedBenefitsPayload,
           recyclablesOffered: selectedRecyclables.map((item) => ({
             recyclableId: item._id,
             recyclableName: item.name,
@@ -419,9 +416,12 @@ walletTradeBtn.addEventListener("click", async () => {
       }
 
       showUnifiedConfirmationModal({
-        benefitName: selectedBenefit.name,
-        benefitEmoji: selectedBenefit.emoji || "🎁",
-        benefitQuantity: selectedBenefit.quantity,
+        benefitsReceived: selectedBenefits.map((item) => ({
+          benefitName: item.name,
+          benefitEmoji: item.emoji || "🎁",
+          benefitQuantity: item.quantity,
+          totalPoints: item.pointsCost * item.quantity,
+        })),
         recyclablesOffered: selectedRecyclables.map((item) => ({
           recyclableName: item.name,
           recyclableEmoji: item.emoji || "♻️",
@@ -487,6 +487,32 @@ function showUnifiedConfirmationModal(trade) {
         </div>
       `;
 
+  const benefitsHtml =
+    trade.benefitsReceived && trade.benefitsReceived.length > 0
+      ? `
+        <div class="info-section">
+          <h3>🎁 Você recebeu:</h3>
+          <div class="items-list">
+            ${trade.benefitsReceived
+              .map(
+                (item) => `
+                  <div class="item">
+                    <span>${item.benefitEmoji || "🎁"} ${item.benefitName}</span>
+                    <span class="qty">x${item.benefitQuantity}</span>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+      `
+      : `
+        <div class="info-section">
+          <h3>🎁 Você recebeu:</h3>
+          <p class="points-info"><strong>Nenhum benefício registrado.</strong></p>
+        </div>
+      `;
+
   modal.innerHTML = `
     <div class="confirmation-card">
       <div class="confirmation-header">
@@ -496,15 +522,7 @@ function showUnifiedConfirmationModal(trade) {
 
       <div class="confirmation-body">
         <div class="trade-info">
-          <div class="info-section">
-            <h3>🎁 Você recebeu:</h3>
-            <div class="items-list">
-              <div class="item">
-                <span>${trade.benefitEmoji || "🎁"} ${trade.benefitName}</span>
-                <span class="qty">x${trade.benefitQuantity}</span>
-              </div>
-            </div>
-          </div>
+          ${benefitsHtml}
 
           <div class="exchange-arrow">↓ DETALHES DA TROCA ↓</div>
 
@@ -515,7 +533,7 @@ function showUnifiedConfirmationModal(trade) {
             <p class="points-info">
               💳 Moedas usadas da carteira: <strong>${trade.walletUsed}</strong><br>
               ♻️ Pontos usados em recicláveis: <strong>${trade.recyclingPointsUsed}</strong><br>
-              🎯 Total do benefício: <strong>${trade.totalCost}</strong><br>
+              🎯 Total dos benefícios: <strong>${trade.totalCost}</strong><br>
               ${trade.coinsSurplus > 0 ? `🪙 Sobra creditada: <strong>${trade.coinsSurplus}</strong><br>` : ""}
               💼 Saldo final da carteira: <strong>${trade.walletBalance}</strong>
             </p>

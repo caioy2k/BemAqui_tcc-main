@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalhes da troca - BemAqui</title>
+  <link rel="stylesheet" href="../static/css/base.css" />
+  <link rel="stylesheet" href="../static/css/tela_detalhes_compra.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-header-inner">
+      <a href="index.html" class="site-brand">
+        <div class="site-brand-mark">♻</div>
+        <div class="site-brand-copy">
+          <h1>Bem<span>Aqui</span></h1>
+          <p>uma ajuda para quem necessita</p>
+        </div>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="tela_beneficiario.html">Menu</a>
+        <a href="tela_beneficiario_perfil.html">Perfil</a>
+        <a href="tela_carteira.html">Carteira</a>
+        <a href="tela_pontos_coleta.html">Pontos de coleta</a>
+        <a href="index.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container">
+      <section class="purchase-hero card-surface">
+        <div class="purchase-hero-content">
+          <span class="section-badge">Detalhes da compra</span>
+          <h1>Acompanhe sua troca até a retirada</h1>
+          <p>
+            Veja o andamento da sua solicitação, confira os itens escolhidos
+            e acompanhe quando tudo estiver pronto para retirada.
+          </p>
+        </div>
+
+        <div class="purchase-status-summary" aria-label="Resumo do status">
+          <span class="status-label">Status atual</span>
+          <strong id="current-status-label">Carregando...</strong>
+          <small id="current-status-description">
+            Buscando informações da sua troca pendente.
+          </small>
+        </div>
+      </section>
+
+      <section id="loading-state" class="card-surface state-card">
+        <p>Carregando detalhes da troca...</p>
+      </section>
+
+      <section id="empty-state" class="card-surface state-card hidden">
+        <h2>Nenhuma troca pendente</h2>
+        <p>No momento, você não possui solicitação em andamento para retirada.</p>
+        <a href="tela_beneficiario_trocar.html" class="primary-btn">Realizar nova troca</a>
+      </section>
+
+      <section id="details-content" class="hidden">
+        <section class="details-layout">
+          <article class="details-main card-surface">
+            <div class="section-heading">
+              <div>
+                <h2>Andamento da solicitação</h2>
+                <p>Linha do tempo da sua troca até o momento da retirada.</p>
+              </div>
+              <span class="order-code" id="order-code">Pedido #---</span>
+            </div>
+
+            <div class="timeline" id="purchaseTimeline"></div>
+          </article>
+
+          <aside class="details-sidebar">
+            <article class="card-surface sidebar-card">
+              <h3>Resumo da troca</h3>
+              <ul class="summary-list">
+                <li><span>Número da troca</span><strong id="summary-trade-id">---</strong></li>
+                <li><span>Data da solicitação</span><strong id="summary-date">---</strong></li>
+                <li><span>Total dos benefícios</span><strong id="summary-total-cost">0 moedas</strong></li>
+                <li><span>Moedas usadas</span><strong id="summary-wallet-used">0 moedas</strong></li>
+                <li><span>Saldo final</span><strong id="summary-wallet-balance">0 moedas</strong></li>
+              </ul>
+            </article>
+
+            <article class="card-surface sidebar-card">
+              <h3>Local de retirada</h3>
+              <p><strong id="pickup-name">Ponto não informado</strong></p>
+              <p id="pickup-address">Endereço não informado</p>
+              <p class="pickup-note" id="pickup-note">
+                Retirada liberada somente quando o status mudar para “Pronto para retirada”.
+              </p>
+              <div class="sidebar-actions">
+                <a href="tela_pontos_coleta.html" class="secondary-btn">Ver pontos</a>
+              </div>
+            </article>
+          </aside>
+        </section>
+
+        <section class="items-section card-surface">
+          <div class="section-heading">
+            <div>
+              <h2>Itens da troca</h2>
+              <p>Confira o que foi oferecido e o que será retirado.</p>
+            </div>
+          </div>
+
+          <div class="items-columns">
+            <div class="items-box">
+              <span class="items-tag">Você ofereceu</span>
+              <div id="recyclables-list">
+                <p class="placeholder">Nenhum reciclável informado.</p>
+              </div>
+              <p class="items-total">
+                Total gerado: <strong id="recyclables-total-points">0 pontos</strong>
+              </p>
+            </div>
+
+            <div class="items-box">
+              <span class="items-tag items-tag-gift">Você recebeu</span>
+              <div id="benefits-list">
+                <p class="placeholder">Nenhum benefício informado.</p>
+              </div>
+              <p class="items-total">
+                Total dos benefícios: <strong id="benefits-total-points">0 pontos</strong>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="financial-section card-surface">
+          <div class="section-heading">
+            <div>
+              <h2>Resumo financeiro</h2>
+              <p>Os mesmos dados apresentados na confirmação da troca.</p>
+            </div>
+          </div>
+
+          <div class="financial-grid">
+            <div class="financial-card">
+              <span>Moedas usadas da carteira</span>
+              <strong id="financial-wallet-used">0</strong>
+            </div>
+            <div class="financial-card">
+              <span>Pontos usados em recicláveis</span>
+              <strong id="financial-recycling-used">0</strong>
+            </div>
+            <div class="financial-card">
+              <span>Sobra creditada</span>
+              <strong id="financial-surplus">0</strong>
+            </div>
+            <div class="financial-card">
+              <span>Saldo final da carteira</span>
+              <strong id="financial-wallet-balance">0</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer-inner">
+      <p>&copy; 2026 BemAqui. Plataforma social de troca sustentável.</p>
+    </div>
+  </footer>
+
+  <script src="../static/js/tela_detalhes_compra.js"></script>
+</body>
+</html>
