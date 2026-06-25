@@ -82,10 +82,7 @@ function getSelectedBenefitsPoints() {
   );
 }
 
-function getFirstSelectedBenefitTotal() {
-  if (selectedBenefits.length === 0) return 0;
-  return selectedBenefits[0].pointsCost * selectedBenefits[0].quantity;
-}
+
 
 function getWalletCoverage(cost, walletBalance) {
   return {
@@ -360,6 +357,88 @@ walletTradeBtn.addEventListener("click", async () => {
         return;
       }
     }
+
+    const response = await fetch(`${API_URL}/trade/buy-multiple-with-wallet-and-recyclables`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        benefits: selectedBenefits.map((item) => ({
+          benefitId: item._id,
+          quantity: item.quantity,
+        })),
+        recyclablesOffered: selectedRecyclables.map((item) => ({
+          recyclableId: item._id,
+          recyclableName: item.name,
+          recyclableEmoji: item.emoji || "♻️",
+          quantity: item.quantity,
+          pointsPerUnit: item.pointsValue,
+        })),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Não foi possível realizar a troca.");
+    }
+
+    currentWalletBalance = data.walletBalanceAfter ?? currentWalletBalance;
+    updateWalletDisplay();
+
+    try {
+      const storedUser = localStorage.getItem("bemaquiUser");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        user.wallet = user.wallet || {};
+        user.wallet.balance = currentWalletBalance;
+        localStorage.setItem("bemaquiUser", JSON.stringify(user));
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar usuário no localStorage:", error);
+    }
+
+    showUnifiedConfirmationModal({
+      benefitsReceived: (data.benefitsRequested || []).map((item) => ({
+        benefitName: item.benefitName,
+        benefitEmoji: item.benefitEmoji || "🎁",
+        benefitQuantity: item.quantity,
+        totalPoints: Number(item.pointsCost || 0) * Number(item.quantity || 1),
+      })),
+      recyclablesOffered: (data.recyclablesOffered || []).map((item) => ({
+        recyclableName: item.recyclableName,
+        recyclableEmoji: item.recyclableEmoji || "♻️",
+        quantity: item.quantity,
+        totalPoints: Number(item.pointsPerUnit || 0) * Number(item.quantity || 1),
+      })),
+      totalPointsOffered: data.recyclingPointsGenerated || 0,
+      totalCost: data.totalBenefitCost || totalCost,
+      walletUsed: data.walletUsed || 0,
+      recyclingPointsUsed: data.recyclingPointsUsed || 0,
+      recyclingPointsGenerated: data.recyclingPointsGenerated || 0,
+      coinsSurplus: data.coinsSurplus || 0,
+      walletBalance: data.walletBalanceAfter ?? currentWalletBalance,
+      tradeId: data.tradeId || "SUCESSO_" + Date.now(),
+      statusText: "✅ Pendente",
+    });
+
+    selectedBenefits = [];
+    selectedRecyclables = [];
+    updateBenefitsDisplay();
+    updateRecyclablesDisplay();
+    updateUI();
+  } catch (error) {
+    console.error("Erro:", error);
+    alert(error.message || "Não foi possível realizar a troca.");
+  } finally {
+    walletTradeBtn.disabled = false;
+    updateUI();
+  }
+});
+
+
 
     const tradesExecuted = [];
     let walletBalanceTemp = currentWalletBalance;
