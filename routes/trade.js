@@ -52,6 +52,34 @@ router.get('/trades', authMiddleware, isEmployeeMiddleware, async (req, res) => 
   });
 });
 
+
+router.get("/my-pending-trade", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id || req.user._id;
+
+    const pendingTrade = await Trade.findOne({
+      user: userId,
+      status: { $in: ["requested", "analyzing", "separating", "ready"] }
+    }).sort({ createdAt: -1 });
+
+    if (!pendingTrade) {
+      return res.status(404).json({
+        error: "Nenhuma troca pendente encontrada."
+      });
+    }
+
+    return res.status(200).json({
+      trade: pendingTrade
+    });
+  } catch (error) {
+    console.error("Erro ao buscar troca pendente:", error);
+    return res.status(500).json({
+      error: "Erro interno ao buscar troca pendente."
+    });
+  }
+});
+
+
 router.post('/create-trade-type1', authMiddleware, async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -332,30 +360,6 @@ router.post('/buy-with-wallet', authMiddleware, async (req, res) => {
 });
 
 
-router.get("/my-pending-trade", authMiddleware, async (req, res) => {
-  try {
-    const userId = req.user.id || req.user._id;
 
-    const pendingTrade = await Trade.findOne({
-      user: userId,
-      status: { $in: ["requested", "analyzing", "separating", "ready"] }
-    }).sort({ createdAt: -1 });
-
-    if (!pendingTrade) {
-      return res.status(404).json({
-        error: "Nenhuma troca pendente encontrada."
-      });
-    }
-
-    return res.status(200).json({
-      trade: pendingTrade
-    });
-  } catch (error) {
-    console.error("Erro ao buscar troca pendente:", error);
-    return res.status(500).json({
-      error: "Erro interno ao buscar troca pendente."
-    });
-  }
-});
 
 module.exports = router;
