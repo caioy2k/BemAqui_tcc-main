@@ -55,11 +55,11 @@ router.get('/trades', authMiddleware, isEmployeeMiddleware, async (req, res) => 
 
 router.get("/my-pending-trade", authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id || req.user._id;
+    const userId = req.user._id || req.user.id;
 
     const pendingTrade = await Trade.findOne({
-      user: userId,
-      status: { $in: ["requested", "analyzing", "separating", "ready"] }
+      beneficiaryId: userId,
+      status: { $in: ["pendente", "requested", "analyzing", "separating", "ready"] }
     }).sort({ createdAt: -1 });
 
     if (!pendingTrade) {
@@ -68,8 +68,11 @@ router.get("/my-pending-trade", authMiddleware, async (req, res) => {
       });
     }
 
+    const user = await User.findById(userId);
+
     return res.status(200).json({
-      trade: pendingTrade
+      trade: pendingTrade,
+      walletBalance: user?.wallet?.balance || 0
     });
   } catch (error) {
     console.error("Erro ao buscar troca pendente:", error);
