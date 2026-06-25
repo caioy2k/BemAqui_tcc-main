@@ -341,34 +341,15 @@ walletTradeBtn.addEventListener("click", async () => {
     return;
   }
 
-  const selectedBenefitsPayload = selectedBenefits.map((item) => ({
-    benefitId: item._id,
-    quantity: item.quantity,
-  }));
-
   const totalCost = getSelectedBenefitsPoints();
   const offeredPoints = getSelectedRecyclablesPoints();
-  const balanceBeforePurchase = currentWalletBalance;
   const { walletUsed, remainingCost } = getWalletCoverage(totalCost, currentWalletBalance);
 
   try {
     walletTradeBtn.disabled = true;
     walletTradeBtn.textContent = "Processando...";
 
-    let response;
-
-    if (currentWalletBalance >= totalCost) {
-      response = await fetch(`${API_URL}/trade/buy-with-wallet`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          benefits: selectedBenefitsPayload,
-        }),
-      });
-    } else {
+    if (currentWalletBalance < totalCost) {
       if (selectedRecyclables.length === 0) {
         alert("Selecione recicláveis para completar o valor restante.");
         return;
@@ -378,78 +359,108 @@ walletTradeBtn.addEventListener("click", async () => {
         alert(`Faltam ${remainingCost - offeredPoints} moedas em recicláveis para completar a troca.`);
         return;
       }
-
-      response = await fetch(`${API_URL}/trade/buy-with-wallet-and-recyclables`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          benefits: selectedBenefitsPayload,
-          recyclablesOffered: selectedRecyclables.map((item) => ({
-            recyclableId: item._id,
-            recyclableName: item.name,
-            quantity: item.quantity,
-            pointsPerUnit: item.pointsValue,
-          })),
-        }),
-      });
     }
 
-    const data = await response.json();
+    const tradesExecuted = [];
+    let walletBalanceTemp = currentWalletBalance;
 
-    if (response.ok) {
-      currentWalletBalance = data.walletBalanceAfter ?? data.walletBalance ?? currentWalletBalance;
-      updateWalletDisplay();
+    for (const selectedBenefit of selectedBenefits) {
+      const benefitTotalCost = selectedBenefit.pointsCost * selectedBenefit.quantity;
+      const coverage = getWalletCoverage(benefitTotalCost, walletBalanceTemp);
 
-      try {
-        const storedUser = localStorage.getItem("bemaquiUser");
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          user.wallet = user.wallet || {};
-          user.wallet.balance = currentWalletBalance;
-          localStorage.setItem("bemaquiUser", JSON.stringify(user));
-        }
-      } catch (error) {
-        console.error("Erro ao atualizar usuário no localStorage:", error);
+      let response;
+
+      if (walletBalanceTemp >= benefitTotalCost) {
+        response = await fetch(`${API_URL}/trade/buy-with-wallet`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            benefitId: selectedBenefit._id,
+            quantity: selectedBenefit.quantity,
+          }),
+        });
+      } else {
+        response = await fetch(`${API_URL}/trade/buy-with-wallet-and-recyclables`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            benefitId: selectedBenefit._id,
+            quantity: selectedBenefit.quantity,
+            recyclablesOffered: selectedRecyclables.map((item) => ({
+              recyclableId: item._id,
+              recyclableName: item.name,
+              quantity: item.quantity,
+              pointsPerUnit: item.pointsValue,
+            })),
+          }),
+        });
       }
 
-      showUnifiedConfirmationModal({
-        benefitsReceived: selectedBenefits.map((item) => ({
-          benefitName: item.name,
-          benefitEmoji: item.emoji || "🎁",
-          benefitQuantity: item.quantity,
-          totalPoints: item.pointsCost * item.quantity,
-        })),
-        recyclablesOffered: selectedRecyclables.map((item) => ({
-          recyclableName: item.name,
-          recyclableEmoji: item.emoji || "♻️",
-          quantity: item.quantity,
-          totalPoints: item.pointsValue * item.quantity,
-        })),
-        totalPointsOffered: offeredPoints,
-        totalCost,
-        walletUsed: data.walletUsed ?? walletUsed,
-        recyclingPointsUsed: data.recyclingPointsUsed ?? Math.max(0, totalCost - (data.walletUsed ?? walletUsed)),
-        recyclingPointsGenerated: data.recyclingPointsGenerated ?? offeredPoints,
-        coinsSurplus: data.coinsSurplus ?? Math.max(0, offeredPoints - remainingCost),
-        walletBalance: currentWalletBalance,
-        tradeId: data.tradeId || data._id || "SUCESSO_" + Date.now(),
-        statusText: "✅ Concluída",
-      });
+      const data = await response.json();
 
-      selectedBenefits = [];
-      selectedRecyclables = [];
-      updateBenefitsDisplay();
-      updateRecyclablesDisplay();
-      updateUI();
-    } else {
-      alert(data.error || "Erro ao realizar troca.");
+      if (!response.ok) {
+        throw new Error(data.error || `Erro ao realizar troca do benefício ${selectedBenefit.name}`);
+      }
+
+      walletBalanceTemp = data.walletBalanceAfter ?? data.walletBalance ?? walletBalanceTemp;
+
+      tradesExecuted.push({
+        benefitName: selectedBenefit.name,
+        benefitEmoji: selectedBenefit.emoji || "🎁",
+        benefitQuantity: selectedBenefit.quantity,
+        totalPoints: benefitTotalCost,
+        tradeId: data.tradeId || data._id || "SUCESSO_" + Date.now(),
+      });
     }
+
+    currentWalletBalance = walletBalanceTemp;
+    updateWalletDisplay();
+
+    try {
+      const storedUser = localStorage.getItem("bemaquiUser");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        user.wallet = user.wallet || {};
+        user.wallet.balance = currentWalletBalance;
+        localStorage.setItem("bemaquiUser", JSON.stringify(user));
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar usuário no localStorage:", error);
+    }
+
+    showUnifiedConfirmationModal({
+      benefitsReceived: tradesExecuted,
+      recyclablesOffered: selectedRecyclables.map((item) => ({
+        recyclableName: item.name,
+        recyclableEmoji: item.emoji || "♻️",
+        quantity: item.quantity,
+        totalPoints: item.pointsValue * item.quantity,
+      })),
+      totalPointsOffered: offeredPoints,
+      totalCost,
+      walletUsed,
+      recyclingPointsUsed: Math.max(0, totalCost - walletUsed),
+      recyclingPointsGenerated: offeredPoints,
+      coinsSurplus: Math.max(0, offeredPoints - remainingCost),
+      walletBalance: currentWalletBalance,
+      tradeId: tradesExecuted[0]?.tradeId || "SUCESSO_" + Date.now(),
+      statusText: "✅ Concluída",
+    });
+
+    selectedBenefits = [];
+    selectedRecyclables = [];
+    updateBenefitsDisplay();
+    updateRecyclablesDisplay();
+    updateUI();
   } catch (error) {
     console.error("Erro:", error);
-    alert("Não foi possível realizar a troca.");
+    alert(error.message || "Não foi possível realizar a troca.");
   } finally {
     walletTradeBtn.disabled = false;
     updateUI();
